@@ -13,20 +13,23 @@ using System.Linq;
 
 namespace StardewDruid.Journal
 {
-    public class TrophyJournal : HerbalJournal
+    public class TrophyJournal : PotionJournal
     {
 
-        public TrophyJournal(string QuestId, int Record) : base(QuestId, Record)
+        public TrophyJournal(journalTypes Type, List<string> Parameters) : base(Type, Parameters)
         {
+
+        }
+
+        public override void prepareContent()
+        {
+
+            type = journalTypes.trophies;
 
         }
 
         public override void populateInterface()
         {
-
-            type = journalTypes.trophies;
-
-            title = JournalData.JournalTitle(type);
 
             interfaceComponents = new()
             {
@@ -37,7 +40,8 @@ namespace StardewDruid.Journal
                 [104] = addButton(journalButtons.openAlchemy),
                 [105] = addButton(journalButtons.openPotions),
                 [106] = addButton(journalButtons.openCompanions),
-                [107] = addButton(journalButtons.openDragonomicon),
+                [107] = addButton(journalButtons.openOrders),
+                [108] = addButton(journalButtons.openDragonomicon),
 
                 [201] = addButton(journalButtons.back),
                 [202] = addButton(journalButtons.start),
@@ -46,38 +50,6 @@ namespace StardewDruid.Journal
                 [301] = addButton(journalButtons.exit),
 
             };
-
-        }
-        
-        public override void populateContent()
-        {
-
-            contentColumns = 12;
-
-            pagination = 0;
-
-            contentComponents = Mod.instance.herbalHandle.JournalTrophies();
-
-            if (record >= contentComponents.Count)
-            {
-
-                record = 0;
-
-            }
-
-            foreach (KeyValuePair<int, ContentComponent> component in contentComponents)
-            {
-
-                component.Value.setBounds(component.Key/2, xPositionOnScreen, yPositionOnScreen, width, height, 0, 56);
-
-            }
-
-        }
-
-        public override void activateInterface()
-        {
-
-            resetInterface();
 
         }
 
@@ -106,56 +78,6 @@ namespace StardewDruid.Journal
                     break;
 
             }
-
-        }
-
-        public override void pressContent()
-        {
-
-            int amount = 1;
-
-            if (Mod.instance.Helper.Input.GetState(SButton.LeftShift) == SButtonState.Held)
-            {
-                amount = 5;
-            }
-            else if (Mod.instance.Helper.Input.GetState(SButton.RightShift) == SButtonState.Held)
-            {
-                amount = 5;
-            }
-            else if (Mod.instance.Helper.Input.GetState(SButton.LeftControl) == SButtonState.Held)
-            {
-                amount = 10;
-            }
-            else if (Mod.instance.Helper.Input.GetState(SButton.RightControl) == SButtonState.Held)
-            {
-                amount = 10;
-            }
-
-            if (contentComponents[focus].type == ContentComponent.contentTypes.toggle)
-            {
-
-                Mod.instance.herbalHandle.ConvertToGoods(contentComponents[focus].id, amount);
-
-                populateContent();
-
-                return;
-
-            }
-
-            string herbalId = contentComponents[focus].id;
-
-            Mod.instance.herbalHandle.ConsumeOmen(herbalId, amount);
-
-            populateContent();
-
-            return;
-
-        }
-
-        public override void pressCancel()
-        {
-
-            return;
 
         }
 

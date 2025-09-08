@@ -18,6 +18,7 @@ using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
+using static StardewDruid.Cast.SpellHandle;
 
 namespace StardewDruid.Character
 {
@@ -165,9 +166,9 @@ namespace StardewDruid.Character
 
                 sound = SpellHandle.Sounds.batFlap,
 
-                added = new() { Mod.instance.rite.ChargeEffect(Rite.riteCharges.fates, true), }
-
             };
+
+            special.added = new() { Rite.FatesCurse(), };
 
             Mod.instance.spellRegister.Add(special);
 

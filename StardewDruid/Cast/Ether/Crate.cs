@@ -297,13 +297,13 @@ namespace StardewDruid.Cast.Ether
 
                 default:
 
-                    ProgressBar(StringData.Strings(StringData.stringkeys.treasureHunt), 0);
+                    ProgressBar(StringData.Get(StringData.str.treasureHunt), 0);
 
                     break;
 
                 case 2:
 
-                    ProgressBar(StringData.Strings(StringData.stringkeys.treasureGuardian), 0);
+                    ProgressBar(StringData.Get(StringData.str.treasureGuardian), 0);
 
                     break;
 
@@ -538,7 +538,7 @@ namespace StardewDruid.Cast.Ether
 
             int aether = Mod.instance.randomIndex.Next(1, 4);
 
-            ThrowHandle throwAether = new(Game1.player, origin, HerbalHandle.herbals.aether, aether);
+            ThrowHandle throwAether = new(Game1.player, origin, ApothecaryHandle.items.aether, aether);
 
             throwAether.register();
 

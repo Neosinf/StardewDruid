@@ -736,7 +736,7 @@ namespace StardewDruid.Cast.Effect
 
             resourceClump.NeedsUpdate = false;
 
-            HerbalHandle.RandomOmen(targetVector * 64, 6);
+            ApothecaryHandle.RandomOmen(targetVector * 64, 6);
 
             if (targetLocation._activeTerrainFeatures.Contains(resourceClump))
             {
@@ -820,7 +820,7 @@ namespace StardewDruid.Cast.Effect
 
             resourceClump.NeedsUpdate = false;
 
-            HerbalHandle.RandomOmen(targetVector * 64, 4);
+            ApothecaryHandle.RandomOmen(targetVector * 64, 4);
 
             if (targetLocation._activeTerrainFeatures.Contains(resourceClump))
             {

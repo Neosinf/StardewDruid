@@ -73,6 +73,15 @@
     // GENERAL MOD TEXT / LABELS
     // ===========================================================================
 
+    // English Punctuation
+    "Punctuation.1": ": ", // colon
+    "Punctuation.2": ", ", // comma
+    "Punctuation.3": " / ", // slash
+    "Punctuation.4": "g", // currency
+    "Punctuation.5": "+", // plus
+    "DialogueData.347.3": " x", // ecks or multiplier
+    "Punctuation.500.dash": "-",
+
     // Menu titles
     "DialogueData.343": "Stardew Druid",
     "DialogueData.352.1": "Magic By Neosinf",
@@ -94,11 +103,6 @@
     "DialogueData.519": "Special Reward",
     "DialogueData.415": "Bounty",
     "DialogueData.419": " (transcript)",
-    "DialogueData.423": "Autoconsume",
-    "DialogueData.427": "Autoconsume off",
-    "DialogueData.431": "Autoconsume priority",
-    "DialogueData.340.1": "Autobrew off",
-    "DialogueData.350.1": "Autobrew & Autoconsume off",
 
     "DialogueData.435": "(MAX)",
     "DialogueData.439": "HP",
@@ -141,12 +145,6 @@
     "DialogueData.582.3": "Unable to find a valid warp point",
     "DialogueData.586": "(nevermind)",
 
-    "Punctuation.1": ": ",
-    "Punctuation.2": ", ",
-    "Punctuation.3": " / ",
-    "Punctuation.4": "g", // currency
-    "Punctuation.5": "+",
-
     // Ether treasure hunt
     "DialogueData.1526": "Chase the thief to recover the treasure!",
     "DialogueData.1527": "A way down has appeared",
@@ -178,8 +176,6 @@
     "DialogueData.343.7": "(Previously)",
 
     "DialogueData.347.1": "Learned how to cook ",
-    "DialogueData.347.3": "x",
-    "DialogueData.347.4": "g",
     "DialogueData.347.5": "(short {{stock}} stock)",
 
     "DialogueData.351.1": "Custom Colour",
@@ -205,12 +201,6 @@
     // Ether treasure hunt
     "DialogueData.366.1": "Defeat the guardian to recover the bounty!",
     "DialogueData.366.2": "A way down has appeared",
-
-    "CharacterHandle.377.6": "Level 1",
-    "CharacterHandle.377.7": "Level 2",
-    "CharacterHandle.377.8": "Level 3",
-    "CharacterHandle.377.9": "Level 4",
-    "CharacterHandle.377.10": "Level 5",
 
     "DialogueData.380.1": "Trapped ",
     "DialogueData.386.1": "Rapidfire",
@@ -260,7 +250,7 @@
 
     "DialogueData.399.1": "Relationship to next level: ",
 
-    "DialogueData.401.1": "Right click to consume and apply buff",
+    "DialogueData.401.1": "Click to consume and apply buff",
     "DialogueData.401.2": "Buff is already in effect",
 
     "StringData.500.stamina": "stamina",
@@ -268,6 +258,21 @@
     "StringData.500.questReceived": " quest received",
     "StringData.500.lessonReceived": " lesson received",
     "StringData.500.challengeReceived": " challenge received",
+
+    "StringData.500.nextLevel": "Next Level",
+
+    "StringData.500.autooff": "no automation",
+    "StringData.500.autoapply": "apply automatically",
+    "StringData.500.autocraft": "craft automatically",
+    "StringData.500.autoboth": "apply and craft automatically",
+
+    "StringData.500.level": "Level {{level}}",
+
+    "StringData.500.upgradeLevel": "Upgrade {{value}} to level {{level}}",
+
+    "StringData.500.nosell": "No buyer available yet",
+
+    "StringData.500.moreAlchemy": "Gain more mastery levels in Alchemy to make use of this process",
 
     // ===========================================================================
     // EVENT DIALOGUE (OVERHEAD)
@@ -1815,7 +1820,6 @@
     "CharacterHandle.329": "(inventory) I have some seeds for you to sow.",
     "CharacterHandle.340": "Jester... what's in your mouth. Come on. Show me.",
     "CharacterHandle.351": "(inventory) Let's take stock of our supplies.",
-    "CharacterHandle.362": "(inventory) Store and review potion ingredients.",
     "CharacterHandle.323.2": "(inventory) Do you have everything you need to continue gardening?",
     "CharacterHandle.343.7": "(inventory) Lets prepare for the journey ahead.",
 
@@ -3883,7 +3887,7 @@
 
     // Distillery
     "QuestData.386.5": "The Distillery",
-    "QuestData.386.6": "With an abundance of constructon resources, alchemical expertise, monster labour and goodwill towards the subterranean world of the mountain, it might be of benefit to everyone to establish some new industry.",
+    "QuestData.386.6": "With an abundance of construction resources, alchemical expertise, monster labour and goodwill towards the subterranean world of the mountain, it might be of benefit to everyone to establish some new industry.",
     "QuestData.386.7": "Approach the offerings bench inside the Sacred Spring to review the defunct distillery.",
     "QuestData.393.1": "When the distillery is restored, it will process goods (used to fulfill guild orders) placed in the various storehouses (inventories accessed via dialogue menu) at the start of every day.",
     "QuestData.393.2": "The amount and nature of goods processed depends on the items submitted, and the roster of machines built in the distillery.",
@@ -4577,206 +4581,45 @@
     // HERBALISM DATA
     // ===========================================================================
 
-    "HerbalData.1": "Ligna",
+    "HerbalData.1266": "Alignment",
     "HerbalData.2": "Boosts magnetism, rite damage and success-rate",
-    "HerbalData.3": "Vigores",
+
+    "HerbalData.1274": "Vigorous",
     "HerbalData.4": "Boosts charge-ups and rite critical hit chance",
-    "HerbalData.5": "Celeri",
+
+    "HerbalData.1282": "Celerity",
     "HerbalData.6": "Boosts movement speed, lowers rite cooldowns",
-    "HerbalData.7": "Essentia",
-    "HerbalData.8": "Magical resources used for advanced alchemy",
-
-    "HerbalData.25": "Ligna",
-    "HerbalData.27": "Nature, liquified and sticky.",
-    //"HerbalData.39": "Restores: 10 Health, 15 Stamina",
-
-    "HerbalData.61": "Melius Ligna",
-    "HerbalData.63": "Like bark-root tea, with more bark, and root to boot.",
-    //"HerbalData.75": "Restores: 15 Health, 30 Stamina",
-    "HerbalData.76": "Effect: Alignment Level 1, 3 Hours",
-
-    "HerbalData.98": "Satius Ligna",
-    "HerbalData.100": "Infused with the leaves and petals of weeds. Toxic to dogs.",
-    //"HerbalData.112": "Restores: 20 Health, 80 Stamina",
-    "HerbalData.113": "Effect: Alignment Level 2, 4 Hours",
-
-    "HerbalData.135": "Magnus Ligna",
-    "HerbalData.137": "Potent oils enhance the rich, nutty flavour profile of the base mixture.",
-    //"HerbalData.149": "Restores: 50 Health, 200 Stamina",
-    "HerbalData.150": "Effect: Alignment Level 3, 6 Hours",
-
-    "HerbalData.171": "Optimus Ligna",
-    "HerbalData.173": "Brims with the vibrant colours of creation",
-    //"HerbalData.185": "Restores: 100 Health, 400 Stamina",
-    "HerbalData.186": "Effect: Alignment Level 4, 8 Hours",
-
-    "HerbalData.206": "Vigores",
-    "HerbalData.208": "The flavours of the earth in a bottle.",
-    //"HerbalData.220": "Restores: 15 Health, 40 Stamina",    
-
-    "HerbalData.242": "Melius Vigores",
-    "HerbalData.244": "Contains the essence of cave.",
-    //"HerbalData.256": "Restores: 30 Health, 80 Stamina",
-    "HerbalData.257": "Effect: Vigorous Level 1, 3 Hours",
-
-    "HerbalData.279": "Satius Vigores",
-    "HerbalData.281": "Gently raise to boiling temperature then leave to simmer.",
-    //"HerbalData.293": "Restores: 45 Health, 160 Stamina",
-    "HerbalData.294": "Effect: Vigorous Level 2, 4 Hours",
-
-    "HerbalData.317": "Magnus Vigores",
-    "HerbalData.319": "The spicy tang that enflames the regions.",
-    //"HerbalData.331": "Restores: 70 Health, 320 Stamina",
-    "HerbalData.332": "Effect: Vigorous Level 3, 6 Hours",
-
-    "HerbalData.353": "Optimus Vigores",
-    "HerbalData.355": "It burns, but it stays down.",
-    //"HerbalData.367": "Restores: 180 Health, 560 Stamina",
-    "HerbalData.368": "Effect: Vigorous Level 4, 8 Hours",
-
-    "HerbalData.388": "Celeri",
-    "HerbalData.390": "With mineral extracts for revitalised skin and circulation.",
-    //"HerbalData.402": "Restores: 10 Health, 30 Stamina",
-
-    "HerbalData.423": "Melius Celeri",
-    "HerbalData.425": "Now with extra fiber for good gut health.",
-    //"HerbalData.437": "Restores: 20 Health, 60 Stamina",
-    "HerbalData.438": "Effect: Celerity Level 1, 3 Hours",
-
-    "HerbalData.460": "Satius Celeri",
-    "HerbalData.462": "Good for your joints and memory retention.",
-    //"HerbalData.474": "Restores: 30 Health, 120 Stamina",
-    "HerbalData.475": "Effect: Celerity Level 2, 4 Hours",
-
-    "HerbalData.497": "Magnus Celeri",
-    "HerbalData.499": "Now with organically sourced protein for heightened muscle recovery.",
-    //"HerbalData.511": "Restores: 60 Health, 240 Stamina",
-    "HerbalData.512": "Effect: Celerity Level 3, 6 Hours",
-
-    "HerbalData.533": "Optimus Celeri",
-    "HerbalData.535": "Now with fluff and sprinkles for added bliss.",
-    //"HerbalData.547": "Restores: 120 Health, 480 Stamina",
-    "HerbalData.548": "Effect: Celerity Level 4, 8 hours",
-
-    "HerbalData.570": "Faeth",
-    "HerbalData.572": "The currency of the Fates.",
-    "HerbalData.581": "Enchants machines",
-
-    "HerbalData.606": "Aether",
-    "HerbalData.608": "The essence of creation as wielded by the Ancient Ones.",
-    "HerbalData.616": "Enhances potions",
 
     "HerbalData.1116": "Consumed {{potion}}",
     "HerbalData.1233": "am",
     "HerbalData.1246": "pm",
-    "HerbalData.1266": "Alignment",
-    "HerbalData.1274": "Vigorous",
-    "HerbalData.1282": "Celerity",
+
     "HerbalData.1313": "Stardew Druid",
     "HerbalData.1314": "Herbalism",
     "HerbalData.1318": "Druid Herbalism",
     "HerbalData.327.1": "Restores: {{health}} Health, {{stamina}} Stamina",
 
-    // Bomb update
-    "HerbalData.361.1": "Voil",
-    "HerbalData.361.2": "The gruelled essence of an ancient race of lizards",
-    "HerbalData.361.3": "Enhances bombs",
-    "HerbalData.361.4": "Requires: 1x Prehistoric Item",
-
-    "HerbalData.361.5": "Imbus",
-    "HerbalData.361.6": "It's certified organic and tastes like spirulina",
-    //"HerbalData.361.7": "Imbuement: Applies the players current charge effect to thrown bombs, 10 hours",
-    "HerbalData.500.buff.1": "Imbuement: Thrown bombs, stones and windslashes drain stamina and health from enemies, 10 hours",
-    "HerbalData.361.8": "Requires: 1x Coruscant, 1x Hardwood",
-
-    "HerbalData.361.9": "Amori",
-    "HerbalData.361.10": "Crafted with love and irony",
-    "HerbalData.361.11": "Amorous: Thrown bombs will charm villagers (30-60 friendship depending on bomb size) and monsters, 10 hours",
-    "HerbalData.361.12": "Requires: 1x Coruscant, 1x Coral",
-
-    //"HerbalData.361.13": "Donis",
-    //"HerbalData.361.14": "Made with a bit of sleight of hand and a wink",
-    //"HerbalData.361.15": "Donor: Chance to throw a free bomb that doesnt consume inventory stock, 10 hours",
-    "HerbalData.500.buff.2": "Macerari",
-    "HerbalData.500.buff.3": "It will leak all over your refridgerator shelf",
-    "HerbalData.500.buff.4": "Macerate: Thrown bombs, stones and wind slashes will dampen soil and slow enemies",
-    "HerbalData.361.16": "Requires: 1x Coruscant, 1x Refined Quartz",
-
-    "HerbalData.361.17": "Concutere",
-    "HerbalData.361.18": "Keep in a cool, dry, airtight container away from open flames",
-    "HerbalData.361.19": "Concussion: Thrown bombs shatter resource clumps. Chance to spawn holes and ladders, 10 hours",
-    "HerbalData.361.20": "Requires: 1x Voil, 1x Staircase",
-
-    "HerbalData.361.21": "Jumere",
-    "HerbalData.361.22": "Sprinkle a little over breakfast to give it an extra kick",
-    "HerbalData.361.23": "Jumper: Thrown bombs will bounce in the direction cast, 10 hours",
-    "HerbalData.361.24": "Requires: 1x Voil, 1x Mayonnaise",
-
-    "HerbalData.361.25": "Felis",
-    "HerbalData.361.26": "What you get when you crush your old cat's medication",
-    //"HerbalData.361.27": "Feline: Thrown bombs smell like cat, 10 hours",
-    "HerbalData.500.buff.5": "Feline: Thrown bombs turn into cats. 20% chance to avoid consumption of item or stamina when throwing bombs.",
-    "HerbalData.361.28": "Requires: 1x Voil, 1x Milk",
+    "HerbalData.373.7": "Active Effects",
 
     "HerbalData.361.29": "Imbuement",
-    "HerbalData.361.30": "Amorous",
-    //"HerbalData.361.31": "Doner",
-    "HerbalData.500.buff.6": "Macerate",
-    "HerbalData.361.32": "Concussion",
-    "HerbalData.361.33": "Jumper",
-    "HerbalData.361.34": "Feline",
-
-    "HerbalData.361.35": "Learned how to cook ",
-
-    //"HerbalData.373.1": "Applies the players current charge effect to thrown bombs and stones",
     "HerbalData.500.buff.7": "Thrown bombs and windslashes drain stamina and health from enemies",
+
+    "HerbalData.361.30": "Amorous",
     "HerbalData.373.2": "Thrown bombs will charm villagers (30-60 friendship) and monsters.",
-    //"HerbalData.373.3": "Chance to throw a free bomb or stone that doesnt consume inventory stock",
-    "HerbalData.500.buff.8": "Thrown bombs and windslashes will dampen soil and slow enemies",
+
+    "HerbalData.500.buff.6": "Macerate",
+    "HerbalData.500.buff.8": "Thrown bombs and windslashes cause spashes that dampen soil and scatter fish",
+
+    "HerbalData.361.32": "Concussion",
     "HerbalData.373.4": "Thrown bombs shatter resource clumps. Chance to spawn ladders.",
+
+    "HerbalData.361.33": "Jumper",
     "HerbalData.373.5": "Thrown bombs and stones will bounce in the direction cast",
+
+    "HerbalData.361.34": "Feline",
     "HerbalData.373.6": "Thrown bombs and stones smell like cat",
 
-    "HerbalData.373.7": "Active Effects",
-    //"HerbalData.374.1": "Axes can critical hit",
-    //"HerbalData.374.2": "Pickaxes can critical hit",
-    //"HerbalData.374.3": "Water cans can critical hit",
-
-    // Second Bomb update
-    "HerbalData.386.1": "Coruscant",
-    "HerbalData.386.2": "Sparkle, sparkle, sparkle, so much in life sparkles, then explodes",
-    "HerbalData.386.3": "The base ingredient of common bomb augments",
-    "HerbalData.386.4": "Requires: 1x Sparkling item",
-
-    "HerbalData.386.5": "Rapidus",
-    "HerbalData.386.6": "Enough sport supplement to turn your throwing arm into an automated weapon",
-    "HerbalData.386.7": "Rapidfire: Player can discharge bombs in short bursts of five with a cool-off, 10 Hours",
-    "HerbalData.386.8": "Requires: 1x Coruscant, 1x Coffee",
-
-    "HerbalData.386.9": "Sanctus",
-    "HerbalData.386.10": "O Yoba, bless this thy hand grenade, that with it thou mayst blow thine enemies to tiny bits, in thy mercy.",
-    "HerbalData.386.11": "Sanctified: Impacts from thrown bombs will sear unholy and shadowy foes with righteous fury, 10 Hours",
-    "HerbalData.386.12": "Requires: 1x Voil, 1x Alcohol",
-
-    "HerbalData.386.13": "Captis",
-    "HerbalData.386.14": "A rudimentary construction, crude, perhaps enough to scare a timid beast",
-    "HerbalData.386.15": "Effect: Capture Level 1 (low chance), 6 Hours",
-    "HerbalData.386.16": "Requires: 1x Copper Bar",
-
-    "HerbalData.386.17": "Ferrum Captis",
-    "HerbalData.386.18": "A reinforced construction, amenable, strong enough to hold a beast",
-    "HerbalData.386.19": "Effect: Capture Level 2, 6 Hours",
-    "HerbalData.386.20": "Requires: 1x Captis (base), 1x Iron Bar",
-
-    "HerbalData.386.21": "Aurum Captis",
-    "HerbalData.386.22": "A careful construction, splendid, almost too good to throw",
-    "HerbalData.386.23": "Effect: Capture Level 3 (high chance), 6 Hours",
-    "HerbalData.386.24": "Requires: 1x Ferrum Captis (base), 1x Gold Bar",
-
-    "HerbalData.386.25": "Diamas Captis",
-    "HerbalData.386.26": "A wondrous ball, exquisite, vain creatures will supplicate before you to be captured by such magnificence",
-    "HerbalData.386.27": "Effect: Capture Level 4 (very high chance), 6 Hours",
-    "HerbalData.386.28": "Requires: 1x Aurum Captis (base), 1x Quality Metal",
+    "HerbalData.361.35": "Learned how to cook ",
 
     "HerbalData.386.29": "Rapidfire",
     "HerbalData.386.30": "Bombs and stones can be thrown in quick bursts with a cooloff interval",
@@ -4787,125 +4630,10 @@
     "HerbalData.386.33": "Capture",
     "HerbalData.386.34": "Chance to capture monsters defeated by bomb and stone toss impacts.",
 
-    "HerbalData.386.35": "Fed one {{potion}} to {{monster}}",
-
-    "HerbalHandle.390.1.56": "Gale Feather",
-    "HerbalHandle.390.1.57": "A feather from a member of a grand old family of owls, recognised by all the wild creatures of the valley.",
-    "HerbalHandle.390.1.60": "Wild omen that is a common drop from flying creatures",
-    "HerbalHandle.390.1.61": "Left click to use this as a reagent to produce the highest level of Ligna potion available to you",
-    "HerbalHandle.390.1.72": "Tuft of Fluff",
-    "HerbalHandle.390.1.73": "A toy for young wolves and foxes, gathered and bound by clever crows.",
-    "HerbalHandle.390.1.76": "Wild omen that is a common drop from small four legged critters",
-    "HerbalHandle.390.1.77": "Left click to use this as a reagent to produce the highest level of Vigores potion available to you",
-    "HerbalHandle.390.1.88": "Gleaming Shell",
-    "HerbalHandle.390.1.89": "The shell is large and opalescent. The mollusc that owned it must have lived a happy life.",
-    "HerbalHandle.390.1.92": "Wild omen that is a common drop from creatures found at the beach",
-    "HerbalHandle.390.1.93": "Left click to use this as a reagent to produce the highest level of Celeri potion available to you",
-    "HerbalHandle.390.1.104": "Weathered Ivory",
-    "HerbalHandle.390.1.105": "The scratched surface bears the memory of every time it was used to sign the earth.",
-    "HerbalHandle.390.1.108": "Wild omen that is a common drop from bears and wolves",
-    "HerbalHandle.390.1.109": "Click to use as an alchemical reagent, to convert 3 stone in your inventory into 3 omni geodes",
-    "HerbalHandle.390.1.120": "Nest of Secrets",
-    "HerbalHandle.390.1.121": "An animal gathered and set the twigs and lichens, then poured all its hopes and secrets into it.",
-    "HerbalHandle.390.1.124": "Wild omen that is a common drop from corvidae",
-    "HerbalHandle.390.1.125": "Click to use an an alchemical reagent, to convert 5 wood in your inventory into 5 hardwood",
-    "HerbalHandle.390.1.136": "Glass Ingot",
-    "HerbalHandle.390.1.137": "An opaque piece of natural glass, easy to carry, good for scouring dirt.",
-    "HerbalHandle.390.1.140": "Wild omen that is a common drop from serpents",
-    "HerbalHandle.390.1.141": "Click to use as an alchemical agent, to convert a ruby, an emerald and an aquamarine present in your inventory into a prismatic shard",
-    "HerbalHandle.390.1.154": "Dangerous Shroom",
-    "HerbalHandle.390.1.155": "This thing is toxic, lethal, and yet, considered a delicacy to monsters of the valley.",
-    "HerbalHandle.390.1.158": "Monster trophy that is a random drop from defeated monsters",
-    "HerbalHandle.390.1.159": "Can be offered to a combatant in a monster battle event to invoke a counter-strike buff.",
-    "HerbalHandle.390.1.170": "Eye of Focus",
-    "HerbalHandle.390.1.171": "There is a shadow in the iris, a shadow of something unseen by human eyes.",
-    "HerbalHandle.390.1.174": "Monster trophy that is a random drop from defeated monsters",
-    "HerbalHandle.390.1.175": "Can be offered to a combatant in a monster battle event to invoke a critical-hit buff.",
-    "HerbalHandle.390.1.186": "Suspicious Gourd",
-    "HerbalHandle.390.1.187": "This isn't a pumpkin. It can't be. No, it is something untoward. Something unnatural. Something ominous.",
-    "HerbalHandle.390.1.190": "Monster trophy that is a random drop from defeated monsters",
-    "HerbalHandle.390.1.191": "Click to use as an alchemical reagent to update the quality of any cooking item in hand to iridium quality",
-    "HerbalHandle.390.1.202": "Abyssal Pearl",
-    "HerbalHandle.390.1.203": "For years this thing slumbered within the roiling innards of some monstrosity. It has a nice weight.",
-    "HerbalHandle.390.1.206": "Monster trophy that is a random drop from defeated monsters",
-    "HerbalHandle.390.1.207": "Click to use as an alchemical reagent to increase the stack size (amount) of any stackable item in hand by one",
-    "HerbalHandle.390.1.218": "Massive Tooth",
-    "HerbalHandle.390.1.219": "How big was the fist that knocked this tooth out?",
-    "HerbalHandle.390.1.222": "Monster trophy that is a random drop from defeated monsters",
-    "HerbalHandle.390.1.223": "Click to use as an alchemical reagent to update the quality of any forageable, crop or flower in hand to iridium quality",
-    "HerbalHandle.390.1.234": "Death Spiral",
-    "HerbalHandle.390.1.235": "These shells are often abandoned at the doorsteps of those doomed to a tragic fate.",
-    "HerbalHandle.390.1.238": "Monster trophy that is a random drop from defeated monsters",
-    "HerbalHandle.390.1.239": "Click to use as an alchemical reagent to update the quality of any artisanal good in hand to iridium quality",
-
-    "HerbalData.40": "Requires 1x Organic Substance",
-    "HerbalData.77": "Requires 1x Tree Seed",
-    "HerbalData.114": "Requires 1x Meadow Flower",
-    "HerbalData.151": "Requires 1x Vegetable Oil",
-
-    "HerbalData.221": "Requires 1x Wild Tuber",
-    "HerbalData.258": "Requires 1x Cave Forage",
-    "HerbalData.296": "Requires 1x Combustible Material",
-    "HerbalData.333": "Requires 1x Spicy Ingredient",
-
-    "HerbalData.403": "Requires 1x Mineral Substance",
-    "HerbalData.439": "Requires 1x Energy Supplement",
-    "HerbalData.476": "Requires 1x Common Fish",
-    "HerbalData.513": "Requires 1x Common Shellfish",
-
-    "HerbalData.582": "Requires 1x Infused Source",
-    "HerbalData.617": "Requires 1x Quality Gem",
-
-    "HerbalData.391.1": "Requires 1x Ligna",
-    "HerbalData.391.2": "Requires 1x Melius Ligna",
-    "HerbalData.391.3": "Requires 1x Satius Ligna",
-    "HerbalData.187": "Requires Magnus Ligna, Aether",
-    "HerbalData.391.5": "Requires 1x Vigores",
-    "HerbalData.391.6": "Requires 1x Melius Vigores",
-    "HerbalData.391.7": "Requires 1x Satius Vigores",
-    "HerbalData.369": "Requires Magnus Vigores, Aether",
-    "HerbalData.391.9": "Requires 1x Celeri",
-    "HerbalData.391.10": "Requires 1x Melius Celeri",
-    "HerbalData.391.11": "Requires 1x Satius Celeri",
-    "HerbalData.549": "Requires Magnus Celeri, Aether",
-
-    "HerbalData.393.1.56": "Vile Spike",
-    "HerbalData.393.1.57": "It feels wrong to touch, or to point at anything, except if that thing is the subject of extreme spite.",
-    "HerbalData.393.1.60": "Monster trophy that is a rare drop from shadow monsters.",
-    "HerbalData.393.1.61": "Left click to use this as a reagent to convert 5 cherry or normal bombs into mega bombs.",
-
-    "HerbalData.393.1.72": "Seed of Doubt",
-    "HerbalData.393.1.73": "You wonder if planting this seed in the ground will yield any growth, and then you think, what if you're mistaken, what if it's not a seed at all.",
-    "HerbalData.393.1.76": "Monster trophy that is a rare drop from skeletons monsters.",
-    "HerbalData.393.1.77": "Left click to use this as a reagent to gain 3 random crop seeds for this season.",
-
-    "HerbalData.393.1.88": "Dragon Stone",
-    "HerbalData.393.1.89": "It's difficult to perceive what geological process produced this stone, if one discounts the likely cause of dragonfire.",
-    "HerbalData.393.1.92": "Monster trophy that is a rare drop from skull cavern monsters.",
-    "HerbalData.393.1.93": "This specimen is invaluable, perhaps too good to reconstitute or sell. Sending to goods will produce 3 trophy crates.",
-
-    "HerbalData.393.1.104": "Grey Down",
-    "HerbalData.393.1.105": "It springs back after being pressed tight in the palm of your hand. Then it tries to fly away.",
-    "HerbalData.393.1.108": "Wild omen that is a rare drop from flying creatures touched by the Weald.",
-    "HerbalData.393.1.109": "Left click to use this as a reagent to gain a random bomb powder.",
-
-    "HerbalData.393.1.120": "Fossilised Coral",
-    "HerbalData.393.1.121": "The coral that inhabitated this sediment layer is long gone, but the minerals that settled in its place have a remarkable hue.",
-    "HerbalData.393.1.124": "Wild omen that is a rare drop from serpents touched by the Weald.",
-    "HerbalData.393.1.125": "Click to use as an alchemical reagent to convert 5 sap into a random quality liquid.",
-
-    "HerbalData.393.1.136": "Rare Bloom",
-    "HerbalData.393.1.137": "The bloom petals are not comprised of plant matter, but something more akin to gossamer or silkthread.",
-    "HerbalData.393.1.140": "Wild omen that is a rare drop from bears touched by the Weald.",
-    "HerbalData.393.1.141": "This specimen is invaluable, perhaps too good to reconstitute or sell. Sending to goods will produce 3 omen crates.",
-
-    "HerbalData.399.1": "Capesso",
-    "HerbalData.399.2": "Come here, come on, oh good boy, good boy! Now get in the cage. It's nice and cosy!",
-    "HerbalData.399.3": "Effect: Spellcatch, main Rite effects will apply the current Capture buff effect, 6 hours.",
-    "HerbalData.399.4": "Requires 1x Coruscant and 1x Voil",
-
     "HerbalData.399.5": "Spellcatch",
     "HerbalData.399.6": "If the Capture buff is active, that buff will be applied to Rite effects that damage monsters, such as Stars: Meteor Rain",
+
+    "HerbalData.386.35": "Fed one {{potion}} to {{monster}}",
 
 
     // ===========================================================================
@@ -4914,42 +4642,61 @@
 
     "ModConfig.10": "Rite",
     "ModConfig.11": "Configure the list or combination of keybinds to use for casting Rites",
+
     "ModConfig.17": "Action (Druid Only)",
     "ModConfig.18": "Assigns an alternative keybind for the Action / Left Click / Use tool function, for the purposes of the mod only. This keybind does not override or re-map any keybinds in the base game. Useful for controllers with non-standard button maps.",
+
     "ModConfig.25": "Special (Druid Only)",
     "ModConfig.26": "Assigns an alternative keybind for the Check / Special / Right Click / Placedown function, for the purposes of the mod only. This keybind does not override or re-map any keybinds in the base game. Useful for controllers with non-standard button maps.",
+
     "ModConfig.33": "Quests Journal",
     "ModConfig.34": "Keybind assignment to open the Stardew Druid effects journal while in world. The rite keybind can be used to open the journal from the game questlog.",
+
     //"ModConfig.41": "Effects Journal",
     //"ModConfig.42": "Keybind assignment to open the Stardew Druid effects journal while in world.",
+
     "ModConfig.49": "Relics Journal (Reliquary)",
     "ModConfig.50": "Keybind assignment to open the Stardew Druid relics journal while in world.",
+
     "ModConfig.57": "Potions Journal (Apothecary)",
     "ModConfig.58": "Keybind assignment to open the Stardew Druid potions journal while in world.",
+
     "ModConfig.65": "Reverse Journal",
     "ModConfig.66": "Reverse the order in which Stardew Druid journal entries are displayed. Default: oldest to newest. Enabled: newest to oldest.",
+
     "ModConfig.73": "Active Journal",
     "ModConfig.74": "Show active quests on the front pages of the Stardew Druid journal. Default: active entries on front page. Disabled: no change in order.",
+
     "ModConfig.83": "Mod Difficulty",
     "ModConfig.84": "Select Mod difficulty level. Affects monetary rewards, stamina costs, replenishment from potions and monster difficulty.",
+
     //"ModConfig.92": "Disable Cast Hands",
     //"ModConfig.93": "(Full mode only) Disables farmer sprite 'cast hands' animation when triggering events. Recommended disable if other game modifications make changes to the farmer rendering or draw cycle.",
+
     "ModConfig.100": "Auto Progress",
     "ModConfig.101": "(Full mode only) Automatically progress to the next stage of the questline after loading or starting a new day.",
-    "ModConfig.108": "Set Progress",
-    "ModConfig.109": "(Full mode only) Use to adjust progress level on game load. 0 is no change. Note that adjustments may clear or miss levels of progress.",
+
+    //"ModConfig.108": "Set Progress",
+    //"ModConfig.109": "(Full mode only) Use to adjust progress level on game load. 0 is no change. Note that adjustments may clear or miss levels of progress.",
+
     "ModConfig.120": "Set Once",
     "ModConfig.121": "(Full mode only) Automatically returns set progress to 0 after reconfiguring one save file.",
+
     "ModConfig.128": "Convert 2.1.9 Data",
     "ModConfig.129": "(Full mode only) (Not recommended) Reconfigures 2.1.9 and earlier version data if present in the loaded save file and sets new progress to the relative 2.1.9 level.",
+
     "ModConfig.136": "Slot Attune",
     "ModConfig.137": "(Always enabled on Magic mode) Rite casts will be based on selected slot in the toolbar as opposed to weapon or tool attunement, as per the below slot assignments. [lunch] will consume any edible item in that slot when health or stamina is below 33%.",
-    "ModConfig.144": "Slot Consume",
-    "ModConfig.145": "For slots set to [lunch], the mod will consume any edible item in that inventory slot when health or stamina is below 33%.",
+
+    //"ModConfig.144": "Slot Consume",
+    //"ModConfig.145": "For slots set to [lunch], the mod will consume any edible item in that inventory slot when health or stamina is below 33%.",
+
     "ModConfig.152": "Slot Freedom",
     "ModConfig.153": "Invalid tool selections will be ignored when slot-attune is active. Proceed with caution!",
-    "ModConfig.160": "Slot Reverse",
-    "ModConfig.161": "Tool and lunch detection moves from right to left (slot 12 to 1)",
+
+    //"ModConfig.160": "Slot Reverse",
+    //"ModConfig.161": "Tool and lunch detection moves from right to left (slot 12 to 1)",
+
     "ModConfig.170": "Slot 1",
     "ModConfig.171": "Select slot behaviour for inventory slot one",
     "ModConfig.179": "Slot 2",
@@ -4974,28 +4721,33 @@
     "ModConfig.261": "Select slot behaviour for inventory slot eleven",
     "ModConfig.269": "Slot 12",
     "ModConfig.270": "Select slot behaviour for inventory slot twelve",
-    "ModConfig.278": "Cultivate Behaviour",
-    "ModConfig.279": "Adjust settings for Weald: Cultivate in regards to crop handling. See readme for specifics. 1 Highest growth rate. 2 Average growth, average quality. 3 Highest quality. 4. Ridiculous.",
-    "ModConfig.289": "Meteor Behaviour",
-    "ModConfig.290": "Adjust risk/reward setting for Stars: Meteor. See readme for specifics. 1 Intelligent targetting, lowest damage. 5 Completely random targets, highest damage.",
-    "ModConfig.300": "Maximum Damage",
-    "ModConfig.301": "Some spell effects have damage modifiers that consider player combat level, highest upgrade on Pickaxe, Axe, and applied enchantments. Enable to cast at max damage and effect everytime.",
+
+    //"ModConfig.278": "Cultivate Behaviour",
+    //"ModConfig.279": "Adjust settings for Weald: Cultivate in regards to crop handling. See readme for specifics. 1 Highest growth rate. 2 Average growth, average quality. 3 Highest quality. 4. Ridiculous.",
+
+    //"ModConfig.289": "Meteor Behaviour",
+    //"ModConfig.290": "Adjust risk/reward setting for Stars: Meteor. See readme for specifics. 1 Intelligent targetting, lowest damage. 5 Completely random targets, highest damage.",
+
+    //"ModConfig.300": "Maximum Damage",
+    // "ModConfig.301": "Some spell effects have damage modifiers that consider player combat level, highest upgrade on Pickaxe, Axe, and applied enchantments. Enable to cast at max damage and effect everytime.",
+
     "ModConfig.308": "Cardinal Targetting",
     "ModConfig.309": "Disables isometric (6 way) targetting for transformation effects. Might look a little misaligned with the transformation animations.",
+
     "ModConfig.316": "Cast Anywhere",
     "ModConfig.317": "Disables the Map-based cast restrictions so that any rite effect can be cast anywhere. Use at own discretion.",
 
     "ModConfig.313.1": "Mod Version",
     "ModConfig.313.2": "(Changes require restarting the game). Choose between the full version of Stardew Druid or the Magic only version. Default will load the magic-only version if Magic by Neosinf mod is enabled.",
 
-    "ModConfig.326.1": "Decorate Grove",
-    "ModConfig.326.2": "Enables placement of furniture and craftables in the Druid Grove. The mod will attempt to save these objects. Use at own discretion.",
+    //"ModConfig.326.1": "Decorate Grove",
+    //"ModConfig.326.2": "Enables placement of furniture and craftables in the Druid Grove. The mod will attempt to save these objects. Use at own discretion.",
 
     "ModConfig.335.1": "Disable Shopdata",
     "ModConfig.335.2": "By default the mod will browse the shopdata registered for Pierre and Sandy in order to create a list of possible cultivations for seed conversion and upgrade behaviour. When disabled, a base list of vanilla items will be used instead.",
 
-    "ModConfig.340.1": "Plant Grove",
-    "ModConfig.340.2": "Enables placement of new terrain features including trees, bushes and crops in the Druid Grove. The mod will attempt to save these features. Use at own discretion.",
+    //"ModConfig.340.1": "Plant Grove",
+    //"ModConfig.340.2": "Enables placement of new terrain features including trees, bushes and crops in the Druid Grove. The mod will attempt to save these features. Use at own discretion.",
 
     "ModConfig.348.1": "Quickwarp (Druid Only)",
     "ModConfig.348.2": "Keybind assignment to activate the warp or access feature of any relic that can be used within the player's current location. For instance, the whetstone relic to warp between the farm and Druid grove.",
@@ -5032,6 +4784,15 @@
 
     "ModConfig.500.skills.1": "Skills Journal",
     "ModConfig.500.skills.2": "Keybind assignment to open the Stardew Druid skills journal while in world.",
+
+    "ModConfig.500.masteries.1": "All Masteries",
+    "ModConfig.500.masteries.2": "Provides the player with all masteries unlocked and enabled.",
+
+    "ModConfig.500.locations.1": "Decorate Locations",
+    "ModConfig.500.locations.2": "Enables placement of furniture and craftables within Druid locations. The mod will attempt to save and load these objects. Use at own discretion.",
+
+    "ModConfig.500.milestones.1": "Set Progress",
+    "ModConfig.500.milestones.2": "Use to adjust progress in the save file to the stated value. 0 is no change. This value will revert back to 0 when the save file is overwritten at end of day in game.",
 
     // ===========================================================================
     // EFFECTS JOURNAL
@@ -5564,119 +5325,6 @@
     // EXPORT JOURNAL
     // ===========================================================================
 
-    // Production readouts
-    "ExportData.386.1.1": "========== WHISKEY ==========",
-    "ExportData.386.1.2": "-------------- Mash Preparation -------------",
-    "ExportData.386.1": "Kilns active: {{value}}",
-    "ExportData.386.2": "Mash tuns active: {{value}}",
-    "ExportData.386.3": "Grain Processing Limit {{value}}",
-    "ExportData.386.4": "Skipped {{value}} (invalid grain type)",
-    "ExportData.386.5": "Processed {{value}} {{valueTwo}} {{valueThree}}",
-    "ExportData.386.6": "{{value}} yield at 50%",
-    "ExportData.386.7": "Grain Quality Bonus {{value}}%",
-    "ExportData.386.8": "Prepared {{value}} {{valueTwo}} Mash",
-    "ExportData.386.9": "Prepared {{value}} Mash Total",
-    "ExportData.386.10": "--------- Fermentation and Distillation ---------",
-    "ExportData.386.11": "Fermentation Tanks active: {{value}}",
-    "ExportData.386.12": "Stills active: {{value}}",
-    "ExportData.386.13": "Production Bonus {{value}}%",
-    "ExportData.386.14": "Production Bonus (estimated) {{value}}%",
-    "ExportData.386.15": "Bonus {{value}}",
-    "ExportData.386.16": "Distilled {{value}}",
-    "ExportData.386.17": "----------------------- Aging ----------------------",
-    "ExportData.386.18": "Aging Barrels active: {{value}}",
-    "ExportData.386.19": "Quality Bonus {{value}}%",
-    "ExportData.386.20": "Bonus {{value}}",
-    "ExportData.386.21": "---------------------- Total ---------------------",
-    "ExportData.386.22": "Produced {{value}} Whiskey",
-    "ExportData.386.23": "  ",
-
-    "ExportData.386.24": "========== BRANDY ==========",
-    "ExportData.386.25": "Crushers active: {{value}}",
-    "ExportData.386.26": "Wine Presses active: {{value}}",
-    "ExportData.386.27": "Fruit Processing Limit {{value}}",
-    "ExportData.386.28": "------------ Crushing and Pressing -------------",
-    "ExportData.386.29": "Skipped {{value}} (invalid fruit type)",
-    "ExportData.386.30": "{{value}} yield at 200%",
-    "ExportData.386.31": "{{value}} yield at 300%",
-    "ExportData.386.32": "Fruit Quality Bonus {{value}}%",
-    "ExportData.386.33": "Prepared {{value}} {{valueTwo}} Juice",
-    "ExportData.386.34": "Prepared {{value}} Juice Total",
-    "ExportData.386.35": "Produced {{value}} Brandy",
-
-    "ExportData.386.36": "====== WEAPONS & SUPPLIES ======",
-    "ExportData.386.37": "Packers active: {{value}}",
-    //"ExportData.386.38": "Estimated Weapon Processing Limit {{value}}",
-    //"ExportData.386.39": "Estimated Supply Processing Limit {{value}}",
-    "ExportData.386.40": "------------------- Stocktaking ------------------",
-    "ExportData.386.41": "Skipped {{value}} (invalid weapon type)",
-    "ExportData.386.42": "Skipped {{value}} (invalid supply type)",
-    "ExportData.386.43": "Processed {{number}} {{itemname}} at {{yield}}% yield",
-    "ExportData.386.44": "--------------------- Packing --------------------",
-    "ExportData.386.45": "Produced {{value}} Weapon Crates",
-    "ExportData.386.46": "Produced {{value}} Supply Crates",
-
-    // Goods crate descriptions
-    "ExportData.386.58": "Potion Box",
-    "ExportData.386.59": "A box of organic homebrewed potions",
-    "ExportData.388.1": "Produced by packing potions (using the 'send to goods' option in the apothecary). Tier 3 potions will fill 1 box each, Tier 4 potions will fill 2 boxes each, and Tier 5 will fill 4-5 boxes.",
-    "ExportData.386.67": "Demand increases in Summer",
-    "ExportData.386.74": "Powder Crate",
-    "ExportData.386.75": "A crate of volative bomb powders. Carry with caution!",
-    "ExportData.388.2": "Produced by packing powders (using the 'send to goods' option in the powderbox menu). Tier 1 powders will fill 2 box each, Tier 2 powders will fill 3 boxes each, and Tier 3 will fill 4-5 boxes.",
-    "ExportData.386.83": "Demand increases in Winter",
-    "ExportData.386.90": "Monster Trophies",
-    "ExportData.386.91": "The parts of vanquished foes that are too useful to be converted into animal feed",
-    "ExportData.388.3": "Produced by packing trophies (using the 'send to goods' option in the satchel menu). Quantity per trophy varies by trophy type.",
-    "ExportData.386.99": "Demand increases in Spring",
-    "ExportData.386.106": "Valley Omens",
-    "ExportData.386.107": "Little gifts and offerings from the critters of the wild, useful for alchemy and rites of foretelling",
-    "ExportData.388.4": "Produced by packing omens (using the 'send to goods' option in the satchel menu). Quantity per omen varies by omen type.",
-    "ExportData.386.115": "Demand increases in late Summer",
-    "ExportData.386.122": "Whiskey Batch",
-    "ExportData.386.123": "The farm provides, and the mountain perfects",
-    "ExportData.386.124": "Produced from grains placed inside the Steephouse inventory, including Wheat, Unmilled Rice, Hops, Corn, Green Beans, Coffee Beans, Potato. Construct kilns and mash tuns to increase production.",
-    "ExportData.386.132": "Demand increases in late Winter",
-    "ExportData.388.5": "Requires the Distillery to be unlocked",
-    "ExportData.386.139": "Brandy Batch",
-    "ExportData.386.140": "You trust the Bats knew what they were doing when they distilled this stuff.",
-    "ExportData.386.141": "Produced from fruits placed inside the Batchhouse inventory. Construct crushers and pressers to increase production.",
-    "ExportData.386.149": "Demand increases in Fall",
-    "ExportData.386.156": "Weapons Box",
-    "ExportData.386.157": "Cleaned and polished secondhand weaponry offered to adventurers at an affordable price",
-    "ExportData.386.158": "Produced from weapons, boots and rings placed inside the Packhouse inventory. Requires 3 units per crate. Construct packers to increase production.",
-    "ExportData.386.166": "Demand increases in early Fall",
-    "ExportData.386.173": "Supply Crate",
-    "ExportData.386.174": "Practical items for those that can't rely on ancient Druidic rites to sustain their adventuring efforts.",
-    "ExportData.386.175": "Produced from supplies such as bombs, torches, warp totems, elixirs, animal products placed inside the Packhouse inventory.",
-    "ExportData.386.183": "Demand increases in early Summer",
-
-    // Distillery machine descriptions
-    "ExportData.386.194": "Crusher",
-    "ExportData.386.195": "Turns fruit into pulp and grain into grist",
-    "ExportData.386.196": "Increases limit of fruit processed by 5 units",
-    "ExportData.386.207": "Wine Press",
-    "ExportData.386.208": "Extracts juice from fruit pulp",
-    "ExportData.386.209": "Increases limit of fruit processed by 20%",
-    "ExportData.386.220": "Kiln",
-    "ExportData.386.221": "Dries steeped grain to stabilize it",
-    "ExportData.386.222": "Increases limit of grain processed by 10 units",
-    "ExportData.386.233": "Mash Tun",
-    "ExportData.386.234": "Turns grist into wet mash",
-    "ExportData.386.235": "Increases limit of grain processed by 20%",
-    "ExportData.386.246": "Fermentation Tank",
-    "ExportData.386.247": "Where the magic happens, if there's enough heat and yeast",
-    "ExportData.386.248": "Increases minimum amount of bonus output by 5%",
-    "ExportData.386.259": "Distillation",
-    "ExportData.386.260": "Seperates the alcohol from the other stuff",
-    "ExportData.386.261": "Increases maximum amount of bonus output by 10%",
-    "ExportData.386.272": "Aging Barrel",
-    "ExportData.386.273": "The alcohol continues to evolve, gaining flavours and aromas",
-    "ExportData.386.274": "Increases overall output by 2%",
-    "ExportData.386.285": "Crate Packer",
-    "ExportData.386.286": "Prepares high quality goods for delivery",
-    "ExportData.386.287": "Increases amount of weapons and supplies processed by 3 units",
-
     // Guild descriptions
     "ExportData.386.302": "The Lady's Church of Bats",
     "ExportData.386.303": "The mountain bats of Stardew Valley have developed a consciousness sustained by the mythical qualities of the Sacred Spring and the patronage of the Lady of Mists. ",
@@ -5747,14 +5395,13 @@
     "ExportData.386.501": "The Church of Bats thanks you for your Business",
     "ExportData.386.503": "The syndicate deems your performance to be satisfactory",
     "ExportData.386.505": "The adventure guilds will survive another season",
-    "ExportData.386.507": "The shadow smugglers expands their influence",
+    "ExportData.386.507": "The shadow smugglers expand their influence",
 
     // Patch 3.9.0 Guild benefits
     "ExportData.390.1": "Sell surplus potion and powder goods at the lowest market price from the goods menu",
     "ExportData.390.2": "Sell surplus whiskey and brandy goods at the lowest market price from the goods menu",
     "ExportData.390.3": "Sell surplus omen and trophy goods at the lowest market price from the goods menu",
-    "ExportData.390.4": "Sell surplus weapon and supply goods at the lowest market price from the goods menu",
-
+    "GuildData.500.sell.1": "Sell surplus aquavitae and ambrosia goods at the lowest market price from the goods menu",
 
     // ===========================================================================
     // BATTLE HANDLE

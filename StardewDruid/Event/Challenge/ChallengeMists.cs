@@ -385,7 +385,7 @@ namespace StardewDruid.Event.Challenge
 
                 ProgressBar(Mod.instance.questHandle.quests[eventId].title, 1);
 
-                EventBar bomberbar = ProgressBar(StringData.Strings(StringData.stringkeys.bomberInterruptions), 2);
+                EventBar bomberbar = ProgressBar(StringData.Get(StringData.str.bomberInterruptions), 2);
 
                 bomberbar.colour = Microsoft.Xna.Framework.Color.LightGreen;
 

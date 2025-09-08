@@ -228,7 +228,7 @@ namespace StardewDruid.Cast
 
         }
 
-        public ThrowHandle(Farmer Player, Vector2 Origin, HerbalHandle.herbals Potion, int Amount)
+        public ThrowHandle(Farmer Player, Vector2 Origin, ApothecaryHandle.items Potion, int Amount)
         {
 
             localisation = Player.currentLocation.Name;
@@ -603,15 +603,15 @@ namespace StardewDruid.Cast
 
                 case throwing.potion:
 
-                    Herbal herbal = Mod.instance.herbalHandle.herbalism[((HerbalHandle.herbals)index).ToString()];
+                    ApothecaryItem herbal = Mod.instance.apothecaryHandle.apothecary[(ApothecaryHandle.items)index];
 
-                    Microsoft.Xna.Framework.Rectangle potionRect = IconData.PotionRectangles(herbal.display);
+                    Microsoft.Xna.Framework.Rectangle potionRect = ApothecaryHandle.ItemRectangles(herbal.item);
 
                     animation = new(0, timeframe * 16.66f, 1, 1, origin + new Vector2(2, 2), false, false)
                     {
                         sourceRect = potionRect,
                         sourceRectStartingPos = new(potionRect.X, potionRect.Y),
-                        texture = Mod.instance.iconData.potionsTexture,
+                        texture = Mod.instance.iconData.itemsTexture,
                         layerDepth = 900f,
                         rotationChange = rotation,
                         scale = 3f,
@@ -719,13 +719,13 @@ namespace StardewDruid.Cast
 
                 case throwing.potion:
 
-                    Herbal herbal = Mod.instance.herbalHandle.herbalism[((HerbalHandle.herbals)index).ToString()];
+                    ApothecaryItem herbal = Mod.instance.apothecaryHandle.apothecary[(ApothecaryHandle.items)index];
 
                     DisplayMessage hudmessage = new("+" + quality.ToString() + " " + herbal.title, herbal);
 
                     Game1.addHUDMessage(hudmessage);
 
-                    HerbalHandle.UpdateHerbalism((HerbalHandle.herbals)index, quality);
+                    ApothecaryHandle.UpdateAmounts((ApothecaryHandle.items)index, quality);
 
                     break;
 

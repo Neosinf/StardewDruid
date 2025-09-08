@@ -1648,7 +1648,7 @@ namespace StardewDruid.Cast
         public void LaunchDeathWind()
         {
             
-            Winds windsNew = new();
+            Souls windsNew = new();
 
             windsNew.EventSetup(Game1.player,origin,Rite.eventDeathwinds);
 
@@ -2141,7 +2141,7 @@ namespace StardewDruid.Cast
 
                     defeated.Add(individual);
 
-                    HerbalHandle.RandomTrophy(individual.Position + new Vector2(32),20);
+                    ApothecaryHandle.RandomTrophy(individual.Position + new Vector2(32),20);
 
                 }
 
@@ -2485,10 +2485,10 @@ namespace StardewDruid.Cast
 
             float impes = 1;
 
-            if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.vigor))
+            if (Mod.instance.apothecaryHandle.buff.applied.ContainsKey(BuffHandle.buffTypes.vigor))
             {
 
-                impes += (Mod.instance.herbalHandle.buff.applied[HerbalBuff.herbalbuffs.vigor].level * 0.25f);
+                impes += (Mod.instance.apothecaryHandle.buff.applied[BuffHandle.buffTypes.vigor].level * 0.25f);
 
             }
 
@@ -3143,10 +3143,10 @@ namespace StardewDruid.Cast
 
             int captureChance = 99;
 
-            if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
+            if (Mod.instance.apothecaryHandle.buff.applied.ContainsKey(BuffHandle.buffTypes.capture))
             {
 
-                switch (Mod.instance.herbalHandle.buff.applied[HerbalBuff.herbalbuffs.capture].level)
+                switch (Mod.instance.apothecaryHandle.buff.applied[BuffHandle.buffTypes.capture].level)
                 {
 
                     case 1:

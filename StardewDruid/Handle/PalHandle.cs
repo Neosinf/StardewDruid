@@ -612,7 +612,7 @@ namespace StardewDruid.Handle
 
         }
 
-        public static void ReceivePotion(CharacterHandle.characters type, HerbalHandle.herbals potion, bool consume = true)
+        public static void ReceivePotion(CharacterHandle.characters type, ApothecaryHandle.items potion, bool consume = true)
         {
 
             if (Mod.instance.save.pals.ContainsKey(type))

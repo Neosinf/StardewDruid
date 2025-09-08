@@ -1,18 +1,18 @@
-﻿using StardewValley;
+﻿using Microsoft.Xna.Framework;
+using StardewDruid.Cast;
+using StardewDruid.Data;
+using StardewDruid.Handle;
+using StardewDruid.Location;
+using StardewModdingAPI;
+using StardewValley;
+using StardewValley.Locations;
+using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using StardewModdingAPI;
-using StardewDruid.Cast;
-using StardewDruid.Data;
-using StardewDruid.Location;
-using StardewValley.Locations;
-using Microsoft.Xna.Framework;
-using StardewValley.Tools;
-using System.Reflection;
-using StardewDruid.Handle;
 
 namespace StardewDruid.Dialogue
 {
@@ -62,17 +62,6 @@ namespace StardewDruid.Dialogue
 
                     break;
 
-                case CharacterHandle.characters.herbalism:
-
-                    if (Mod.instance.questHandle.IsComplete(QuestHandle.herbalism))
-                    {
-
-                        return Mod.instance.Helper.Translation.Get("CharacterHandle.362");
-
-                    }
-
-                    break;
-
                 case CharacterHandle.characters.anvil:
 
                     if (RelicHandle.HasRelic(IconData.relics.druid_hammer))
@@ -113,10 +102,9 @@ namespace StardewDruid.Dialogue
 
             switch (character)
             {
+                case CharacterHandle.characters.anvil:
 
-                case CharacterHandle.characters.Aldebaran:
-
-                    CharacterHandle.OpenInventory(CharacterHandle.characters.Effigy);
+                    ChestHandle.OpenInventory(ChestHandle.chests.Anvil);
 
                     break;
 
@@ -145,26 +133,7 @@ namespace StardewDruid.Dialogue
 
                         case 1:
 
-                            switch (answer)
-                            {
-                                case 1:
-
-                                    CharacterHandle.OpenInventory(CharacterHandle.characters.spring_bench);
-
-                                    break;
-
-                                case 2:
-
-                                    CharacterHandle.OpenInventory(CharacterHandle.characters.spring_vintner);
-
-                                    break;
-
-                                case 3:
-
-                                    CharacterHandle.OpenInventory(CharacterHandle.characters.spring_packer);
-
-                                    break;
-                            }
+                            ChestHandle.OpenInventory(ChestHandle.chests.Distillery);
 
                             break;
 
@@ -174,7 +143,7 @@ namespace StardewDruid.Dialogue
 
                 default:
 
-                    CharacterHandle.OpenInventory(character);
+                    ChestHandle.OpenInventory(ChestHandle.chests.Companions);
 
                     break;
 

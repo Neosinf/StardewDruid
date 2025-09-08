@@ -1352,7 +1352,7 @@ namespace StardewDruid.Data
             Quest starsTwo = new()
             {
 
-                name = QuestHandle.starsTwo,
+                name = QuestHandle.voideOne,
 
                 icon = IconData.displays.stars,
 
@@ -1415,7 +1415,7 @@ namespace StardewDruid.Data
 
                 name = QuestHandle.captures,
 
-                icon = IconData.displays.pals,
+                icon = IconData.displays.orders,
 
                 type = Quest.questTypes.lesson,
 

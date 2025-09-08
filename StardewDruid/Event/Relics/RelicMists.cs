@@ -50,7 +50,7 @@ namespace StardewDruid.Event.Relics
             if ((Game1.getLocationFromName("CommunityCenter") as CommunityCenter).numberOfCompleteBundles() == 0)
             {
 
-                Mod.instance.RegisterDisplay(StringData.Strings(StringData.stringkeys.noInstructions));
+                Mod.instance.RegisterDisplay(StringData.Get(StringData.str.noInstructions));
 
                 return false;
 

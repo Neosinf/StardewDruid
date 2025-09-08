@@ -237,10 +237,10 @@ namespace StardewDruid.Cast.Fates
 
                         sweep.damageMonsters = strikes * baseDamage;
 
-                        if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
+                        if (Mod.instance.apothecaryHandle.buff.applied.ContainsKey(BuffHandle.buffTypes.spellcatch))
                         {
 
-                            if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
+                            if (Mod.instance.apothecaryHandle.buff.applied.ContainsKey(BuffHandle.buffTypes.capture))
                             {
 
                                 sweep.added.Add(SpellHandle.Effects.capture);

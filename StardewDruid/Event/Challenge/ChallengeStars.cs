@@ -55,7 +55,7 @@ namespace StardewDruid.Event.Challenge
 
             ProgressBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
-            EventBar slimebar = ProgressBar(StringData.Strings(StringData.stringkeys.slimesDestroyed), 1);
+            EventBar slimebar = ProgressBar(StringData.Get(StringData.str.slimesDestroyed), 1);
 
             slimebar.colour = Microsoft.Xna.Framework.Color.LightGreen;
 

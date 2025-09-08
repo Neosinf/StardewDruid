@@ -31,11 +31,11 @@ namespace StardewDruid.Cast.Effect
 
             Buff shieldBuff = new(
                 Rite.buffIdShield,
-                source: StringData.Strings(StringData.stringkeys.druidShield),
+                source: StringData.Get(StringData.str.druidShield),
                 displaySource: RiteData.RiteNames(Rite.Rites.stars),
                 duration: 3000,
-                displayName: StringData.Strings(StringData.stringkeys.druidShield),
-                description: StringData.Strings(StringData.stringkeys.defenseIncrease),
+                displayName: StringData.Get(StringData.str.druidShield),
+                description: StringData.Get(StringData.str.defenseIncrease),
                 effects: buffEffect);
 
             Game1.player.buffs.Apply(shieldBuff);

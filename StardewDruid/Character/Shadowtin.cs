@@ -54,8 +54,7 @@ namespace StardewDruid.Character
 
         public override void NewDay()
         {
-
-            CharacterHandle.RetrieveInventory(characterType);
+            ChestHandle.RetrieveInventory(ChestHandle.chests.Companions);
 
             List<StardewValley.Item> marmalade = new();
 
@@ -69,10 +68,10 @@ namespace StardewDruid.Character
 
             int? overrideMinutesUntilReady;
 
-            for (int i = Mod.instance.chests[characterType].Items.Count - 1; i >= 0; i--)
+            for (int i = Mod.instance.chests[ChestHandle.chests.Companions].Items.Count - 1; i >= 0; i--)
             {
 
-                Item getItem = Mod.instance.chests[characterType].Items.ElementAt(i);
+                Item getItem = Mod.instance.chests[ChestHandle.chests.Companions].Items.ElementAt(i);
 
                 if (getItem is StardewValley.Object && getItem.Category == -79)
                 {
@@ -97,7 +96,7 @@ namespace StardewDruid.Character
 
                     marmalade.Add(outputItem);
 
-                    Mod.instance.chests[characterType].Items.RemoveAt(i);
+                    Mod.instance.chests[ChestHandle.chests.Companions].Items.RemoveAt(i);
 
                 }
 
@@ -106,7 +105,7 @@ namespace StardewDruid.Character
             foreach (StardewValley.Item conversion in marmalade)
             {
 
-                Mod.instance.chests[characterType].addItem(conversion);
+                Mod.instance.chests[ChestHandle.chests.Companions].addItem(conversion);
 
             }
 
@@ -130,8 +129,7 @@ namespace StardewDruid.Character
 
         public override bool TargetWork()
         {
-
-            CharacterHandle.RetrieveInventory(CharacterHandle.characters.Shadowtin);
+            ChestHandle.RetrieveInventory(ChestHandle.chests.Companions);
 
             List<Vector2> objectVectors = new List<Vector2>();
 
@@ -312,7 +310,7 @@ namespace StardewDruid.Character
 
             }
 
-            Chest chest = Mod.instance.chests[CharacterHandle.characters.Shadowtin];
+            Chest chest = Mod.instance.chests[ChestHandle.chests.Companions];
 
             StardewValley.Object targetObject = currentLocation.objects[workVector];
 

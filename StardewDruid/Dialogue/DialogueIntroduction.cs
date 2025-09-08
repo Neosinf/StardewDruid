@@ -147,60 +147,6 @@ namespace StardewDruid.Dialogue
 
                     return Mod.instance.Helper.Translation.Get("DialogueIntroduction.386.2");
 
-                case CharacterHandle.characters.spring_steephouse:
-
-
-                    if (Mod.instance.questHandle.IsComplete(QuestHandle.distillery))
-                    {
-
-                        CharacterHandle.OpenInventory(CharacterHandle.characters.spring_bench);
-
-                    }
-                    else
-                    {
-
-                        return Mod.instance.Helper.Translation.Get("DialogueInventory.386.3");
-
-                    }
-
-                    break;
-
-                case CharacterHandle.characters.spring_batchhouse:
-
-
-                    if (Mod.instance.questHandle.IsComplete(QuestHandle.distillery))
-                    {
-
-                        CharacterHandle.OpenInventory(CharacterHandle.characters.spring_vintner);
-
-                    }
-                    else
-                    {
-
-                        return Mod.instance.Helper.Translation.Get("DialogueInventory.386.4");
-
-                    }
-
-                    break;
-
-                case CharacterHandle.characters.spring_packhouse:
-
-
-                    if (Mod.instance.questHandle.IsComplete(QuestHandle.distillery))
-                    {
-
-                        CharacterHandle.OpenInventory(CharacterHandle.characters.spring_packer);
-
-                    }
-                    else
-                    {
-
-                        return Mod.instance.Helper.Translation.Get("DialogueInventory.386.5");
-
-                    }
-
-                    break;
-
                 // ---------------------------------------------------
 
                 case CharacterHandle.characters.waves:

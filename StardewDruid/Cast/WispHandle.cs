@@ -513,7 +513,7 @@ namespace StardewDruid.Cast
                                 displayRadius = 3
                             };
 
-                            spell.added.Add(Mod.instance.rite.ChargeEffect(Rite.riteCharges.fates, true));
+                            spell.added = new() { Rite.FatesCurse() };
 
                             Mod.instance.spellRegister.Add(spell);
 

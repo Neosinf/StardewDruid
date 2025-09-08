@@ -329,7 +329,7 @@ namespace StardewDruid.Data
 
         }
 
-        public int BoostStat(HerbalHandle.herbals potion, bool consume = true)
+        public int BoostStat(ApothecaryHandle.items potion, bool consume = true)
         {
 
             if (fedtoday)
@@ -339,9 +339,16 @@ namespace StardewDruid.Data
 
             }
 
-            HerbalHandle.herbals best = Mod.instance.herbalHandle.BestHerbal(potion);
+            ApothecaryHandle.items best = Mod.instance.apothecaryHandle.BestHerbal(potion);
 
-            Herbal data = Mod.instance.herbalHandle.herbalism[best.ToString()];
+            if (best == ApothecaryHandle.items.none)
+            {
+
+                return 0;
+
+            }
+
+            ApothecaryItem data = Mod.instance.apothecaryHandle.apothecary[best];
 
             int boost = data.level + 1;
 
@@ -349,7 +356,7 @@ namespace StardewDruid.Data
             {
 
                 default:
-                case HerbalHandle.herbals.ligna:
+                case ApothecaryHandle.items.ligna:
 
                     if (health >= 50)
                     {
@@ -363,7 +370,7 @@ namespace StardewDruid.Data
 
                     break;
 
-                case HerbalHandle.herbals.impes:
+                case ApothecaryHandle.items.vigores:
 
                     if (attack >= 50)
                     {
@@ -377,7 +384,7 @@ namespace StardewDruid.Data
 
                     break;
 
-                case HerbalHandle.herbals.celeri:
+                case ApothecaryHandle.items.celeri:
 
                     if(speed >= 50)
                     {
@@ -392,7 +399,7 @@ namespace StardewDruid.Data
 
                     break;
 
-                case HerbalHandle.herbals.faeth:
+                case ApothecaryHandle.items.faeth:
 
                     if (resist >= 50)
                     {
@@ -414,7 +421,7 @@ namespace StardewDruid.Data
             if (consume)
             {
 
-                HerbalHandle.UpdateHerbalism(best, 0 - 1);
+                ApothecaryHandle.UpdateAmounts(best, 0 - 1);
 
             }
 

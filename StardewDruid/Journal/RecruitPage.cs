@@ -18,7 +18,7 @@ namespace StardewDruid.Journal
 
         public Texture2D portrait;
 
-        public RecruitPage(string RecruitId, int Record) : base(RecruitId, Record) 
+        public RecruitPage(journalTypes Type, List<string> Parameters) : base(Type, Parameters)
         {
 
         }
@@ -26,7 +26,7 @@ namespace StardewDruid.Journal
         public override void populateInterface()
         {
 
-            parentJournal = journalTypes.ledger;
+            parent = journalTypes.ledger;
 
             type = journalTypes.companion;
 
@@ -41,7 +41,7 @@ namespace StardewDruid.Journal
 
                 //-------------------------------------------
 
-                [201] = addButton(journalButtons.back),
+                [201] = addButton(journalButtons.previous),
 
                 [301] = addButton(journalButtons.exit),
 
@@ -52,7 +52,7 @@ namespace StardewDruid.Journal
         public override void populateContent()
         {
 
-            CharacterHandle.characters character = Enum.Parse<CharacterHandle.characters>(journalId);
+            CharacterHandle.characters character = Enum.Parse<CharacterHandle.characters>(parameters[0]);
 
             RecruitHandle recruit = Mod.instance.save.recruits[character];
 
@@ -134,13 +134,13 @@ namespace StardewDruid.Journal
             if(nextlevel == -1)
             {
 
-                recruitExperience.text[0] = StringData.Strings(StringData.stringkeys.maxLevel);
+                recruitExperience.text[0] = StringData.Get(StringData.str.maxLevel);
             
             }
             else
             {
 
-                recruitExperience.text[0] = StringData.Strings(StringData.stringkeys.experience) + recruit.level + StringData.slash + nextlevel;
+                recruitExperience.text[0] = StringData.Get(StringData.str.experience) + recruit.level + StringData.slash + nextlevel;
 
             }
 
@@ -166,7 +166,7 @@ namespace StardewDruid.Journal
 
             }
 
-            recruitFriendship.text[0] = StringData.Strings(StringData.stringkeys.friendship) + friendship.ToString();
+            recruitFriendship.text[0] = StringData.Get(StringData.str.friendship) + friendship.ToString();
 
             recruitFriendship.SetText(320);
 
@@ -191,18 +191,10 @@ namespace StardewDruid.Journal
 
         }
 
-
-        public override void activateInterface()
-        {
-
-            resetInterface();
-
-        }
-
         public override void pressButton(journalButtons button)
         {
 
-            CharacterHandle.characters type = Enum.Parse<CharacterHandle.characters>(journalId);
+            CharacterHandle.characters type = Enum.Parse<CharacterHandle.characters>(parameters[0]);
 
             switch (button)
             {
@@ -266,12 +258,6 @@ namespace StardewDruid.Journal
                     exitThisMenu();
 
                     return;
-
-                case journalButtons.back:
-
-                    DruidJournal.openJournal(parentJournal, null, record);
-
-                    break;
 
                 default:
 

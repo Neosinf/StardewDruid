@@ -41,12 +41,6 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.herbalism:
 
-                    if (Mod.instance.questHandle.IsComplete(QuestHandle.herbalism))
-                    {
-
-                        return Mod.instance.Helper.Translation.Get("CharacterHandle.466");
-
-                    }
                     if (Mod.instance.questHandle.IsGiven(QuestHandle.herbalism))
                     {
 
@@ -222,7 +216,7 @@ namespace StardewDruid.Dialogue
 
                     }
 
-                    string upgradeOption = HerbalHandle.ForgeCheck();
+                    string upgradeOption = ApothecaryHandle.ForgeCheck();
 
                     if (upgradeOption == String.Empty)
                     {
@@ -235,9 +229,9 @@ namespace StardewDruid.Dialogue
 
                     string upgradeName = tooling.DisplayName;
 
-                    int upgradeRequirement = HerbalHandle.ForgeRequirement(upgradeOption);
+                    int upgradeRequirement = ApothecaryHandle.ForgeRequirement(upgradeOption);
 
-                    if (HerbalHandle.GetHerbalism(HerbalHandle.herbals.aether) < upgradeRequirement)
+                    if (ApothecaryHandle.GetAmount(ApothecaryHandle.items.aether) < upgradeRequirement)
                     {
 
                         return Mod.instance.Helper.Translation.Get("CharacterHandle.328.3").Tokens(new { tool = Game1.player.CurrentTool.Name, upgrade = upgradeName, aether = upgradeRequirement, });
@@ -385,17 +379,6 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.herbalism:
 
-                    if (Mod.instance.questHandle.IsComplete(QuestHandle.herbalism))
-                    {
-
-                        generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1443");
-
-                        Mod.instance.herbalHandle.MassBrew(true);
-
-                        return generate;
-
-                    }
-
                     switch (index)
                     {
 
@@ -532,7 +515,7 @@ namespace StardewDruid.Dialogue
 
                     }
 
-                    if (HerbalHandle.RandomStudy())
+                    if (ApothecaryHandle.RandomStudy())
                     {
 
                         Mod.instance.rite.specialCasts[LocationHandle.druid_chapel_name].Add("DeskBlessing");
@@ -587,7 +570,7 @@ namespace StardewDruid.Dialogue
 
                     Mod.instance.RegisterMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.780").Tokens(new { faeth = faethBlessing.ToString(), }));
 
-                    HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.faeth, faethBlessing);
+                    ApothecaryHandle.UpdateAmounts(ApothecaryHandle.items.faeth, faethBlessing);
 
                     generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.785");
 
@@ -638,7 +621,7 @@ namespace StardewDruid.Dialogue
 
                     Mod.instance.RegisterMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.323.14").Tokens(new { aether = aetherBlessing.ToString(), }));
 
-                    HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.aether, aetherBlessing);
+                    ApothecaryHandle.UpdateAmounts(ApothecaryHandle.items.aether, aetherBlessing);
 
                     generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.323.15");
 
@@ -666,7 +649,7 @@ namespace StardewDruid.Dialogue
 
                     }
 
-                    string upgradeOption = HerbalHandle.ForgeCheck();
+                    string upgradeOption = ApothecaryHandle.ForgeCheck();
 
                     if (upgradeOption == String.Empty)
                     {
@@ -677,9 +660,9 @@ namespace StardewDruid.Dialogue
 
                     }
 
-                    int upgradeRequirement = HerbalHandle.ForgeRequirement(upgradeOption);
+                    int upgradeRequirement = ApothecaryHandle.ForgeRequirement(upgradeOption);
 
-                    if (HerbalHandle.GetHerbalism(HerbalHandle.herbals.aether) < upgradeRequirement)
+                    if (ApothecaryHandle.GetAmount(ApothecaryHandle.items.aether) < upgradeRequirement)
                     {
 
                         Game1.player.currentLocation.playSound(SpellHandle.Sounds.ghost.ToString());
@@ -690,17 +673,17 @@ namespace StardewDruid.Dialogue
 
                     Mod.instance.rite.specialCasts[LocationHandle.druid_engineum_name].Add("ForgeBlessing");
 
-                    HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.aether,0 - upgradeRequirement);
+                    ApothecaryHandle.UpdateAmounts(ApothecaryHandle.items.aether,0 - upgradeRequirement);
 
                     DisplayMessage shrineForgeMessage = new(
-                        Mod.instance.Helper.Translation.Get("HerbalData.1116").Tokens(new { potion = Mod.instance.herbalHandle.herbalism[HerbalHandle.herbals.aether.ToString()].title, }) 
-                        + " " + StringData.Strings(StringData.stringkeys.multiplier) + upgradeRequirement.ToString(),
-                        Mod.instance.herbalHandle.herbalism[HerbalHandle.herbals.aether.ToString()]
+                        Mod.instance.Helper.Translation.Get("HerbalData.1116").Tokens(new { potion = Mod.instance.apothecaryHandle.apothecary[ApothecaryHandle.items.aether].title, }) 
+                        + StringData.ecks + upgradeRequirement.ToString(),
+                        Mod.instance.apothecaryHandle.apothecary[ApothecaryHandle.items.aether]
                     );
 
                     Game1.addHUDMessage(shrineForgeMessage);
 
-                    HerbalHandle.ForgeUpgrade();
+                    ApothecaryHandle.ForgeUpgrade();
 
                     return null;
 
@@ -708,7 +691,7 @@ namespace StardewDruid.Dialogue
 
                     bool lowAether = false;
 
-                    if(HerbalHandle.GetHerbalism(HerbalHandle.herbals.aether) < 3)
+                    if(ApothecaryHandle.GetAmount(ApothecaryHandle.items.aether) < 3)
                     {
 
                         lowAether = true;
@@ -744,7 +727,7 @@ namespace StardewDruid.Dialogue
 
                     }
 
-                    if (HerbalHandle.RandomTinker())
+                    if (ApothecaryHandle.RandomTinker())
                     {
 
                         Mod.instance.rite.specialCasts[LocationHandle.druid_engineum_name].Add("DeskBlessing");
@@ -753,8 +736,8 @@ namespace StardewDruid.Dialogue
                         Game1.player.Items.ReduceId("390", 25);
 
                         DisplayMessage shrineDeskMessage = new(
-                            Mod.instance.Helper.Translation.Get("HerbalData.1116").Tokens(new { potion = Mod.instance.herbalHandle.herbalism[HerbalHandle.herbals.aether.ToString()].title, }) + " " + StringData.Strings(StringData.stringkeys.multiplier) + "3", 
-                            Mod.instance.herbalHandle.herbalism[HerbalHandle.herbals.aether.ToString()]
+                            Mod.instance.Helper.Translation.Get("HerbalData.1116").Tokens(new { potion = Mod.instance.apothecaryHandle.apothecary[ApothecaryHandle.items.aether].title, }) + StringData.ecks + "3", 
+                            Mod.instance.apothecaryHandle.apothecary[ApothecaryHandle.items.aether]
                         );
 
                         Game1.addHUDMessage(shrineDeskMessage);
@@ -879,7 +862,7 @@ namespace StardewDruid.Dialogue
 
                             generate.intro = Mod.instance.Helper.Translation.Get("DialogueOffering.386.2").Tokens(new { name = PalHandle.PalName(character), title = PalHandle.PalScheme(character) });
 
-                            if (Mod.instance.herbalHandle.BestHerbal(HerbalHandle.herbals.ligna) != HerbalHandle.herbals.none)
+                            if (Mod.instance.apothecaryHandle.BestHerbal(ApothecaryHandle.items.ligna) != ApothecaryHandle.items.none)
                             {
 
                                 generate.responses.Add(1, Mod.instance.Helper.Translation.Get("DialogueOffering.386.3"));
@@ -888,7 +871,7 @@ namespace StardewDruid.Dialogue
 
                             }
 
-                            if (Mod.instance.herbalHandle.BestHerbal(HerbalHandle.herbals.impes) != HerbalHandle.herbals.none)
+                            if (Mod.instance.apothecaryHandle.BestHerbal(ApothecaryHandle.items.vigores) != ApothecaryHandle.items.none)
                             {
 
                                 generate.responses.Add(2, Mod.instance.Helper.Translation.Get("DialogueOffering.386.4"));
@@ -897,7 +880,7 @@ namespace StardewDruid.Dialogue
 
                             }
 
-                            if (Mod.instance.herbalHandle.BestHerbal(HerbalHandle.herbals.celeri) != HerbalHandle.herbals.none)
+                            if (Mod.instance.apothecaryHandle.BestHerbal(ApothecaryHandle.items.celeri) != ApothecaryHandle.items.none)
                             {
 
                                 generate.responses.Add(3, Mod.instance.Helper.Translation.Get("DialogueOffering.386.5"));
@@ -906,10 +889,10 @@ namespace StardewDruid.Dialogue
 
                             }
 
-                            if (Mod.instance.save.herbalism.ContainsKey(HerbalHandle.herbals.faeth))
+                            if (Mod.instance.save.apothecary.ContainsKey(ApothecaryHandle.items.faeth))
                             {
 
-                                if (Mod.instance.save.herbalism[HerbalHandle.herbals.faeth] > 0)
+                                if (Mod.instance.save.apothecary[ApothecaryHandle.items.faeth].amount > 0)
                                 {
 
                                     generate.responses.Add(4, Mod.instance.Helper.Translation.Get("DialogueOffering.390.1"));
@@ -931,7 +914,7 @@ namespace StardewDruid.Dialogue
                                 case 1:
 
 
-                                    statBoost = Mod.instance.save.pals[character].BoostStat(HerbalHandle.herbals.ligna);
+                                    statBoost = Mod.instance.save.pals[character].BoostStat(ApothecaryHandle.items.ligna);
 
                                     if (statBoost > 0)
                                     {
@@ -948,7 +931,7 @@ namespace StardewDruid.Dialogue
 
                                 case 2:
 
-                                    statBoost = Mod.instance.save.pals[character].BoostStat(HerbalHandle.herbals.impes);
+                                    statBoost = Mod.instance.save.pals[character].BoostStat(ApothecaryHandle.items.vigores);
 
                                     if (statBoost > 0)
                                     {
@@ -965,7 +948,7 @@ namespace StardewDruid.Dialogue
 
                                 case 3:
 
-                                    statBoost = Mod.instance.save.pals[character].BoostStat(HerbalHandle.herbals.celeri);
+                                    statBoost = Mod.instance.save.pals[character].BoostStat(ApothecaryHandle.items.celeri);
 
                                     if (statBoost > 0)
                                     {
@@ -982,7 +965,7 @@ namespace StardewDruid.Dialogue
 
                                 case 4:
 
-                                    statBoost = Mod.instance.save.pals[character].BoostStat(HerbalHandle.herbals.faeth);
+                                    statBoost = Mod.instance.save.pals[character].BoostStat(ApothecaryHandle.items.faeth);
 
                                     if (statBoost > 0)
                                     {

@@ -1,152 +1,34 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Data;
-using StardewValley.Menus;
 using StardewValley;
+using StardewValley.Buildings;
+using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using StardewValley.Network;
-using StardewDruid.Character;
-using StardewDruid.Cast.Mists;
 
 namespace StardewDruid.Journal
 {
-    public class JournalComponent
-    {
-
-        public DruidJournal.journalButtons button;
-
-        public Microsoft.Xna.Framework.Vector2 position;
-
-        public IconData.displays display;
-
-        public Microsoft.Xna.Framework.Rectangle bounds;
-
-        public Microsoft.Xna.Framework.Rectangle source;
-
-        public int hover;
-
-        public string text;
-
-        public bool active;
-
-        public float fade = 1f;
-
-        public JournalAdditional spec = new();
-
-        public JournalComponent(DruidJournal.journalButtons Button, Vector2 Position, IconData.displays Display, JournalAdditional additional)
-        {
-
-            position = Position;
-
-            button = Button;
-
-            display = Display;
-
-            spec = additional;
-
-            setBounds();
-
-        }
-
-        public void setBounds()
-        {
-
-            source = IconData.DisplayRectangle(display);
-
-            bounds = new((int)position.X - (int)(8f * spec.scale), (int)position.Y - (int)(8f * spec.scale), (int)(16f * spec.scale), (int)(16f * spec.scale));
-
-            text = JournalData.ButtonStrings(button);
-
-        }
-
-        public void draw(SpriteBatch b)
-        {
-
-            switch (button)
-            {
-
-                default:
-
-                    b.Draw(
-                        Mod.instance.iconData.displayTexture,
-                        position,
-                        source,
-                        Color.White * fade,
-                        0f,
-                        new Vector2(8),
-                        spec.scale + (0.05f * hover),
-                        spec.flip ? SpriteEffects.FlipHorizontally : 0,
-                        999f
-                    );
-
-                    break;
-
-                case DruidJournal.journalButtons.HP:
-
-                    b.DrawString(Game1.smallFont, text, position - new Vector2(28,32), Color.Wheat, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.88f);
-
-                    b.DrawString(Game1.smallFont, Game1.player.health + StringData.slash + Game1.player.maxHealth, position - new Vector2(28, 0), Color.Wheat, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.88f);
-
-                    break;
-
-                case DruidJournal.journalButtons.STM:
-
-                    b.DrawString(Game1.smallFont, text, position - new Vector2(28,32), Color.Wheat, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.88f);
-
-                    b.DrawString(Game1.smallFont, (int)Game1.player.Stamina + StringData.slash + Game1.player.MaxStamina, position - new Vector2(28, 0), Color.Wheat, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.88f);
-
-                    break;
-
-
-            }
-
-
-        }
-
-    }
-
-    public class JournalAdditional
-    {
-
-        public float scale = 3.5f;
-
-        public bool flip;
-
-        public float hoverLimit = 5;
-
-    }
-
     public class ContentComponent
     {
 
+        public static Microsoft.Xna.Framework.Color defaultColour = new Color(106, 30, 16);
+
+
         public enum contentTypes
         {
-
+            text,
             list,
+            title,
+            custom,
             header,
-
-            masterysection,
-            masterynode,
-
-            potion,
             toggle,
-            toggleleft,
-            toggleright,
+
             relic,
             portrait,
-            title,
-            text,
-            textsmall,
-            custom,
+
             herolist,
-            
-            goods,
-            machine,
-            estimate,
+
             order,
 
             battle,
@@ -164,6 +46,8 @@ namespace StardewDruid.Journal
 
         public string id;
 
+        public int grid;
+
         public int serial;
 
         public Microsoft.Xna.Framework.Rectangle bounds;
@@ -176,13 +60,11 @@ namespace StardewDruid.Journal
 
         public Dictionary<int, Vector2> textMeasures = new();
 
+        public Dictionary<int, float> textScales = new();
+
+        public Dictionary<int, int> textFonts = new();
+
         public Dictionary<int, Microsoft.Xna.Framework.Color> textColours = new();
-
-        public Dictionary<int, IconData.displays> icons = new();
-
-        public Dictionary<int, Microsoft.Xna.Framework.Rectangle> iconSources = new();
-
-        public Microsoft.Xna.Framework.Color defaultColour = new Color(86, 22, 12);
 
         public Dictionary<int, Texture2D> textures = new();
 
@@ -197,6 +79,10 @@ namespace StardewDruid.Journal
         public int readoutPace;
 
         public int readoutLength;
+
+        public int hover;
+
+        public int hoverLimit;
 
         public ContentComponent(contentTypes Type, string ID, bool Active = true)
         {
@@ -226,18 +112,46 @@ namespace StardewDruid.Journal
             foreach (KeyValuePair<int, string> textIndex in text)
             {
 
-                textParse[textIndex.Key] = Game1.parseText(textIndex.Value, Game1.dialogueFont, width);
+                int useWidth = width;
 
-                if(type == contentTypes.textsmall)
+                float useScale = 1f;
+
+                int useFont = 1;
+
+                if (textScales.ContainsKey(textIndex.Key))
                 {
 
-                    textMeasures[textIndex.Key] = Game1.dialogueFont.MeasureString(textParse[textIndex.Key]) * 0.8f;
+                    useWidth = (int)((float)width / textScales[textIndex.Key]);
+
+                    useScale = textScales[textIndex.Key];
 
                 }
-                else
+
+                if (textFonts.ContainsKey(textIndex.Key))
                 {
 
-                    textMeasures[textIndex.Key] = Game1.dialogueFont.MeasureString(textParse[textIndex.Key]);
+                    useFont = textFonts[textIndex.Key];
+
+                }
+
+                switch (useFont)
+                {
+
+                    default:
+
+                        textParse[textIndex.Key] = Game1.parseText(textIndex.Value, Game1.dialogueFont, useWidth);
+
+                        textMeasures[textIndex.Key] = Game1.dialogueFont.MeasureString(textParse[textIndex.Key]);
+
+                        break;
+
+                    case 2:
+
+                        textParse[textIndex.Key] = Game1.parseText(textIndex.Value, Game1.smallFont, useWidth);
+
+                        textMeasures[textIndex.Key] = Game1.smallFont.MeasureString(textParse[textIndex.Key]);
+
+                        break;
 
                 }
 
@@ -259,28 +173,11 @@ namespace StardewDruid.Journal
 
         }
 
-
-        public void SetIcon()
-        {
-
-            iconSources = new();
-
-            foreach (KeyValuePair<int, IconData.displays> icon in icons)
-            {
-
-                iconSources.Add(icon.Key, IconData.DisplayRectangle(icon.Value));
-
-            }
-
-        }
-
         public void setBounds(int index, int xP, int yP, int width, int height, int column = 0, int row = 0)
         {
 
             SetText(width);
-
-            SetIcon();
-
+  
             switch (type)
             {
 
@@ -319,44 +216,6 @@ namespace StardewDruid.Journal
 
                     return;
 
-                case contentTypes.potion:
-
-                    bounds = new Rectangle(xP + 16 + 4 + (index % 6) * ((width - 32) / 6), yP + 16 + (int)(index / 6) * (146 + row), ((width - 32) / 6) - 8, 146);
-
-                    if (!textureColours.ContainsKey(0))
-                    {
-
-                        textureColours[0] = Color.Wheat;
-
-                    }
-
-                    if (!textureColours.ContainsKey(1))
-                    {
-
-                        textureColours[1] = Color.White;
-
-                    }
-
-                    return;
-
-                case contentTypes.toggle:
-
-                    bounds = new Rectangle(xP + 16 + 4 + (index % 6) * ((width - 32) / 6), yP + 16 + 146 + (int)(index / 6) * (146 + 56), (width - 32) / 6 - 8, 56);
-
-                    return;
-
-                case contentTypes.toggleleft:
-
-                    bounds = new Rectangle(xP + 16 + 4 + (index % 6) * ((width - 32) / 6), yP + 16 + 146 + (int)(index / 6) * (146 + 56), (width - 32) / 12 - 8, 56);
-
-                    return;
-
-                case contentTypes.toggleright:
-
-                    bounds = new Rectangle(xP + 16 + 4 + (int)(((index % 6)+ 0.5f) * ((width - 32) / 6)), yP + 16 + 146 + (int)(index / 6) * (146 + 56), (width - 32) / 12 - 8, 56);
-
-                    return;
-
                 case contentTypes.relic:
 
                     bounds = new Rectangle(xP + 16 + 4 + (index % 6) * ((width - 32) / 6), yP + 16 + (int)(index / 6) * (146 + row), (width - 32) / 6 - 8, 146);
@@ -366,24 +225,6 @@ namespace StardewDruid.Journal
                 case contentTypes.herolist:
 
                     bounds = new Rectangle(xP + 16, yP + 16 + index * ((height - 32) / 4), width - 32, (height - 32) / 4 + 4);
-
-                    return;
-
-                case contentTypes.goods:
-
-                    bounds = new Rectangle(xP + 16 + 4 + (index % 4) * ((width - 32) / 4), yP + 24 + (int)(index / 4) * (224 + 56), ((width - 32) / 4) - 8, 224);
-
-                    return;
-
-                case contentTypes.machine:
-
-                    bounds = new Rectangle(xP + 16 + 4 + (index % 4) * ((width - 32) / 4), yP + 24 + (int)(index / 4) * (224 + 4), ((width - 32) / 4) - 8, 224);
-
-                    return;
-
-                case contentTypes.estimate:
-
-                    bounds = new Rectangle(xP + 16 + 4 + (index % 4) * ((width - 32) / 4), yP + 24 + (int)(index / 4) * (224 + 4), ((width - 32) / 4) - 8, 112);
 
                     return;
 
@@ -417,18 +258,6 @@ namespace StardewDruid.Journal
 
                     return;
 
-                case contentTypes.masterysection:
-
-                    bounds = new Rectangle(xP + 16 + 4 + ((index % 5) * ((width - 32) / 5)), yP + 24 + (int)(index / 4) * (224 + 4), ((width - 32) / 5) - 8, height - 64);
-
-                    return;
-
-                case contentTypes.masterynode:
-
-                    bounds = new Rectangle(xP + 16 + 4 + (index % 4) * ((width - 32) / 4), yP + 24 + (int)(index / 4) * (224 + 4), ((width - 32) / 4) - 8, 224);
-
-                    return;
-
             }
 
         }
@@ -456,13 +285,13 @@ namespace StardewDruid.Journal
                     );
 
                     // icons
-                    if (icons.Count > 0)
+                    if (textureSources.Count > 0)
                     {
 
                         b.Draw(
                             Mod.instance.iconData.displayTexture,
                             new Vector2(bounds.Left + 20f + 32f - 1.5f, bounds.Center.Y + 3f),
-                            iconSources[0],
+                            textureSources[0],
                             Microsoft.Xna.Framework.Color.Black * 0.35f,
                             0f,
                             new Vector2(8),
@@ -474,7 +303,7 @@ namespace StardewDruid.Journal
                         b.Draw(
                             Mod.instance.iconData.displayTexture,
                             new Vector2(bounds.Left + 20f + 32f, bounds.Center.Y),
-                            iconSources[0],
+                            textureSources[0],
                             Microsoft.Xna.Framework.Color.White,
                             0f,
                             new Vector2(8),
@@ -485,14 +314,14 @@ namespace StardewDruid.Journal
 
                     }
 
-                    if (icons.Count > 1)
+                    if (textureSources.Count > 1)
                     {
 
 
                         b.Draw(
                             Mod.instance.iconData.displayTexture,
                             new Vector2(bounds.Right - 20f - 32f + 1f, bounds.Center.Y + 3f),
-                            iconSources[1],
+                            textureSources[1],
                             Microsoft.Xna.Framework.Color.Black * 0.35f,
                             0f,
                             new Vector2(8),
@@ -504,7 +333,7 @@ namespace StardewDruid.Journal
                         b.Draw(
                             Mod.instance.iconData.displayTexture,
                             new Vector2(bounds.Right - 20f - 32f, bounds.Center.Y),
-                            iconSources[1],
+                            textureSources[1],
                             Microsoft.Xna.Framework.Color.White,
                             0f,
                             new Vector2(8),
@@ -541,6 +370,35 @@ namespace StardewDruid.Journal
                         0.901f
                     );
 
+                    if (text.Count > 1)
+                    {
+
+                        b.DrawString(
+                            Game1.dialogueFont,
+                            textParse[1],
+                            new Vector2(bounds.Right - 20f - textMeasures[1].X + 1f, bounds.Center.Y - (textMeasures[1].Y / 2) + 1.5f),
+                            Microsoft.Xna.Framework.Color.Brown * 0.35f,
+                            0f,
+                            Vector2.Zero,
+                            1f,
+                            SpriteEffects.None,
+                            0.900f
+                        );
+
+                        b.DrawString(
+                            Game1.dialogueFont,
+                            textParse[1],
+                            new Vector2(bounds.Right - 20f - textMeasures[1].X, bounds.Center.Y - (textMeasures[1].Y / 2)),
+                            defaultColour,
+                            0f,
+                            Vector2.Zero,
+                            1f,
+                            SpriteEffects.None,
+                            0.901f
+                        );
+
+                    }
+
                     return;
 
                 case contentTypes.portrait:
@@ -562,7 +420,7 @@ namespace StardewDruid.Journal
 
                     switch (textureSources[0].Width)
                     {
-                        
+
                         case 64:
                             portraitScale = 4f;
                             break;
@@ -574,14 +432,14 @@ namespace StardewDruid.Journal
                     };
 
                     b.Draw(
-                        textures[0], 
-                        new Vector2(bounds.Center.X, bounds.Center.Y), 
-                        textureSources[0], 
-                        Color.White, 
-                        0f, 
-                        new Vector2(textureSources[0].Width/2, textureSources[0].Height/2), 
-                        portraitScale, 
-                        0, 
+                        textures[0],
+                        new Vector2(bounds.Center.X, bounds.Center.Y),
+                        textureSources[0],
+                        Color.White,
+                        0f,
+                        new Vector2(textureSources[0].Width / 2, textureSources[0].Height / 2),
+                        portraitScale,
+                        0,
                         0.901f
                     );
 
@@ -617,14 +475,27 @@ namespace StardewDruid.Journal
 
                 case contentTypes.text:
 
+                    float textScale = 1f;
+
+                    float textOffset = 1f;
+
+                    if (textScales.ContainsKey(0))
+                    {
+
+                        textScale = textScales[0];
+
+                        textOffset = 1f * textScale;
+
+                    }
+
                     b.DrawString(
                         Game1.dialogueFont,
                         textParse[0],
-                        new Vector2(bounds.Left - 1.5f, offset.Y + bounds.Top + 1.5f),
-                        Microsoft.Xna.Framework.Color.Brown * 0.35f,
+                        new Vector2(bounds.Left - textOffset, offset.Y + bounds.Top + (textOffset * 2)),
+                        textColours[0] * 0.3f,
                         0f,
                         Vector2.Zero,
-                        1f,
+                        textScale,
                         SpriteEffects.None,
                         0.900f
                     );
@@ -636,34 +507,7 @@ namespace StardewDruid.Journal
                         textColours[0],
                         0f,
                         Vector2.Zero,
-                        1f,
-                        SpriteEffects.None,
-                        0.901f
-                    );
-                    return;
-
-                case contentTypes.textsmall:
-
-                    b.DrawString(
-                        Game1.dialogueFont,
-                        textParse[0],
-                        new Vector2(bounds.Left - 1f, offset.Y + bounds.Top + 1f),
-                        Microsoft.Xna.Framework.Color.Brown * 0.35f,
-                        0f,
-                        Vector2.Zero,
-                        0.8f,
-                        SpriteEffects.None,
-                        0.900f
-                    );
-
-                    b.DrawString(
-                        Game1.dialogueFont,
-                        textParse[0],
-                        new Vector2(bounds.Left, offset.Y + bounds.Top),
-                        textColours[0],
-                        0f,
-                        Vector2.Zero,
-                        0.8f,
+                        textScale,
                         SpriteEffects.None,
                         0.901f
                     );
@@ -675,66 +519,42 @@ namespace StardewDruid.Journal
 
                     b.DrawString(Game1.smallFont, textParse[0], new Vector2(bounds.Left + 10, bounds.Center.Y - textMeasures[0].Y / 2 + 2f), Game1.textColor * 0.9f, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0.901f);
 
-                    //b.DrawString(Game1.dialogueFont, textParse[1], new Vector2(bounds.Left + 156 - 0.5f, bounds.Center.Y - (textMeasures[1].Y * 0.8f) / 2 + 4f + 0.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0.900f);
-                    
                     int headerLeft = Math.Max(272, (int)textMeasures[0].X + 48);
 
                     b.DrawString(Game1.smallFont, textParse[1], new Vector2(bounds.Left + headerLeft, bounds.Center.Y - (textMeasures[1].Y * 0.9f) / 2 + 4f), Game1.textColor * 0.9f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -0.901f);
 
                     return;
 
-                case contentTypes.potion:
+                case contentTypes.toggle:
 
-                    IClickableMenu.drawTextureBox(
-                        b,
-                        Game1.mouseCursors,
-                        new Rectangle(384, 396, 15, 15),
-                        bounds.X,
-                        bounds.Y,
-                        bounds.Width,
-                        bounds.Height,
-                        focus ? Color.Wheat : Color.White,
-                        4f,
-                        false,
-                        -1f
-                    );
-
-                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Center.X + 6 - (textMeasures[0].X * 0.9f / 2) - 1f, bounds.Center.Y + 24 + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.900f);
-
-                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Center.X + 6 - (textMeasures[0].X * 0.9f / 2), bounds.Center.Y + 24), textColours[0], 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.901f);
-
-                    b.Draw(Mod.instance.iconData.potionsTexture, new Vector2(bounds.Center.X + 2f, bounds.Center.Y - 20f + 4f), textureSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, new Vector2(10), 4f, 0, 0.900f);
-
-                    b.Draw(Mod.instance.iconData.potionsTexture, new Vector2(bounds.Center.X, bounds.Center.Y - 20f), textureSources[0], Color.White, 0f, new Vector2(10), 4f, 0, 0.901f);
-
-                    if(textureSources.Count > 1)
+                    if (focus)
                     {
 
-                        int glitterTime = (int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 2000) / 100;
-
-                        if(glitterTime <= 7)
+                        if (hover < hoverLimit)
                         {
 
-                            b.Draw(Mod.instance.iconData.impactsTexture, new Vector2(bounds.Center.X, bounds.Center.Y), new Rectangle(0 + (glitterTime * 64), 128, 64, 64), Color.White * 0.5f, (float)(Math.PI/2), new Vector2(32), 4f, 0, 0.901f);
+                            hover++;
 
                         }
 
                     }
+                    else if (hover > 0)
+                    {
 
-                    return;
+                        hover--;
 
-                case contentTypes.toggle:
-                case contentTypes.toggleleft:
-                case contentTypes.toggleright:
+                    }
+
+                    float toggleScale = 2.5f + (0.05f * hover);
 
                     b.Draw(
                         Mod.instance.iconData.displayTexture,
-                        bounds.Center.ToVector2() + new Vector2(-1f,2f),
-                        iconSources[0],
+                        bounds.Center.ToVector2() + new Vector2(-1f, 2f),
+                        textureSources[0],
                         Microsoft.Xna.Framework.Color.Black * 0.35f,
                         0f,
                         new Vector2(8),
-                        2.5f,
+                        toggleScale,
                         0,
                         0.900f
                     );
@@ -742,11 +562,11 @@ namespace StardewDruid.Journal
                     b.Draw(
                         Mod.instance.iconData.displayTexture,
                         bounds.Center.ToVector2(),
-                        iconSources[0],
+                        textureSources[0],
                         Microsoft.Xna.Framework.Color.White,
                         0f,
                         new Vector2(8),
-                        2.5f,
+                        toggleScale,
                         0,
                         0.901f
                     );
@@ -791,13 +611,13 @@ namespace StardewDruid.Journal
                         -1f
                     );
 
-                    if (icons.Count > 0)
+                    if (textureSources.Count > 0)
                     {
 
                         b.Draw(
                             Mod.instance.iconData.displayTexture,
                             new Vector2(bounds.Right - 200 + 1f, bounds.Center.Y - 1f),
-                            iconSources[0],
+                            textureSources[0],
                             Microsoft.Xna.Framework.Color.Black * 0.35f,
                             0f,
                             new Vector2(8),
@@ -809,7 +629,7 @@ namespace StardewDruid.Journal
                         b.Draw(
                             Mod.instance.iconData.displayTexture,
                             new Vector2(bounds.Right - 200, bounds.Center.Y - 4f),
-                            iconSources[0],
+                            textureSources[0],
                             Microsoft.Xna.Framework.Color.White,
                             0f,
                             new Vector2(8),
@@ -967,87 +787,6 @@ namespace StardewDruid.Journal
 
                     return;
 
-                case contentTypes.goods:
-
-                    IClickableMenu.drawTextureBox(
-                        b,
-                        Game1.mouseCursors,
-                        new Rectangle(384, 396, 15, 15),
-                        bounds.X,
-                        bounds.Y,
-                        bounds.Width,
-                        bounds.Height,
-                        focus ? Color.Wheat : Color.White,
-                        4f,
-                        false,
-                        -1f
-                    );
-
-                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Center.X + 6 - (textMeasures[0].X * 0.9f / 2) - 1f, bounds.Center.Y + 60 + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.900f);
-
-                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Center.X + 6 - (textMeasures[0].X * 0.9f / 2), bounds.Center.Y + 60), textColours[0], 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.901f);
-
-                    b.Draw(Mod.instance.iconData.workshopTexture, new Vector2(bounds.Center.X + 2f, bounds.Center.Y - 16f + 4f), textureSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, new Vector2(16), 4f, 0, 0.900f);
-
-                    b.Draw(Mod.instance.iconData.workshopTexture, new Vector2(bounds.Center.X, bounds.Center.Y - 16f), textureSources[0], Color.White, 0f, new Vector2(16), 4f, 0, 0.901f);
-
-                    if(text.Count > 1)
-                    {
-
-                        b.DrawString(Game1.dialogueFont, textParse[1], new Vector2(bounds.Left + 12f, bounds.Bottom + 8f + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.900f);
-
-                        b.DrawString(Game1.dialogueFont, textParse[1], new Vector2(bounds.Left + 12f, bounds.Bottom + 8f), textColours[1], 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.901f);
-
-                        b.DrawString(Game1.dialogueFont, textParse[2], new Vector2(bounds.Right + 8f - textMeasures[2].X - 1f, bounds.Bottom + 9f + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0.900f);
-
-                        b.DrawString(Game1.dialogueFont, textParse[2], new Vector2(bounds.Right + 8f - textMeasures[2].X, bounds.Bottom + 9f), textColours[2], 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0.901f);
-
-                    }
-
-                    return;
-
-                case contentTypes.machine:
-
-                    IClickableMenu.drawTextureBox(
-                        b,
-                        Game1.mouseCursors,
-                        new Rectangle(384, 396, 15, 15),
-                        bounds.X,
-                        bounds.Y,
-                        bounds.Width,
-                        bounds.Height,
-                        focus ? Color.Wheat : Color.White,
-                        4f,
-                        false,
-                        -1f
-                    );
-
-                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Center.X + 6 - (textMeasures[0].X * 0.9f / 2) - 1f, bounds.Center.Y + 60 + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.900f);
-
-                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Center.X + 6 - (textMeasures[0].X * 0.9f / 2), bounds.Center.Y + 60), textColours[0], 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.901f);
-
-                    b.Draw(Mod.instance.iconData.workshopTexture, new Vector2(bounds.Center.X + 2f, bounds.Center.Y - 16f + 4f), textureSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, new Vector2(16), 4f, 0, 0.900f);
-
-                    b.Draw(Mod.instance.iconData.workshopTexture, new Vector2(bounds.Center.X, bounds.Center.Y - 16f), textureSources[0], Color.White, 0f, new Vector2(16), 4f, 0, 0.901f);
-
-                    return;
-
-                case contentTypes.estimate:
-
-                    b.Draw(Mod.instance.iconData.workshopTexture, new Vector2(bounds.Left + 64f + 2f, bounds.Center.Y + 4f), textureSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, new Vector2(16), 3f, 0, 0.900f);
-
-                    b.Draw(Mod.instance.iconData.workshopTexture, new Vector2(bounds.Left + 64f, bounds.Center.Y), textureSources[0], Color.White, 0f, new Vector2(16), 3f, 0, 0.901f);
-
-                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Right - 16f - (textMeasures[0].X * 0.9f) - 1f, bounds.Center.Y + 4 - textMeasures[0].Y + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.900f);
-
-                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Right - 16f - (textMeasures[0].X * 0.9f), bounds.Center.Y + 4 - textMeasures[0].Y), textColours[0], 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.901f);
-
-                    b.DrawString(Game1.dialogueFont, textParse[1], new Vector2(bounds.Right - 16f - (textMeasures[1].X * 0.9f) - 1f, bounds.Center.Y + 8 + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.900f);
-
-                    b.DrawString(Game1.dialogueFont, textParse[1], new Vector2(bounds.Right - 16f - (textMeasures[1].X * 0.9f), bounds.Center.Y + 8), textColours[1], 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.901f);
-
-                    return;
-
                 case contentTypes.order:
 
                     IClickableMenu.drawTextureBox(
@@ -1064,9 +803,9 @@ namespace StardewDruid.Journal
                         -1f
                     );
 
-                    b.Draw(Mod.instance.iconData.workshopTexture, new Vector2(bounds.Left + 64f + 1f, bounds.Center.Y + 4f), textureSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, new Vector2(16), 2.8f, 0, 0.900f);
+                    b.Draw(Mod.instance.iconData.exportTexture, new Vector2(bounds.Left + 64f + 1f, bounds.Center.Y + 4f), textureSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, new Vector2(16), 2.8f, 0, 0.900f);
 
-                    b.Draw(Mod.instance.iconData.workshopTexture, new Vector2(bounds.Left + 64f, bounds.Center.Y), textureSources[0], Color.White, 0f, new Vector2(16), 2.8f, 0, 0.901f);
+                    b.Draw(Mod.instance.iconData.exportTexture, new Vector2(bounds.Left + 64f, bounds.Center.Y), textureSources[0], Color.White, 0f, new Vector2(16), 2.8f, 0, 0.901f);
 
                     b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Left + 148f + 2f, bounds.Top + 40 + 1f), textureSources[1], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, new Vector2(10), 1.8f, 0, 0.900f);
 
@@ -1111,13 +850,13 @@ namespace StardewDruid.Journal
                         -1f
                     );
 
-                    if (icons.Count > 0)
+                    if (textureSources.Count > 0)
                     {
 
                         b.Draw(
                             Mod.instance.iconData.displayTexture,
                             new Vector2(bounds.Left + 49, bounds.Center.Y + 2f),
-                            iconSources[0],
+                            textureSources[0],
                             Microsoft.Xna.Framework.Color.Black * 0.35f,
                             0f,
                             new Vector2(8),
@@ -1129,7 +868,7 @@ namespace StardewDruid.Journal
                         b.Draw(
                             Mod.instance.iconData.displayTexture,
                             new Vector2(bounds.Left +48, bounds.Center.Y),
-                            iconSources[0],
+                            textureSources[0],
                             Microsoft.Xna.Framework.Color.White,
                             0f,
                             new Vector2(8),
@@ -1274,14 +1013,6 @@ namespace StardewDruid.Journal
                          );
 
                     }
-
-                    return;
-
-                case contentTypes.masterysection:
-
-                    return;
-
-                case contentTypes.masterynode:
 
                     return;
 

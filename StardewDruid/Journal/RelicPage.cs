@@ -2,20 +2,24 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Character;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace StardewDruid.Journal
 {
-    public class RelicPage : QuestPage
+    public class RelicPage : DruidJournal
     {
 
-        public RelicPage(string QuestId, int Record) : base(QuestId, Record) 
+        string relicId = null;
+
+        public RelicPage(journalTypes Type, List<string> Parameters) : base(Type, Parameters)
         {
 
         }
@@ -23,14 +27,14 @@ namespace StardewDruid.Journal
         public override void populateInterface()
         {
 
-            parentJournal = journalTypes.relics;
+            parent = journalTypes.relics;
 
             type = journalTypes.relicPage;
 
             interfaceComponents = new()
             {
 
-                [201] = addButton(journalButtons.back),
+                [201] = addButton(journalButtons.previous),
 
                 [301] = addButton(journalButtons.exit),
 
@@ -44,10 +48,22 @@ namespace StardewDruid.Journal
 
         }
 
-        public override void populateContent()
+        public override void prepareContent()
         {
 
-            string relicId = journalId;
+            relicId = ((IconData.relics)1).ToString();
+
+            if (parameters.Count > 0)
+            {
+
+                relicId = parameters[0];
+
+            }
+
+        }
+
+        public override void populateContent()
+        {
 
             // ----------------------------- title
 
@@ -93,32 +109,6 @@ namespace StardewDruid.Journal
 
         }
 
-
-        public override void activateInterface()
-        {
-
-            resetInterface();
-
-            scrolled = 0;
-
-            if (contentBox.Height < 512)
-            {
-
-                interfaceComponents[302].active = false;
-
-                interfaceComponents[303].active = false;
-
-                interfaceComponents[304].active = false;
-
-            }
-            else
-            {
-
-                scrollId = 303;
-
-            }
-
-        }
     }
 
 }

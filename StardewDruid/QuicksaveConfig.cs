@@ -1,5 +1,6 @@
 ﻿using StardewDruid.Cast;
 using StardewDruid.Character;
+using StardewDruid.Data;
 using StardewModdingAPI;
 using StardewValley;
 using System;
@@ -40,13 +41,13 @@ namespace StardewDruid
             if (!Mod.instance.magic)
             {
 
-                Mod.instance.SerialiseGrove();
+                Mod.instance.SerialiseLocations();
 
                 Mod.instance.SaveCharacters();
 
             }
 
-            Mod.instance.Helper.Data.WriteSaveData("saveData_" + Mod.instance.version.ToString(), Mod.instance.save);
+            Mod.instance.Helper.Data.WriteSaveData(SaveData.version, Mod.instance.save);
 
             Mod.RemoveCharacters();
 

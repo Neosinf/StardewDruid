@@ -16,7 +16,7 @@ namespace StardewDruid.Journal
     public class QuestJournal : DruidJournal
     {
 
-        public QuestJournal(string QuestId, int Record) : base(QuestId, Record)
+        public QuestJournal(journalTypes Type, List<string> Parameters) : base(Type, Parameters)
         {
 
         }
@@ -33,7 +33,8 @@ namespace StardewDruid.Journal
                 [104] = addButton(journalButtons.openAlchemy),
                 [105] = addButton(journalButtons.openPotions),
                 [106] = addButton(journalButtons.openCompanions),
-                [107] = addButton(journalButtons.openDragonomicon),
+                [107] = addButton(journalButtons.openOrders),
+                [108] = addButton(journalButtons.openDragonomicon),
 
                 [201] = addButton(journalButtons.back),
                 [202] = addButton(journalButtons.start),
@@ -53,20 +54,11 @@ namespace StardewDruid.Journal
         public override void populateContent()
         {
 
-            type = journalTypes.quests;
-
-            title = JournalData.JournalTitle(type);
-
             pagination = 6;
 
             contentComponents = Mod.instance.questHandle.JournalQuests();
 
-            if (record >= contentComponents.Count)
-            {
-
-                record = 0;
-
-            }
+            ParameterRecord();
 
             foreach (KeyValuePair<int, ContentComponent> component in contentComponents)
             {
@@ -80,7 +72,7 @@ namespace StardewDruid.Journal
         public override void pressContent()
         {
 
-            openJournal(journalTypes.questPage, contentComponents[focus].id, focus);
+            openJournal(journalTypes.questPage, contentComponents[focus].id);
 
         }
 

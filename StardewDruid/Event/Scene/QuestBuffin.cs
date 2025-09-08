@@ -171,7 +171,7 @@ namespace StardewDruid.Event.Scene
         public override void OnLocationAbort()
         {
 
-            Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
+            Mod.instance.RegisterMessage(StringData.Get(StringData.str.abortTomorrow), 3, true);
 
         }
 

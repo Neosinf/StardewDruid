@@ -12,13 +12,14 @@ using StardewValley.Quests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 
 namespace StardewDruid.Journal
 {
     public class GuildPage : DruidJournal
     {
 
-        public GuildPage(string RecruitId, int Record) : base(RecruitId, Record) 
+        public GuildPage(journalTypes Type, List<string> Parameters) : base(Type, Parameters)
         {
 
         }
@@ -26,15 +27,16 @@ namespace StardewDruid.Journal
         public override void populateInterface()
         {
 
-            parentJournal = journalTypes.relics;
+            parent = journalTypes.guilds;
 
             type = journalTypes.guildPage;
 
             interfaceComponents = new()
             {
                 // ------------------------------------------
+                [101] = addButton(journalButtons.openOrders),
 
-                [201] = addButton(journalButtons.back),
+                [201] = addButton(journalButtons.previous),
 
                 [301] = addButton(journalButtons.exit),
 
@@ -48,40 +50,16 @@ namespace StardewDruid.Journal
 
         }
 
-        public override void activateInterface()
-        {
-
-            resetInterface();
-
-            scrolled = 0;
-
-            if (contentBox.Height < 512)
-            {
-
-                interfaceComponents[302].active = false;
-
-                interfaceComponents[303].active = false;
-
-                interfaceComponents[304].active = false;
-
-            }
-            else
-            {
-
-                scrollId = 303;
-
-            }
-
-        }
-
         public override void populateContent()
         {
 
-            ExportHandle.exports export = Enum.Parse<ExportHandle.exports>(journalId);
+            ExportGuild.guilds guildId = Enum.Parse<ExportGuild.guilds>(parameters[0]);
 
-            ExportGuild guild = Mod.instance.exportHandle.guilds[export];
+            ExportGuild guild = Mod.instance.exportHandle.guilds[guildId];
 
-            int level = ExportHandle.GuildLevel(export);
+            GuildRecord record = Mod.instance.save.guilds[guildId];
+
+            int Level = ExportHandle.GuildLevel(guildId);
 
             // ----------------------------- title
 
@@ -105,9 +83,9 @@ namespace StardewDruid.Journal
 
             contentComponents[start] = new(ContentComponent.contentTypes.text, "level");
 
-            int nextlevel = ExportHandle.GuildNext(export);
+            int nextlevel = ExportHandle.GuildNext(guildId);
 
-            contentComponents[start].text[0] = StringData.LevelStrings(level);
+            contentComponents[start].text[0] = StringData.Get(StringData.str.level, new { level = Level });
 
             contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
 
@@ -120,13 +98,13 @@ namespace StardewDruid.Journal
             if (nextlevel == -1)
             {
 
-                contentComponents[start].text[0] = StringData.Strings(StringData.stringkeys.maxLevel);
+                contentComponents[start].text[0] = StringData.Get(StringData.str.maxLevel);
 
             }
             else
             {
 
-                contentComponents[start].text[0] = StringData.Strings(StringData.stringkeys.relationship) + ExportHandle.GuildRelationship(export) + StringData.slash + nextlevel;
+                contentComponents[start].text[0] = StringData.Get(StringData.str.relationship) + record.experience + StringData.slash + nextlevel;
 
             }
 
@@ -153,11 +131,11 @@ namespace StardewDruid.Journal
 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, i.ToString());
 
-                contentComponents[start].text[0] = StringData.LevelStrings(benefit.Key) + StringData.colon + benefit.Value;
+                contentComponents[start].text[0] = StringData.Get(StringData.str.level, new { level = benefit.Key }) + StringData.colon + benefit.Value;
 
                 Microsoft.Xna.Framework.Color benefitColour = Microsoft.Xna.Framework.Color.DarkBlue;
 
-                if (level < benefit.Key)
+                if (Level < benefit.Key)
                 {
 
                     benefitColour = Microsoft.Xna.Framework.Color.DarkBlue * 0.5f;
@@ -178,27 +156,6 @@ namespace StardewDruid.Journal
 
         }
 
-        public override void pressButton(journalButtons button)
-        {
-
-            switch (button)
-            {
-
-                case journalButtons.back:
-
-                    DruidJournal.openJournal(parentJournal, null, record);
-
-                    break;
-
-                default:
-
-                    base.pressButton(button);
-
-                    break;
-
-            }
-
-        }
 
         public override void drawContent(SpriteBatch b)
         {

@@ -244,7 +244,7 @@ namespace StardewDruid.Handle
 
         public static bool HasRelic(IconData.relics relic)
         {
-
+            return true;
             if (Mod.instance.magic)
             {
 
@@ -627,9 +627,9 @@ namespace StardewDruid.Handle
             for(int i = 0; i < 18; i++)
             {
 
-                HerbalHandle.herbals herbal = (HerbalHandle.herbals)((int)HerbalHandle.herbals.omen_feather + i);
+                ApothecaryHandle.items herbal = (ApothecaryHandle.items)((int)ApothecaryHandle.items.omen_feather + i);
 
-                if (HerbalHandle.GetHerbalism(herbal) <= 0)
+                if (ApothecaryHandle.GetAmount(herbal) <= 0)
                 {
 
                     return 0;

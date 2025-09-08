@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -90,7 +91,7 @@ namespace StardewDruid.Battle
 
         public battleoptions chosen;
 
-        public HerbalHandle.herbals item;
+        public ApothecaryHandle.items item;
 
         public BattleCombatant()
         {
@@ -106,9 +107,9 @@ namespace StardewDruid.Battle
 
             level = Level;
 
-            levelString = StringData.LevelStrings(level);
+            levelString = StringData.Get(StringData.str.level, new { level = Level });
 
-            possessive = StringData.Strings(StringData.stringkeys.your);
+            possessive = StringData.Get(StringData.str.your);
 
             title = Mod.instance.Helper.Translation.Get("BattleHandle.388.1701");
 
@@ -141,11 +142,13 @@ namespace StardewDruid.Battle
 
             name = pal.name;
 
-            level = PalHandle.UnitLevel(pal.experience);
+            int Level = PalHandle.UnitLevel(pal.experience);
 
-            levelString = StringData.LevelStrings(level);
+            level = Level;
 
-            possessive = StringData.Strings(StringData.stringkeys.your);
+            levelString = StringData.Get(StringData.str.level, new { level = Level });
+
+            possessive = StringData.Get(StringData.str.your);
 
             title = PalHandle.PalTitle(pal.type, pal.scheme);
 
@@ -182,9 +185,9 @@ namespace StardewDruid.Battle
 
             level = Level;
 
-            levelString = StringData.LevelStrings(level);
+            levelString = StringData.Get(StringData.str.level, new { level = Level });
 
-            possessive = StringData.Strings(StringData.stringkeys.your);
+            possessive = StringData.Get(StringData.str.your);
 
             title = PalHandle.PalTitle(Type, Scheme);
 
@@ -221,9 +224,9 @@ namespace StardewDruid.Battle
 
             level = Level;
 
-            levelString = StringData.LevelStrings(level);
+            levelString = StringData.Get(StringData.str.level, new { level = Level });
 
-            possessive = StringData.Strings(StringData.stringkeys.your);
+            possessive = StringData.Get(StringData.str.your);
 
             title = BattleDragon.DragonTitle();
 
@@ -720,40 +723,34 @@ namespace StardewDruid.Battle
 
         }
 
-        public int PotionHealth(HerbalHandle.herbals Item = HerbalHandle.herbals.ligna)
+        public int PotionHealth(ApothecaryHandle.items Item = ApothecaryHandle.items.ligna)
         {
 
             int extra = max / 3;
 
             switch (Item)
             {
-                case HerbalHandle.herbals.ligna:
+                case ApothecaryHandle.items.ligna:
 
                     extra = Math.Max(20, extra);
 
                     break;
 
-                case HerbalHandle.herbals.melius_ligna:
-
-                    extra = Math.Max(30, extra);
-
-                    break;
-
-                case HerbalHandle.herbals.satius_ligna:
+                case ApothecaryHandle.items.satius_ligna:
 
                     extra = Math.Max(40, extra);
 
                     break;
 
-                case HerbalHandle.herbals.magnus_ligna:
+                case ApothecaryHandle.items.magnus_ligna:
 
-                    extra = Math.Max(50, extra);
+                    extra = Math.Max(60, extra);
 
                     break;
 
-                case HerbalHandle.herbals.optimus_ligna:
+                case ApothecaryHandle.items.optimus_ligna:
 
-                    extra = Math.Max(60, extra);
+                    extra = Math.Max(100, extra);
 
                     break;
 
@@ -767,38 +764,32 @@ namespace StardewDruid.Battle
 
         }
 
-        public int PotionAttack(HerbalHandle.herbals Item = HerbalHandle.herbals.impes)
+        public int PotionAttack(ApothecaryHandle.items Item = ApothecaryHandle.items.vigores)
         {
             int extra = attack / 4;
 
             switch (Item)
             {
 
-                case HerbalHandle.herbals.impes:
-
-                    extra = Math.Max(4, extra);
-
-                    break;
-
-                case HerbalHandle.herbals.melius_impes:
+                case ApothecaryHandle.items.vigores:
 
                     extra = Math.Max(6, extra);
 
                     break;
 
-                case HerbalHandle.herbals.satius_impes:
+                case ApothecaryHandle.items.satius_vigores:
 
                     extra = Math.Max(8, extra);
 
                     break;
 
-                case HerbalHandle.herbals.magnus_impes:
+                case ApothecaryHandle.items.magnus_vigores:
 
                     extra = Math.Max(10, extra);
 
                     break;
 
-                case HerbalHandle.herbals.optimus_impes:
+                case ApothecaryHandle.items.optimus_vigores:
                     extra = Math.Max(12, extra);
 
                     break;
@@ -811,7 +802,7 @@ namespace StardewDruid.Battle
 
         }
 
-        public int PotionSpeed(HerbalHandle.herbals Item = HerbalHandle.herbals.celeri)
+        public int PotionSpeed(ApothecaryHandle.items Item = ApothecaryHandle.items.celeri)
         {
 
             int extra = speed / 4;
@@ -819,31 +810,25 @@ namespace StardewDruid.Battle
             switch (Item)
             {
 
-                case HerbalHandle.herbals.celeri:
-
-                    extra = Math.Max(4, extra);
-
-                    break;
-
-                case HerbalHandle.herbals.melius_celeri:
+                case ApothecaryHandle.items.celeri:
 
                     extra = Math.Max(6, extra);
 
                     break;
 
-                case HerbalHandle.herbals.satius_celeri:
+                case ApothecaryHandle.items.satius_celeri:
 
                     extra = Math.Max(8, extra);
 
                     break;
 
-                case HerbalHandle.herbals.magnus_celeri:
+                case ApothecaryHandle.items.magnus_celeri:
 
                     extra = Math.Max(10, extra);
 
                     break;
 
-                case HerbalHandle.herbals.optimus_celeri:
+                case ApothecaryHandle.items.optimus_celeri:
 
                     extra = Math.Max(12, extra);
 
@@ -957,7 +942,7 @@ namespace StardewDruid.Battle
                     switch (useMove.item)
                     {
                         default:
-                        case HerbalHandle.herbals.satius_ligna:
+                        case ApothecaryHandle.items.satius_ligna:
 
                             //int health = PotionHealth();
 
@@ -965,7 +950,7 @@ namespace StardewDruid.Battle
 
                             break;
 
-                        case HerbalHandle.herbals.satius_impes:
+                        case ApothecaryHandle.items.satius_vigores:
 
                             //int attack = PotionAttack();
 
@@ -973,7 +958,7 @@ namespace StardewDruid.Battle
 
                             break;
 
-                        case HerbalHandle.herbals.satius_celeri:
+                        case ApothecaryHandle.items.satius_celeri:
 
                             //int speed = PotionSpeed();
 
@@ -981,7 +966,7 @@ namespace StardewDruid.Battle
 
                             break;
 
-                        case HerbalHandle.herbals.faeth:
+                        case ApothecaryHandle.items.faeth:
 
                             //int resist = PotionResist();
 
@@ -989,7 +974,7 @@ namespace StardewDruid.Battle
 
                             break;
 
-                        case HerbalHandle.herbals.trophy_shroom:
+                        case ApothecaryHandle.items.trophy_shroom:
 
                             //int critical = PotionCritical();
 
@@ -997,7 +982,7 @@ namespace StardewDruid.Battle
 
                             break;
 
-                        case HerbalHandle.herbals.trophy_eye:
+                        case ApothecaryHandle.items.trophy_eye:
 
                             //int counter = PotionCounter();
 
@@ -1011,7 +996,7 @@ namespace StardewDruid.Battle
 
                 case BattleCombatant.battleoptions.absorb:
 
-                    description = prefix + abilities[useMove.ability].onHit + useMove.damage + StringData.Strings(StringData.stringkeys.health);
+                    description = prefix + abilities[useMove.ability].onHit + useMove.damage + StringData.Get(StringData.str.health);
 
                     break;
 
@@ -1023,7 +1008,7 @@ namespace StardewDruid.Battle
                         if (useMove.hit)
                         {
 
-                            description = prefix + abilities[useMove.ability].onBypass + useMove.damage + StringData.Strings(StringData.stringkeys.damage);
+                            description = prefix + abilities[useMove.ability].onBypass + useMove.damage + StringData.Get(StringData.str.damage);
 
                         }
                         else
@@ -1037,7 +1022,7 @@ namespace StardewDruid.Battle
                     if (useMove.hit)
                     {
 
-                        description = prefix + abilities[useMove.ability].onHit + useMove.damage + StringData.Strings(StringData.stringkeys.damage);
+                        description = prefix + abilities[useMove.ability].onHit + useMove.damage + StringData.Get(StringData.str.damage);
                     }
                     else
                     {
@@ -1118,37 +1103,35 @@ namespace StardewDruid.Battle
 
         }
 
-        public void ApplyItem(HerbalHandle.herbals Item)
+        public void ApplyItem(ApothecaryHandle.items Item)
         {
 
             itemStat = 0;
 
             switch (Item)
             {
-                case HerbalHandle.herbals.ligna:
-                case HerbalHandle.herbals.melius_ligna:
-                case HerbalHandle.herbals.satius_ligna:
-                case HerbalHandle.herbals.magnus_ligna:
-                case HerbalHandle.herbals.optimus_ligna:
+                case ApothecaryHandle.items.ligna:
+                case ApothecaryHandle.items.satius_ligna:
+                case ApothecaryHandle.items.magnus_ligna:
+                case ApothecaryHandle.items.optimus_ligna:
 
                     itemStat = PotionHealth(Item);
 
                     if (champion)
                     {
 
-                        HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.satius_ligna, 0 - 1);
+                        ApothecaryHandle.UpdateAmounts(ApothecaryHandle.items.satius_ligna, 0 - 1);
 
-                        PalHandle.ReceivePotion(championType,HerbalHandle.herbals.ligna, false);
+                        PalHandle.ReceivePotion(championType,ApothecaryHandle.items.ligna, false);
 
                     }
                     
                     break;
 
-                case HerbalHandle.herbals.impes:
-                case HerbalHandle.herbals.melius_impes:
-                case HerbalHandle.herbals.satius_impes:
-                case HerbalHandle.herbals.magnus_impes:
-                case HerbalHandle.herbals.optimus_impes:
+                case ApothecaryHandle.items.vigores:
+                case ApothecaryHandle.items.satius_vigores:
+                case ApothecaryHandle.items.magnus_vigores:
+                case ApothecaryHandle.items.optimus_vigores:
 
                     itemStat = PotionAttack(Item);
 
@@ -1157,18 +1140,17 @@ namespace StardewDruid.Battle
                     if (champion)
                     {
 
-                        HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.satius_impes, 0 - 1);
+                        ApothecaryHandle.UpdateAmounts(ApothecaryHandle.items.satius_vigores, 0 - 1);
 
-                        PalHandle.ReceivePotion(championType, HerbalHandle.herbals.impes, false);
+                        PalHandle.ReceivePotion(championType, ApothecaryHandle.items.vigores, false);
 
                     }
                     break;
 
-                case HerbalHandle.herbals.celeri:
-                case HerbalHandle.herbals.melius_celeri:
-                case HerbalHandle.herbals.satius_celeri:
-                case HerbalHandle.herbals.magnus_celeri:
-                case HerbalHandle.herbals.optimus_celeri:
+                case ApothecaryHandle.items.celeri:
+                case ApothecaryHandle.items.satius_celeri:
+                case ApothecaryHandle.items.magnus_celeri:
+                case ApothecaryHandle.items.optimus_celeri:
 
                     itemStat = PotionSpeed(Item);
 
@@ -1177,14 +1159,14 @@ namespace StardewDruid.Battle
                     if (champion)
                     {
 
-                        HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.satius_celeri, 0 - 1);
+                        ApothecaryHandle.UpdateAmounts(ApothecaryHandle.items.satius_celeri, 0 - 1);
 
-                        PalHandle.ReceivePotion(championType, HerbalHandle.herbals.celeri, false);
+                        PalHandle.ReceivePotion(championType, ApothecaryHandle.items.celeri, false);
 
                     }
                     break;
 
-                case HerbalHandle.herbals.faeth:
+                case ApothecaryHandle.items.faeth:
 
                     itemStat = PotionResist();
 
@@ -1207,14 +1189,14 @@ namespace StardewDruid.Battle
                     if (champion)
                     {
 
-                        HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.faeth, 0 - 1);
+                        ApothecaryHandle.UpdateAmounts(ApothecaryHandle.items.faeth, 0 - 1);
 
-                        PalHandle.ReceivePotion(championType, HerbalHandle.herbals.faeth, false);
+                        PalHandle.ReceivePotion(championType, ApothecaryHandle.items.faeth, false);
 
                     }
                     break;
 
-                case HerbalHandle.herbals.trophy_shroom:
+                case ApothecaryHandle.items.trophy_shroom:
 
                     itemStat = PotionCritical();
 
@@ -1223,12 +1205,12 @@ namespace StardewDruid.Battle
                     if (champion)
                     {
 
-                        HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.trophy_shroom, 0 - 1);
+                        ApothecaryHandle.UpdateAmounts(ApothecaryHandle.items.trophy_shroom, 0 - 1);
 
                     }
                     break;
 
-                case HerbalHandle.herbals.trophy_eye:
+                case ApothecaryHandle.items.trophy_eye:
 
                     itemStat = PotionCounter();
 
@@ -1237,7 +1219,7 @@ namespace StardewDruid.Battle
                     if (champion)
                     {
 
-                        HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.trophy_eye, 0 - 1);
+                        ApothecaryHandle.UpdateAmounts(ApothecaryHandle.items.trophy_eye, 0 - 1);
 
                     }
                     break;

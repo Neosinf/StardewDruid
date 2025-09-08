@@ -50,7 +50,7 @@ namespace StardewDruid.Event.Relics
             if (!Game1.player.hasOrWillReceiveMail("canReadJunimoText"))
             {
 
-                Mod.instance.RegisterDisplay(StringData.Strings(StringData.stringkeys.noJunimo));
+                Mod.instance.RegisterDisplay(StringData.Get(StringData.str.noJunimo));
 
                 return false;
 

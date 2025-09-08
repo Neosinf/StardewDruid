@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using StardewDruid.Cast;
 using StardewDruid.Cast.Ether;
 using StardewDruid.Character;
 using StardewDruid.Data;
@@ -10,6 +11,8 @@ using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Menus;
+using StardewValley.Network;
+using StardewValley.Objects;
 using StardewValley.Quests;
 using System;
 using System.Collections.Generic;
@@ -33,8 +36,8 @@ namespace StardewDruid.Journal
             masteries,
             relics,
             alchemy,
-            herbalism,
-
+            potions,
+            orders,
             ledger,
             dragon,
 
@@ -43,6 +46,7 @@ namespace StardewDruid.Journal
             questionPage,
 
             // masteries
+            masteryOverview,
             masteryPage,
             effects,
             effectPage,
@@ -56,7 +60,7 @@ namespace StardewDruid.Journal
             omens,
             trophies,
 
-            // herbalism
+            // apothecary
             powders,
             goods,
 
@@ -65,13 +69,13 @@ namespace StardewDruid.Journal
             palPage,
 
             // other
-            orders,
-
+            guilds,
+            guildPage,
+            goodsDistillery,
             distillery,
+            distilleryInventory,
             distilleryEstimated,
             distilleryRecent,
-
-            guildPage,
 
             battle,
             
@@ -79,9 +83,13 @@ namespace StardewDruid.Journal
 
         public journalTypes type = journalTypes.quests;
 
-        public journalTypes parentJournal = journalTypes.quests;
+        public journalTypes parent = journalTypes.quests;
 
-        public string title = StringData.Strings(StringData.stringkeys.stardewDruid);
+        public int record = 0;
+
+        public List<string> parameters = new();
+
+        public string title = StringData.Get(StringData.str.stardewDruid);
 
         public enum journalButtons
         {
@@ -92,12 +100,11 @@ namespace StardewDruid.Journal
             openAlchemy,
             openPotions,
             openOmens,
+            openOrders,
             openCompanions,
             openDragonomicon,
 
             refresh,
-            //viewQuest,
-            //viewEffect,
             openEffects,
             openLore,
             openPowders,
@@ -109,6 +116,11 @@ namespace StardewDruid.Journal
             replayQuest,
             cancelReplay,
             clearBuffs,
+            
+            openGuilds,
+            openGoodsDistillery,
+            openDistillery,
+            openDistilleryInventory,
             openProductionEstimated,
             openProductionRecent,
 
@@ -116,7 +128,7 @@ namespace StardewDruid.Journal
 
             back,
             start,
-            backto,
+            previous,
 
             scrollUp,
             scrollBar,
@@ -143,9 +155,9 @@ namespace StardewDruid.Journal
             HP,
             STM,
 
-        }
+            levelUp,
 
-        public string journalId;
+        }
 
         public int focus;
 
@@ -154,8 +166,6 @@ namespace StardewDruid.Journal
         public bool interfacing;
 
         public bool browsing;
-
-        public int record;
 
         public int pagination;
 
@@ -167,9 +177,13 @@ namespace StardewDruid.Journal
 
         public int scrollId;
 
+        public int scrollHeight = 512;
+
         public Microsoft.Xna.Framework.Rectangle contentBox = new();
 
-        public Dictionary<int, JournalComponent> interfaceComponents = new();
+        public Microsoft.Xna.Framework.Vector2 titlePosition = new();
+
+        public Dictionary<int, InterfaceComponent> interfaceComponents = new();
 
         public Dictionary<journalButtons, int> interfaceRegistry = new();
 
@@ -185,13 +199,15 @@ namespace StardewDruid.Journal
 
         }
 
-        public DruidJournal(string JournalId = null, int Record = 0)
+        public DruidJournal(journalTypes Type, List<string> Parameters)
           : base(0, 0, 0, 0, true)
         {
 
-            journalId = JournalId;
+            type = Type;
 
-            record = Record;
+            title = JournalData.JournalTitle(type);
+
+            parameters = Parameters;
 
             width = 960;
 
@@ -245,7 +261,7 @@ namespace StardewDruid.Journal
             if (Mod.instance.Config.herbalismButtons.GetState() == SButtonState.Pressed && Mod.instance.questHandle.IsComplete(QuestHandle.herbalism))
             {
 
-                return journalTypes.herbalism;
+                return journalTypes.potions;
 
             }
 
@@ -264,10 +280,11 @@ namespace StardewDruid.Journal
 
                     case journalTypes.dragon:
                     case journalTypes.masteries:
+                    case journalTypes.masteryOverview:
                     case journalTypes.masteryPage:
                     case journalTypes.effects:
                     case journalTypes.effectPage:
-                    case journalTypes.herbalism:
+                    case journalTypes.potions:
                     case journalTypes.powders:
                     case journalTypes.goods:
                     case journalTypes.alchemy:
@@ -311,12 +328,13 @@ namespace StardewDruid.Journal
                 // --------------------------------
 
                 case journalTypes.masteries:
+                case journalTypes.masteryOverview:
                 case journalTypes.masteryPage:
                 case journalTypes.effects:
                 case journalTypes.effectPage:
                 case journalTypes.lore:
                 case journalTypes.lorePage:
-
+                    
                     if (RelicHandle.HasRelic(IconData.relics.druid_grimoire))
                     {
 
@@ -329,11 +347,11 @@ namespace StardewDruid.Journal
 
                 // --------------------------------
 
-                case journalTypes.herbalism:
+                case journalTypes.potions:
                 case journalTypes.powders:
                 case journalTypes.goods:
 
-                    if (RelicHandle.HasRelic(IconData.relics.herbalism_apothecary))
+                    if (RelicHandle.HasRelic(IconData.relics.druid_apothecary))
                     {
 
                         return Type;
@@ -342,7 +360,6 @@ namespace StardewDruid.Journal
                     }
 
                     break;
-
 
                 // --------------------------------
 
@@ -354,7 +371,6 @@ namespace StardewDruid.Journal
                     {
 
                         return Type;
-
 
                     }
 
@@ -388,9 +404,27 @@ namespace StardewDruid.Journal
                     }
                     break;
 
+
+                // --------------------------------
+
+                case journalTypes.orders:
+                case journalTypes.guilds:
+                case journalTypes.guildPage:
+
+                    if (RelicHandle.HasRelic(IconData.relics.crest_church))
+                    {
+
+                        return Type;
+
+
+                    }
+
+                    break;
+
                 // --------------------------------
 
                 case journalTypes.distillery:
+                case journalTypes.distilleryInventory:
                 case journalTypes.distilleryEstimated:
                 case journalTypes.distilleryRecent:
 
@@ -401,19 +435,7 @@ namespace StardewDruid.Journal
 
 
                     }
-                    break;
-                // --------------------------------
 
-                case journalTypes.orders:
-                case journalTypes.guildPage:
-
-                    if (RelicHandle.HasRelic(IconData.relics.crest_church))
-                    {
-
-                        return Type;
-
-
-                    }
                     break;
 
             }
@@ -422,9 +444,22 @@ namespace StardewDruid.Journal
 
         }
 
-        public static void openJournal(journalTypes Type, string Id = null, int Record = 0)
+        public static void openJournal(journalTypes Type)
         {
 
+            openJournal(Type,new List<string>());
+
+        }
+
+        public static void openJournal(journalTypes Type, string parameter)
+        {
+
+            openJournal(Type, new List<string>(){ parameter});
+
+        }
+
+        public static void openJournal(journalTypes Type, List<string> Parameters)
+        {
 
             Type = JournalUnlocked(Type);
 
@@ -458,19 +493,19 @@ namespace StardewDruid.Journal
 
                 case journalTypes.quests:
 
-                    Game1.activeClickableMenu = new QuestJournal(Id, Record);
+                    Game1.activeClickableMenu = new QuestJournal(Type, Parameters);
 
                     break;
 
                 case journalTypes.questPage:
 
-                    Game1.activeClickableMenu = new QuestPage(Id, Record);
+                    Game1.activeClickableMenu = new QuestPage(Type, Parameters);
 
                     break;
 
                 case journalTypes.questionPage:
 
-                    Game1.activeClickableMenu = new QuestionPage(Id, Record);
+                    Game1.activeClickableMenu = new QuestionPage(Type, Parameters);
 
                     break;
 
@@ -478,13 +513,19 @@ namespace StardewDruid.Journal
 
                 case journalTypes.masteries:
 
-                    Game1.activeClickableMenu = new MasteryJournal(Id, Record);
+                    Game1.activeClickableMenu = new MasteryJournal(Type, Parameters);
+
+                    break;
+
+                case journalTypes.masteryOverview:
+
+                    Game1.activeClickableMenu = new MasteryOverview(Type, Parameters);
 
                     break;
 
                 case journalTypes.masteryPage:
 
-                    Game1.activeClickableMenu = new MasteryPage(Id, Record);
+                    Game1.activeClickableMenu = new MasteryPage(Type, Parameters);
 
                     break;
 
@@ -492,13 +533,13 @@ namespace StardewDruid.Journal
 
                 case journalTypes.relics:
 
-                    Game1.activeClickableMenu = new RelicJournal(Id, Record);
+                    Game1.activeClickableMenu = new RelicJournal(Type, Parameters);
 
                     break;
 
                 case journalTypes.relicPage:
 
-                    Game1.activeClickableMenu = new RelicPage(Id, Record);
+                    Game1.activeClickableMenu = new RelicPage(Type, Parameters);
 
                     break;
 
@@ -506,25 +547,25 @@ namespace StardewDruid.Journal
 
                 case journalTypes.effects:
 
-                    Game1.activeClickableMenu = new EffectJournal(Id, Record);
+                    Game1.activeClickableMenu = new EffectJournal(Type, Parameters);
 
                     break;
 
                 case journalTypes.effectPage:
 
-                    Game1.activeClickableMenu = new EffectPage(Id, Record);
+                    Game1.activeClickableMenu = new EffectPage(Type, Parameters);
 
                     break;
 
                 case journalTypes.lore:
 
-                    Game1.activeClickableMenu = new LoreJournal(Id, Record);
+                    Game1.activeClickableMenu = new LoreJournal(Type, Parameters);
 
                     break;
 
                 case journalTypes.lorePage:
 
-                    Game1.activeClickableMenu = new LorePage(Id, Record);
+                    Game1.activeClickableMenu = new LorePage(Type, Parameters);
 
                     break;
 
@@ -532,27 +573,28 @@ namespace StardewDruid.Journal
 
                 case journalTypes.alchemy:
 
-                    Game1.activeClickableMenu = new AlchemyJournal(Id, Record);
+                    Game1.activeClickableMenu = new AlchemyJournal(Type, Parameters);
 
                     break;
 
                 // --------------------------------
 
-                case journalTypes.herbalism:
+                case journalTypes.potions:
 
-                    Game1.activeClickableMenu = new HerbalJournal(Id, Record);
+                    Game1.activeClickableMenu = new PotionJournal(Type, Parameters);
 
                     break;
 
                 case journalTypes.powders:
 
-                    Game1.activeClickableMenu = new PowderJournal(Id, Record);
+                    Game1.activeClickableMenu = new PowderJournal(Type, Parameters);
 
                     break;
 
                 case journalTypes.goods:
+                case journalTypes.goodsDistillery:
 
-                    Game1.activeClickableMenu = new GoodsJournal(Id, Record);
+                    Game1.activeClickableMenu = new GoodsJournal(Type, Parameters);
 
                     break;
 
@@ -560,13 +602,57 @@ namespace StardewDruid.Journal
 
                 case journalTypes.omens:
 
-                    Game1.activeClickableMenu = new OmenJournal(Id, Record);
+                    Game1.activeClickableMenu = new OmenJournal(Type, Parameters);
 
                     break;
 
                 case journalTypes.trophies:
 
-                    Game1.activeClickableMenu = new TrophyJournal(Id, Record);
+                    Game1.activeClickableMenu = new TrophyJournal(Type, Parameters);
+
+                    break;
+
+                // --------------------------------
+
+                case journalTypes.orders:
+
+                    Game1.activeClickableMenu = new OrdersJournal(Type, Parameters);
+
+                    break;
+
+                case journalTypes.guilds:
+
+                    Game1.activeClickableMenu = new GuildJournal(Type, Parameters);
+
+                    break;
+
+                case journalTypes.guildPage:
+
+                    Game1.activeClickableMenu = new GuildPage(Type, Parameters);
+
+                    break;
+
+                case journalTypes.distillery:
+
+                    Game1.activeClickableMenu = new DistilleryJournal(Type, Parameters);
+
+                    break;
+
+                case journalTypes.distilleryInventory:
+
+                    ChestHandle.OpenInventory(ChestHandle.chests.Distillery, journalTypes.distillery);
+                    
+                    break;
+
+                case journalTypes.distilleryEstimated:
+
+                    Game1.activeClickableMenu = new DistilleryEstimated(Type, Parameters);
+
+                    break;
+
+                case journalTypes.distilleryRecent:
+
+                    Game1.activeClickableMenu = new DistilleryRecent(Type, Parameters);
 
                     break;
 
@@ -574,7 +660,7 @@ namespace StardewDruid.Journal
 
                 case journalTypes.dragon:
 
-                    Game1.activeClickableMenu = new DragonJournal(Id, Record);
+                    Game1.activeClickableMenu = new DragonJournal(Type, Parameters);
 
                     break;
 
@@ -582,61 +668,52 @@ namespace StardewDruid.Journal
 
                 case journalTypes.ledger:
 
-                    Game1.activeClickableMenu = new RecruitJournal(Id, Record);
+                    Game1.activeClickableMenu = new RecruitJournal(Type, Parameters);
 
                     break;
 
                 case journalTypes.companion:
 
-                    Game1.activeClickableMenu = new RecruitPage(Id, Record);
+                    Game1.activeClickableMenu = new RecruitPage(Type, Parameters);
 
                     break;
 
                 case journalTypes.palPage:
 
-                    Game1.activeClickableMenu = new PalPage(Id, Record);
+                    Game1.activeClickableMenu = new PalPage(Type, Parameters);
 
                     break;
 
-                // --------------------------------
-
-                case journalTypes.distillery:
-
-                    Game1.activeClickableMenu = new DistilleryJournal(Id, Record);
-
-                    break;
-
-                case journalTypes.distilleryEstimated:
-
-                    Game1.activeClickableMenu = new DistilleryEstimated(Id, Record);
-
-                    break;
-
-                case journalTypes.distilleryRecent:
-
-                    Game1.activeClickableMenu = new DistilleryRecent(Id, Record);
-
-                    break;
-
-                case journalTypes.orders:
-
-                    Game1.activeClickableMenu = new OrdersJournal(Id, Record);
-
-                    break;
-
-                case journalTypes.guildPage:
-
-                    Game1.activeClickableMenu = new GuildPage(Id, Record);
-
-                    break;
             }
-
 
         }
 
         public virtual void populateContent()
         {
 
+
+        }
+
+        public virtual void ParameterRecord()
+        {
+
+            if (parameters.Count == 0)
+            {
+                return;
+
+            }
+
+            foreach (KeyValuePair<int, ContentComponent> component in contentComponents)
+            {
+
+                if (component.Value.id == parameters[0])
+                {
+
+                    record = component.Key;
+
+                }
+
+            }
 
         }
 
@@ -652,7 +729,8 @@ namespace StardewDruid.Journal
                 [104] = addButton(journalButtons.openAlchemy),
                 [105] = addButton(journalButtons.openPotions),
                 [106] = addButton(journalButtons.openCompanions),
-                [107] = addButton(journalButtons.openDragonomicon),
+                [107] = addButton(journalButtons.openOrders),
+                [108] = addButton(journalButtons.openDragonomicon),
 
                 [301] = addButton(journalButtons.exit),
 
@@ -669,15 +747,20 @@ namespace StardewDruid.Journal
 
         }
 
-
         public virtual void resetInterface()
         {
+
+            Vector2 titleSize = Game1.dialogueFont.MeasureString(title);
+
+            titlePosition = new Vector2(xPositionOnScreen + width - (int)titleSize.X - 16, yPositionOnScreen - (int)titleSize.Y - 4);
 
             interfacing = false;
 
             browsing = false;
 
-            foreach (KeyValuePair<int, JournalComponent> component in interfaceComponents)
+            interfaceRegistry = new();
+
+            foreach (KeyValuePair<int, InterfaceComponent> component in interfaceComponents)
             {
 
                 component.Value.active = true;
@@ -692,7 +775,7 @@ namespace StardewDruid.Journal
 
         }
 
-        public JournalComponent addButton(journalButtons Button)
+        public InterfaceComponent addButton(journalButtons Button)
         {
 
             int xP = xPositionOnScreen;
@@ -714,218 +797,249 @@ namespace StardewDruid.Journal
 
                 case journalButtons.back:
 
-                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 36), IconData.displays.forward, new() { flip = true, });
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 36), IconData.displays.forward, new() { flip = true, });
 
                 case journalButtons.start:
 
-                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 36), IconData.displays.end, new() { flip = true, });
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 36), IconData.displays.end, new() { flip = true, });
+
+                case journalButtons.previous:
+
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 36), IconData.displays.previous, new() );
 
                 // quest
 
                 case journalButtons.getHint:
 
-                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.question, new());
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.question, new());
+
+                case journalButtons.viewQuest:
+
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 36), IconData.displays.quest, new());
+
+                case journalButtons.viewEffect:
+
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 36), IconData.displays.skills, new());
+
+                case journalButtons.skipQuest:
+
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 68 + 36), IconData.displays.skip, new());
+
+                case journalButtons.replayQuest:
+
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 68 + 36), IconData.displays.replay, new());
+
+                case journalButtons.replayTomorrow:
+
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 68 + 36), IconData.displays.flag, new());
+
+                case journalButtons.cancelReplay:
+
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 68 + 36), IconData.displays.active, new());
 
                 // skills
 
                 case journalButtons.openEffects:
 
-                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 36), IconData.displays.effects, new());
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 36), IconData.displays.effects, new());
 
                 case journalButtons.openLore:
 
-                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 68 + 36), IconData.displays.lore, new());
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 68 + 36), IconData.displays.lore, new());
 
-                // herbalism
+
+                // apothecary
 
                 case journalButtons.openPowders:
 
-                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.powderbox, new());
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.powderbox, new());
 
                 case journalButtons.openGoods:
+                case journalButtons.openGoodsDistillery:
 
-                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 36), IconData.displays.goods, new());
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 36), IconData.displays.goods, new());
+
 
                 // alchemy
 
                 case journalButtons.openOmens:
 
-                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.omens, new());
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.omens, new());
 
                 case journalButtons.openTrophies:
 
-                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 36), IconData.displays.trophies, new());
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 36), IconData.displays.trophies, new());
 
-                // questpage replay buttons
 
-                case journalButtons.skipQuest:
+                // distillery
 
-                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.skip, new());
+                case journalButtons.openGuilds:
 
-                case journalButtons.replayQuest:
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.guilds, new());
 
-                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.replay, new());
+                case journalButtons.openDistillery:
 
-                case journalButtons.replayTomorrow:
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 68 + 36), IconData.displays.malt, new());
 
-                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.flag, new());
+                case journalButtons.openDistilleryInventory:
 
-                case journalButtons.cancelReplay:
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 68 + 68 + 36), IconData.displays.inventory, new());
 
-                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.active, new());
+                case journalButtons.openProductionRecent:
+
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 68 + 68 + 68 + 36), IconData.displays.lore, new());
+
+                case journalButtons.openProductionEstimated:
+
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 68 + 68 + 68 + 68 + 36), IconData.displays.skills, new());
+
+
+                // refresh
+
+                case journalButtons.refresh:
+
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yB - 36), IconData.displays.knock, new());
+
+                case journalButtons.clearBuffs:
+
+                    return new InterfaceComponent(Button, new Vector2(xP - 36, yB - 68 - 36), IconData.displays.active, new());
+
 
                 // ====================================== top bar
 
                 default:
                 case journalButtons.openQuests:
 
-                    return new JournalComponent(Button, new Vector2(xP + 36, yT), IconData.displays.quest, new());
+                    return new InterfaceComponent(Button, new Vector2(xP + 36, yT), IconData.displays.quest, new());
 
                 case journalButtons.openMasteries:
 
-                    return new JournalComponent(Button, new Vector2(xP + 68 + 36, yT), IconData.displays.skills, new());
+                    return new InterfaceComponent(Button, new Vector2(xP + 68 + 36, yT), IconData.displays.skills, new());
 
                 case journalButtons.openRelics:
 
-                    return new JournalComponent(Button, new Vector2(xP + 68 + 68 + 36, yT), IconData.displays.relic, new());
+                    return new InterfaceComponent(Button, new Vector2(xP + 68 + 68 + 36, yT), IconData.displays.relic, new());
 
                 case journalButtons.openAlchemy:
 
-                    return new JournalComponent(Button, new Vector2(xP + 68 + 68 + 68 + 36, yT), IconData.displays.alchemy, new());
+                    return new InterfaceComponent(Button, new Vector2(xP + 68 + 68 + 68 + 36, yT), IconData.displays.alchemy, new());
 
                 case journalButtons.openPotions:
 
-                    return new JournalComponent(Button, new Vector2(xP + 68 + 68 + 68 + 68 + 36, yT), IconData.displays.herbalism, new());
-
-                case journalButtons.openDragonomicon:
-
-                    return new JournalComponent(Button, new Vector2(xP + 68 + 68 + 68 + 68 + 68 + 36, yT), IconData.displays.transform, new());
+                    return new InterfaceComponent(Button, new Vector2(xP + 68 + 68 + 68 + 68 + 36, yT), IconData.displays.herbalism, new());
 
                 case journalButtons.openCompanions:
 
-                    return new JournalComponent(Button, new Vector2(xP + 68 + 68 + 68 + 68 + 68 + 68 + 36, yT), IconData.displays.heroes, new());
+                    return new InterfaceComponent(Button, new Vector2(xP + 68 + 68 + 68 + 68 + 68 + 36, yT), IconData.displays.heroes, new());
 
-                // ====================================== variant top buttons
+                case journalButtons.openOrders:
 
-                case journalButtons.viewQuest:
+                    return new InterfaceComponent(Button, new Vector2(xP + 68 + 68 + 68 + 68 + 68 + 68 + 36, yT), IconData.displays.orders, new());
 
-                    return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.quest, new());
+                case journalButtons.openDragonomicon:
 
-                case journalButtons.viewEffect:
+                    return new InterfaceComponent(Button, new Vector2(xP + 68 + 68 + 68 + 68 + 68 + 68 + 68 + 36, yT), IconData.displays.transform, new());
 
-                   return new JournalComponent(Button, new Vector2(xR - 68 - 36, yT), IconData.displays.skills, new());
+                // ====================================== variant top buttons displayed within content
+
+                // mastery menu
+
+                case journalButtons.levelUp:
+
+                    return new InterfaceComponent(Button, new Vector2(xP + (width / 2), yB - 56), IconData.displays.levelup, new());
 
                 // dragon menu
 
                 case journalButtons.dragonCopy:
 
-                    return new JournalComponent(Button, new Vector2(xR - 400, yB - 72), IconData.displays.replay, new());
+                    return new InterfaceComponent(Button, new Vector2(xR - 400, yB - 72), IconData.displays.replay, new());
 
                 case journalButtons.dragonSave:
 
-                    return new JournalComponent(Button, new Vector2(xR - 320, yB - 72), IconData.displays.save, new());
+                    return new InterfaceComponent(Button, new Vector2(xR - 320, yB - 72), IconData.displays.save, new());
 
                 // recruit menu
 
                 case journalButtons.summonCompanion:
 
-                    return new JournalComponent(Button, new Vector2(xR - 160, yB - 72), IconData.displays.complete, new());
+                    return new InterfaceComponent(Button, new Vector2(xR - 160, yB - 72), IconData.displays.complete, new());
 
                 case journalButtons.dismissCompanion:
 
-                    return new JournalComponent(Button, new Vector2(xR - 80, yB - 72), IconData.displays.exit, new());
+                    return new InterfaceComponent(Button, new Vector2(xR - 80, yB - 72), IconData.displays.exit, new());
 
                 // pal menu
 
                 case journalButtons.summonPal:
 
-                    return new JournalComponent(Button, new Vector2(xR - 160, yB - 72), IconData.displays.complete, new());
+                    return new InterfaceComponent(Button, new Vector2(xR - 160, yB - 72), IconData.displays.complete, new());
 
                 case journalButtons.dismissPal:
 
-                    return new JournalComponent(Button, new Vector2(xR - 80, yB - 72), IconData.displays.exit, new());
+                    return new InterfaceComponent(Button, new Vector2(xR - 80, yB - 72), IconData.displays.exit, new());
 
                 case journalButtons.renamePal:
 
-                    return new JournalComponent(Button, new Vector2(xP + 80, yP + 80), IconData.displays.scroll, new());
+                    return new InterfaceComponent(Button, new Vector2(xP + 80, yP + 80), IconData.displays.scroll, new());
 
                 case journalButtons.schemePal:
 
-                    return new JournalComponent(Button, new Vector2(xP + 80, yP + 160), IconData.displays.replay, new());
+                    return new InterfaceComponent(Button, new Vector2(xP + 80, yP + 160), IconData.displays.replay, new());
 
                 case journalButtons.rewildPal:
 
-                    return new JournalComponent(Button, new Vector2(xP + 80, yP + 240), IconData.displays.tree, new());
+                    return new InterfaceComponent(Button, new Vector2(xP + 80, yP + 240), IconData.displays.tree, new());
 
-                // distillery
-
-                case journalButtons.openProductionRecent:
-
-                    return new JournalComponent(Button, new Vector2(xP + 36, yT), IconData.displays.lore, new());
-
-                case journalButtons.openProductionEstimated:
-
-                    return new JournalComponent(Button, new Vector2(xP + 68 + 36, yT), IconData.displays.skills, new());
 
                 // ======================================  right side
 
                 case journalButtons.exit:
 
-                    return new JournalComponent(Button, new Vector2(xR + 36, yP + 36), IconData.displays.exit, new() { scale = 4f, });
+                    return new InterfaceComponent(Button, new Vector2(xR + 36, yP + 36), IconData.displays.exit, new() { scale = 4f, });
 
                 case journalButtons.scrollUp:
 
-                    return new JournalComponent(Button, new Vector2(xR + 36, yP + 68 + 68 + 36), IconData.displays.up, new() { flip = true, });
+                    return new InterfaceComponent(Button, new Vector2(xR + 36, yP + 68 + 36), IconData.displays.up, new() { flip = true, });
 
                 case journalButtons.scrollBar:
 
-                    int scrollUpper = yP + 68 + 68 + 68 + 4;
+                    int scrollUpper = yP + 68 + 68 + 4;
 
-                    int scrollLower = yB - 68 - 68 - 68 - 4;
+                    int scrollLower = yB - 68 - 68 - 68 - 68 - 4;
 
                     scrollBox = new(xR + 36, scrollUpper, 64, scrollLower - scrollUpper);
 
-                    return new JournalComponent(Button, new Vector2(xR + 36, yP + 68 + 68 + 68 + 36), IconData.displays.scroll, new() { flip = true, });
+                    return new InterfaceComponent(Button, new Vector2(xR + 36, yP + 68 + 68 + 36), IconData.displays.scroll, new() { flip = true, });
 
                 case journalButtons.scrollDown:
 
-                    return new JournalComponent(Button, new Vector2(xR + 36, yB - 68 - 68 - 36), IconData.displays.down, new() { flip = true, });
+                    return new InterfaceComponent(Button, new Vector2(xR + 36, yB - 68 - 68 - 68 - 36), IconData.displays.down, new() { flip = true, });
 
                 case journalButtons.forward:
 
-                    return new JournalComponent(Button, new Vector2(xR + 36, yB - 36), IconData.displays.forward, new());
+                    return new InterfaceComponent(Button, new Vector2(xR + 36, yB - 36), IconData.displays.forward, new());
 
                 case journalButtons.end:
 
-                    return new JournalComponent(Button, new Vector2(xR + 36, yB - 68 - 36), IconData.displays.end, new());
+                    return new InterfaceComponent(Button, new Vector2(xR + 36, yB - 68 - 36), IconData.displays.end, new());
 
                 // ---------------------------------------  other right side
 
                 case journalButtons.active:
 
-                    return new JournalComponent(Button, new Vector2(xR + 36, yP + 68 + 68 + 36), IconData.displays.active, new());
+                    return new InterfaceComponent(Button, new Vector2(xR + 36, yP + 68 + 68 + 36), IconData.displays.active, new());
 
                 case journalButtons.reverse:
 
-                    return new JournalComponent(Button, new Vector2(xR + 36, yP + 68 + 68 + 68 + 36), IconData.displays.reverse, new());
+                    return new InterfaceComponent(Button, new Vector2(xR + 36, yP + 68 + 68 + 68 + 36), IconData.displays.reverse, new());
 
                 case journalButtons.HP:
 
-                    return new JournalComponent(Button, new Vector2(xR + 36, yP + 68 + 36 + 36), IconData.displays.none, new());
+                    return new InterfaceComponent(Button, new Vector2(xR + 36, yP + 68 + 36 + 36), IconData.displays.none, new());
 
                 case journalButtons.STM:
 
-                    return new JournalComponent(Button, new Vector2(xR + 36, yP + 68 + 68 + 36 + 36), IconData.displays.none, new());
-
-                // herbalism
-
-                case journalButtons.refresh:
-
-                    return new JournalComponent(Button, new Vector2(xR + 36, yP + 68 + 68 + 68 + 68 + 36), IconData.displays.knock, new());
-
-                case journalButtons.clearBuffs:
-
-                    return new JournalComponent(Button, new Vector2(xR + 36, yP + 68 + 68 + 68 + 68 + 68 + 36), IconData.displays.active, new());
+                    return new InterfaceComponent(Button, new Vector2(xR + 36, yP + 68 + 68 + 36 + 36), IconData.displays.none, new());
 
             }
 
@@ -949,13 +1063,6 @@ namespace StardewDruid.Journal
 
                         }
 
-                        if (type != journalTypes.quests)
-                        {
-
-                            interfaceComponents[button.Value].fade = 0.8f;
-
-                        }
-
                         break;
 
                     case journalButtons.openMasteries:
@@ -964,13 +1071,6 @@ namespace StardewDruid.Journal
                         {
 
                             interfaceComponents[button.Value].active = false;
-
-                        }
-
-                        if (type != journalTypes.masteries)
-                        {
-
-                            interfaceComponents[button.Value].fade = 0.8f;
 
                         }
 
@@ -992,13 +1092,6 @@ namespace StardewDruid.Journal
 
                         }
 
-                        if (type != journalTypes.relics)
-                        {
-
-                            interfaceComponents[button.Value].fade = 0.8f;
-
-                        }
-
                         break;
 
                     case journalButtons.openAlchemy:
@@ -1010,36 +1103,16 @@ namespace StardewDruid.Journal
 
                         }
 
-                        if (type != journalTypes.alchemy)
-                        {
-
-                            interfaceComponents[button.Value].fade = 0.8f;
-
-                        }
-
                         break;
 
                     case journalButtons.openPotions:
 
-                        if (JournalUnlocked(journalTypes.herbalism) == journalTypes.none)
+                        if (JournalUnlocked(journalTypes.potions) == journalTypes.none)
                         {
 
                             interfaceComponents[button.Value].active = false;
 
                         }
-
-                        if (type != journalTypes.herbalism)
-                        {
-
-                            interfaceComponents[button.Value].fade = 0.8f;
-
-                        }
-
-                        break;
-
-                    case journalButtons.openOmens:
-
-                        interfaceComponents[button.Value].fade = 0.8f;
 
                         break;
 
@@ -1052,10 +1125,14 @@ namespace StardewDruid.Journal
 
                         }
 
-                        if (type != journalTypes.ledger)
+                        break;
+
+                    case journalButtons.openOrders:
+
+                        if (JournalUnlocked(journalTypes.orders) == journalTypes.none)
                         {
 
-                            interfaceComponents[button.Value].fade = 0.8f;
+                            interfaceComponents[button.Value].active = false;
 
                         }
 
@@ -1068,13 +1145,6 @@ namespace StardewDruid.Journal
                         {
 
                             interfaceComponents[button.Value].active = false;
-
-                        }
-
-                        if (type != journalTypes.dragon)
-                        {
-
-                            interfaceComponents[button.Value].fade = 0.8f;
 
                         }
 
@@ -1158,6 +1228,31 @@ namespace StardewDruid.Journal
 
                         break;
 
+
+                    case journalButtons.scrollBar:
+
+                        scrolled = 0;
+
+                        if (contentBox.Height < scrollHeight)
+                        {
+
+                            interfaceComponents[button.Value].active = false;
+
+                            interfaceComponents[interfaceRegistry[journalButtons.scrollUp]].active = false;
+
+                            interfaceComponents[interfaceRegistry[journalButtons.scrollDown]].active = false;
+
+                        }
+                        else
+                        {
+
+                            scrollId = button.Value;
+
+                        }
+
+                        break;
+
+
                 }
 
             }
@@ -1173,67 +1268,97 @@ namespace StardewDruid.Journal
                 default:
                 case journalButtons.openQuests:
 
-                    DruidJournal.openJournal(journalTypes.quests);
+                    openJournal(journalTypes.quests);
 
                     break;
 
                 case journalButtons.openMasteries:
 
-                    DruidJournal.openJournal(journalTypes.masteries);
+                    openJournal(journalTypes.masteries);
+
+                    break;
+
+                case journalButtons.openAlchemy:
+
+                    openJournal(journalTypes.alchemy);
 
                     break;
 
                 case journalButtons.openRelics:
 
-                    DruidJournal.openJournal(journalTypes.relics);
+                    openJournal(journalTypes.relics);
 
                     break;
 
                 case journalButtons.openPotions:
 
-                    DruidJournal.openJournal(journalTypes.herbalism);
+                    openJournal(journalTypes.potions);
 
                     break;
 
                 case journalButtons.openLore:
 
-                    DruidJournal.openJournal(journalTypes.lore);
+                    openJournal(journalTypes.lore);
 
                     break;
 
                 case journalButtons.openEffects:
 
-                    DruidJournal.openJournal(journalTypes.effects);
+                    openJournal(journalTypes.effects);
 
                     break;
 
                 case journalButtons.openDragonomicon:
 
-                    DruidJournal.openJournal(journalTypes.dragon);
+                    openJournal(journalTypes.dragon);
 
                     break;
 
                 case journalButtons.openCompanions:
 
-                    DruidJournal.openJournal(journalTypes.ledger);
+                    openJournal(journalTypes.ledger);
 
                     break;
 
                 case journalButtons.openPowders:
 
-                    DruidJournal.openJournal(journalTypes.powders);
+                    openJournal(journalTypes.powders);
 
                     break;
 
                 case journalButtons.openOmens:
 
-                    DruidJournal.openJournal(journalTypes.omens);
+                    openJournal(journalTypes.omens);
+
+                    break;
+
+                case journalButtons.openTrophies:
+
+                    openJournal(journalTypes.trophies);
+
+                    break;
+
+                case journalButtons.openOrders:
+
+                    openJournal(journalTypes.orders);
+
+                    break;
+
+                case journalButtons.openGuilds:
+
+                    openJournal(journalTypes.guilds);
 
                     break;
 
                 case journalButtons.openGoods:
 
-                    DruidJournal.openJournal(journalTypes.goods);
+                    openJournal(journalTypes.goods);
+
+                    break;
+
+                case journalButtons.openGoodsDistillery:
+
+                    openJournal(journalTypes.goodsDistillery);
 
                     break;
 
@@ -1288,6 +1413,12 @@ namespace StardewDruid.Journal
                     
                     break;
 
+                case journalButtons.previous:
+
+                    openJournal(parent);
+
+                    break;
+
                 case journalButtons.scrollUp:
 
                     scrollAmount(-1);
@@ -1333,11 +1464,42 @@ namespace StardewDruid.Journal
 
                 case journalButtons.getHint:
 
-                    DruidJournal.openJournal(journalTypes.questionPage);
+                    openJournal(journalTypes.questionPage);
 
                     break;
 
+                case journalButtons.openDistillery:
 
+                    DruidJournal.openJournal(journalTypes.distillery);
+
+                    return;
+
+                case journalButtons.openDistilleryInventory:
+
+                    DruidJournal.openJournal(journalTypes.distilleryInventory);
+
+                    return;
+
+                case journalButtons.openProductionEstimated:
+
+                    DruidJournal.openJournal(journalTypes.distilleryEstimated);
+
+                    return;
+
+                case journalButtons.openProductionRecent:
+
+                    if (Mod.instance.exportHandle.recentProduction.Count == 0)
+                    {
+
+                        Game1.playSound(SpellHandle.Sounds.ghost.ToString());
+
+                        return;
+
+                    }
+
+                    DruidJournal.openJournal(journalTypes.distilleryRecent);
+
+                    return;
 
             }
 
@@ -1366,6 +1528,35 @@ namespace StardewDruid.Journal
                     break;
 
             }
+
+        }
+
+        public virtual int ShiftPressed()
+        {
+
+            int amount = 1;
+
+            if (Mod.instance.Helper.Input.GetState(SButton.LeftShift) == SButtonState.Held)
+            {
+                amount *= 5;
+            }
+
+            if (Mod.instance.Helper.Input.GetState(SButton.RightShift) == SButtonState.Held)
+            {
+                amount *= 5;
+            }
+            
+            if (Mod.instance.Helper.Input.GetState(SButton.LeftControl) == SButtonState.Held)
+            {
+                amount *= 10;
+            }
+            
+            if (Mod.instance.Helper.Input.GetState(SButton.RightControl) == SButtonState.Held)
+            {
+                amount *= 10;
+            }
+
+            return amount;
 
         }
 
@@ -1437,7 +1628,7 @@ namespace StardewDruid.Journal
 
             scrolled += (int)(direction * 32);
 
-            int limit = contentBox.Height - 512;
+            int limit = contentBox.Height - scrollHeight;
 
             if (scrolled > limit)
             {
@@ -1487,7 +1678,7 @@ namespace StardewDruid.Journal
 
             float ratio = diff / (float)(scrollBox.Height - 64);
 
-            int limit = contentBox.Height - 512;
+            int limit = contentBox.Height - scrollHeight;
 
             scrolled = (int)((float)ratio * (float)limit);
 
@@ -1748,7 +1939,7 @@ namespace StardewDruid.Journal
 
             List<int> interfaceables = new();
 
-            foreach(KeyValuePair<int,JournalComponent> component in interfaceComponents)
+            foreach(KeyValuePair<int,InterfaceComponent> component in interfaceComponents)
             {
                 if (component.Value.active)
                 {
@@ -2068,7 +2259,7 @@ namespace StardewDruid.Journal
         public void hoverInterface(int x, int y)
         {
 
-            foreach (KeyValuePair<int, JournalComponent> component in interfaceComponents)
+            foreach (KeyValuePair<int, InterfaceComponent> component in interfaceComponents)
             {
 
                 if (!component.Value.active)
@@ -2167,7 +2358,7 @@ namespace StardewDruid.Journal
 
             // Title
 
-            //SpriteText.drawStringWithScrollCenteredAt(b, title, xPositionOnScreen + width / 2, yPositionOnScreen - 64);
+            drawTitle(b);
 
             // Mainbox
 
@@ -2179,7 +2370,18 @@ namespace StardewDruid.Journal
 
             // content
 
-            drawContent(b);
+            if (scrollId != 0)
+            {
+
+                drawScroll(b);
+
+            }
+            else
+            {
+
+                drawContent(b);
+
+            }
 
             // mouse
 
@@ -2193,10 +2395,29 @@ namespace StardewDruid.Journal
 
         }
 
+        public virtual void drawTitle(SpriteBatch b)
+        {
+
+            b.DrawString(
+                Game1.dialogueFont,
+                title,
+                titlePosition + new Vector2(-1, 1.5f),
+                Microsoft.Xna.Framework.Color.Brown * 0.35f,
+                0f, Vector2.Zero, 1f, SpriteEffects.None, 0.900f);
+
+            b.DrawString(
+                Game1.dialogueFont,
+                title,
+                titlePosition,
+                Microsoft.Xna.Framework.Color.Wheat*0.9f,
+                0f, Vector2.Zero, 1f, SpriteEffects.None, 0.901f);
+
+        }
+
         public virtual void drawInterface(SpriteBatch b)
         {
 
-            foreach(KeyValuePair<int,JournalComponent> component in interfaceComponents)
+            foreach(KeyValuePair<int,InterfaceComponent> component in interfaceComponents)
             {
 
                 if (!component.Value.active)
@@ -2253,6 +2474,46 @@ namespace StardewDruid.Journal
 
         }
 
+        public virtual void drawScroll(SpriteBatch b)
+        {
+
+            // preserve current batch rectangle
+
+            Rectangle preserve = b.GraphicsDevice.ScissorRectangle;
+
+            b.End();
+
+            // create new batch for scroll rectangle
+
+            SpriteBatch b2 = b;
+
+            b2.Begin(0, BlendState.AlphaBlend, SamplerState.PointClamp, null, new RasterizerState() { ScissorTestEnable = true }, null, new Matrix?());
+
+            // determine inframe
+
+            Rectangle inframe = new(xPositionOnScreen + 32, yPositionOnScreen + 48, width - 64, scrollHeight + 32);
+
+            Rectangle screen = Utility.ConstrainScissorRectToScreen(inframe);
+
+            Game1.graphics.GraphicsDevice.ScissorRectangle = screen;
+
+            foreach (KeyValuePair<int, ContentComponent> component in contentComponents)
+            {
+
+                component.Value.draw(b, new Vector2(0, -scrolled));
+
+            }
+
+            // leave inframe
+
+            b.End();
+
+            b.GraphicsDevice.ScissorRectangle = preserve;
+
+            b.Begin(0, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, new Matrix?());
+
+        }
+
         public virtual void drawHover(SpriteBatch b)
         {
 
@@ -2275,27 +2536,27 @@ namespace StardewDruid.Journal
 
             Vector2 textOffset = Game1.smallFont.MeasureString(t) * 1.25f;
 
-            Microsoft.Xna.Framework.Rectangle hoverbox = drawHoverBox(b, (int)textOffset.X + 64, (int)textOffset.Y + 32);
+            Microsoft.Xna.Framework.Rectangle hoverbox = drawHoverBox(b, (int)textOffset.X + 64, (int)textOffset.Y + 32, 3f);
+
+            Vector2 hoverPosition = new Vector2(hoverbox.Center.X - (textOffset.X / 2),hoverbox.Center.Y - (textOffset.Y / 2) + 2f);
 
             b.DrawString(
                 Game1.smallFont,
                 t,
-                new Vector2(hoverbox.Center.X - (textOffset.X / 2),
-                hoverbox.Center.Y - (textOffset.Y / 2) + 2f),
-                Game1.textColor,
-                0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
-
-            b.DrawString(
-                Game1.smallFont,
-                t,
-                new Vector2(hoverbox.Center.X - (textOffset.X / 2) - 1f,
-                hoverbox.Center.Y - (textOffset.Y / 2) + 2f + 1.5f),
+                hoverPosition + new Vector2(-1,1.5f),
                 Microsoft.Xna.Framework.Color.Brown * 0.35f,
-                0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
+                0f, Vector2.Zero, 1.25f, SpriteEffects.None, 0.900f);
+
+            b.DrawString(
+                Game1.smallFont,
+                t,
+                hoverPosition,
+                Game1.textColor,
+                0f, Vector2.Zero, 1.25f, SpriteEffects.None, 0.901f);
 
         }
 
-        public Microsoft.Xna.Framework.Rectangle drawHoverBox(SpriteBatch b, int bWidth = 512, int bHeight = 64)
+        public Microsoft.Xna.Framework.Rectangle drawHoverBox(SpriteBatch b, int bWidth = 512, int bHeight = 64, float border = 4f)
         {
 
             // -------------------------------------------------------
@@ -2336,7 +2597,7 @@ namespace StardewDruid.Journal
                 bounds.Width,
                 bounds.Height,
                 Color.White,
-                4f,
+                border,
                 true,
                 -1f
             );
@@ -2345,6 +2606,14 @@ namespace StardewDruid.Journal
 
         }
 
+        public virtual void DrawSeparator(SpriteBatch b, int x, int y, float width = 488f)
+        {
+
+            b.Draw(Game1.staminaRect, new Rectangle(x, y, 488, 2), new Microsoft.Xna.Framework.Color(167, 81, 37));
+
+            b.Draw(Game1.staminaRect, new Rectangle(x, y + 2, 488, 3), new Microsoft.Xna.Framework.Color(246, 146, 30));
+
+        }
 
         // ===================================================== 
 

@@ -51,7 +51,7 @@ namespace StardewDruid.Journal
 
         public int dragonResist;
 
-        public DragonJournal(string QuestId, int Record) : base(QuestId, Record) 
+        public DragonJournal(journalTypes Type, List<string> Parameters) : base(Type, Parameters)
         {
 
         }
@@ -61,9 +61,7 @@ namespace StardewDruid.Journal
 
             type = journalTypes.dragon;
 
-            parentJournal = journalTypes.relics;
-
-            title = JournalData.JournalTitle(type);
+            parent = journalTypes.relics;
 
             interfaceComponents = new()
             {
@@ -74,7 +72,8 @@ namespace StardewDruid.Journal
                 [104] = addButton(journalButtons.openAlchemy),
                 [105] = addButton(journalButtons.openPotions),
                 [106] = addButton(journalButtons.openCompanions),
-                [107] = addButton(journalButtons.openDragonomicon),
+                [107] = addButton(journalButtons.openOrders),
+                [108] = addButton(journalButtons.openDragonomicon),
 
                 [109] = addButton(journalButtons.dragonCopy),
                 [110] = addButton(journalButtons.dragonSave),
@@ -184,7 +183,7 @@ namespace StardewDruid.Journal
 
             // ===========================================
 
-            dragonPrimary = new(StringData.Strings(StringData.stringkeys.primaryColour), xPositionOnScreen + (width / 2) + 32, yPositionOnScreen + 96);
+            dragonPrimary = new(StringData.Get(StringData.str.primaryColour), xPositionOnScreen + (width / 2) + 32, yPositionOnScreen + 96);
 
             dragonPrimary.setColor(dragonRender.primary);
 
@@ -197,7 +196,7 @@ namespace StardewDruid.Journal
 
             // ===========================================
 
-            dragonSecondary = new(StringData.Strings(StringData.stringkeys.secondaryColour), xPositionOnScreen + (width / 2) + 32, yPositionOnScreen + 200);
+            dragonSecondary = new(StringData.Get(StringData.str.secondaryColour), xPositionOnScreen + (width / 2) + 32, yPositionOnScreen + 200);
 
             dragonSecondary.setColor(dragonRender.secondary);
 
@@ -210,7 +209,7 @@ namespace StardewDruid.Journal
 
             // ===========================================
 
-            dragonTertiary = new(StringData.Strings(StringData.stringkeys.tertiaryColour), xPositionOnScreen + (width / 2) + 32, yPositionOnScreen + 304);
+            dragonTertiary = new(StringData.Get(StringData.str.tertiaryColour), xPositionOnScreen + (width / 2) + 32, yPositionOnScreen + 304);
 
             dragonTertiary.setColor(dragonRender.tertiary);
 
@@ -253,11 +252,6 @@ namespace StardewDruid.Journal
             switch (button)
             {
 
-                case journalButtons.back:
-
-                    DruidJournal.openJournal(parentJournal, null, record);
-
-                    break;
 
                 case journalButtons.dragonCopy:
 
@@ -546,17 +540,17 @@ namespace StardewDruid.Journal
 
                         dragonRender.drawWalk(b, new(component.Value.bounds.X + 160 - (32 * dragonScale), component.Value.bounds.Y + 304 - (64 * dragonScale)), new() { direction = dragonDirection, frame = 0, scale = dragonScale, layer = -1f, flip = dragonDirection == 3, shadow = false, });
 
-                        b.DrawString(Game1.smallFont, StringData.Strings(StringData.stringkeys.dragonScheme), new Vector2(component.Value.bounds.X - 1.5f, yPositionOnScreen + 372 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1.1f);
+                        b.DrawString(Game1.smallFont, StringData.Get(StringData.str.dragonScheme), new Vector2(component.Value.bounds.X - 1.5f, yPositionOnScreen + 372 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1.1f);
 
-                        b.DrawString(Game1.smallFont, StringData.Strings(StringData.stringkeys.dragonScheme), new Vector2(component.Value.bounds.X, yPositionOnScreen + 372), Game1.textColor, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
+                        b.DrawString(Game1.smallFont, StringData.Get(StringData.str.dragonScheme), new Vector2(component.Value.bounds.X, yPositionOnScreen + 372), Game1.textColor, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
 
-                        b.DrawString(Game1.smallFont, StringData.Strings(StringData.stringkeys.breathScheme), new Vector2(component.Value.bounds.X - 1.5f, yPositionOnScreen + 480 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1.1f);
+                        b.DrawString(Game1.smallFont, StringData.Get(StringData.str.breathScheme), new Vector2(component.Value.bounds.X - 1.5f, yPositionOnScreen + 480 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1.1f);
 
-                        b.DrawString(Game1.smallFont, StringData.Strings(StringData.stringkeys.breathScheme), new Vector2(component.Value.bounds.X, yPositionOnScreen + 480), Game1.textColor, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
+                        b.DrawString(Game1.smallFont, StringData.Get(StringData.str.breathScheme), new Vector2(component.Value.bounds.X, yPositionOnScreen + 480), Game1.textColor, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
 
-                        b.DrawString(Game1.smallFont, StringData.Strings(StringData.stringkeys.dragonSize), new Vector2(xPositionOnScreen + width - 160f - 1.5f, yPositionOnScreen + 64f + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1.1f);
+                        b.DrawString(Game1.smallFont, StringData.Get(StringData.str.dragonSize), new Vector2(xPositionOnScreen + width - 160f - 1.5f, yPositionOnScreen + 64f + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1.1f);
 
-                        b.DrawString(Game1.smallFont, StringData.Strings(StringData.stringkeys.dragonSize), new Vector2(xPositionOnScreen + width - 160f, yPositionOnScreen + 64), Game1.textColor, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
+                        b.DrawString(Game1.smallFont, StringData.Get(StringData.str.dragonSize), new Vector2(xPositionOnScreen + width - 160f, yPositionOnScreen + 64), Game1.textColor, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
 
                         break;
 
@@ -753,9 +747,9 @@ namespace StardewDruid.Journal
 
                     case "primary":
 
-                        b.DrawString(Game1.smallFont, StringData.Strings(StringData.stringkeys.primaryColour), new Vector2(center + 32, yPositionOnScreen + 64), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
+                        b.DrawString(Game1.smallFont, StringData.Get(StringData.str.primaryColour), new Vector2(center + 32, yPositionOnScreen + 64), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
 
-                        b.DrawString(Game1.smallFont, StringData.Strings(StringData.stringkeys.primaryColour), new Vector2(center + 32 - 1.5f, yPositionOnScreen + 64 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
+                        b.DrawString(Game1.smallFont, StringData.Get(StringData.str.primaryColour), new Vector2(center + 32 - 1.5f, yPositionOnScreen + 64 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
 
                         dragonPrimary.draw(b);
 
@@ -763,9 +757,9 @@ namespace StardewDruid.Journal
 
                     case "secondary":
 
-                        b.DrawString(Game1.smallFont, StringData.Strings(StringData.stringkeys.secondaryColour), new Vector2(center + 32, yPositionOnScreen + 168), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
+                        b.DrawString(Game1.smallFont, StringData.Get(StringData.str.secondaryColour), new Vector2(center + 32, yPositionOnScreen + 168), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
 
-                        b.DrawString(Game1.smallFont, StringData.Strings(StringData.stringkeys.secondaryColour), new Vector2(center + 32 - 1.5f, yPositionOnScreen + 168 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
+                        b.DrawString(Game1.smallFont, StringData.Get(StringData.str.secondaryColour), new Vector2(center + 32 - 1.5f, yPositionOnScreen + 168 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
 
                         dragonSecondary.draw(b);
 
@@ -773,9 +767,9 @@ namespace StardewDruid.Journal
 
                     case "tertiary":
 
-                        b.DrawString(Game1.smallFont, StringData.Strings(StringData.stringkeys.tertiaryColour), new Vector2(center + 32, yPositionOnScreen + 272), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
+                        b.DrawString(Game1.smallFont, StringData.Get(StringData.str.tertiaryColour), new Vector2(center + 32, yPositionOnScreen + 272), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
 
-                        b.DrawString(Game1.smallFont, StringData.Strings(StringData.stringkeys.tertiaryColour), new Vector2(center + 32 - 1.5f, yPositionOnScreen + 272 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
+                        b.DrawString(Game1.smallFont, StringData.Get(StringData.str.tertiaryColour), new Vector2(center + 32 - 1.5f, yPositionOnScreen + 272 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
 
                         dragonTertiary.draw(b);
 
@@ -835,7 +829,7 @@ namespace StardewDruid.Journal
             // -------------------------------------------------------
             // description
 
-            string descriptionText = Game1.parseText(StringData.Strings(StringData.stringkeys.dragonStats), Game1.smallFont, 476);
+            string descriptionText = Game1.parseText(StringData.Get(StringData.str.dragonStats), Game1.smallFont, 476);
 
             Vector2 descriptionSize = Game1.smallFont.MeasureString(descriptionText);
 
@@ -844,7 +838,7 @@ namespace StardewDruid.Journal
             // -------------------------------------------------------
             // attack
 
-            string attackText = Game1.parseText(StringData.Strings(StringData.stringkeys.attackLevel) + dragonAttack, Game1.smallFont, 476);
+            string attackText = Game1.parseText(StringData.Get(StringData.str.attackLevel) + dragonAttack, Game1.smallFont, 476);
 
             Vector2 attackSize = Game1.smallFont.MeasureString(attackText);
 
@@ -853,7 +847,7 @@ namespace StardewDruid.Journal
             // -------------------------------------------------------
             // health
 
-            string healthText = Game1.parseText(StringData.Strings(StringData.stringkeys.healthLevel) + dragonVitality, Game1.smallFont, 476);
+            string healthText = Game1.parseText(StringData.Get(StringData.str.healthLevel) + dragonVitality, Game1.smallFont, 476);
 
             Vector2 healthSize = Game1.smallFont.MeasureString(healthText);
 
@@ -862,7 +856,7 @@ namespace StardewDruid.Journal
             // -------------------------------------------------------
             // speed
 
-            string speedText = Game1.parseText(StringData.Strings(StringData.stringkeys.speedLevel) + dragonSpeed, Game1.smallFont, 476);
+            string speedText = Game1.parseText(StringData.Get(StringData.str.speedLevel) + dragonSpeed, Game1.smallFont, 476);
 
             Vector2 speedSize = Game1.smallFont.MeasureString(speedText);
 
@@ -871,7 +865,7 @@ namespace StardewDruid.Journal
             // -------------------------------------------------------
             // resist
 
-            string resistText = Game1.parseText(StringData.Strings(StringData.stringkeys.resistLevel) + dragonResist, Game1.smallFont, 476);
+            string resistText = Game1.parseText(StringData.Get(StringData.str.resistLevel) + dragonResist, Game1.smallFont, 476);
 
             Vector2 resistSize = Game1.smallFont.MeasureString(resistText);
 
@@ -941,18 +935,10 @@ namespace StardewDruid.Journal
 
             textPosition += 8 + titleSize.Y;
 
-            Color outerTop = new(167, 81, 37);
-
-            Color outerBot = new(139, 58, 29);
-
-            Color inner = new(246, 146, 30);
-
             // -------------------------------------------------------
             // description
 
-            b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition, 488, 2), outerTop);
-
-            b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition + 2, 488, 3), inner);
+            DrawSeparator(b, (int)textMargin - 4, (int)textPosition);
 
             textPosition += 12;
 
@@ -1006,9 +992,7 @@ namespace StardewDruid.Journal
             if (dragonAbilities.Count > 0)
             {
 
-                b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition, 488, 2), outerTop);
-
-                b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition + 2, 488, 3), inner);
+                DrawSeparator(b, (int)textMargin - 4, (int)textPosition);
 
                 textPosition += 12;
 

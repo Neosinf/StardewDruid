@@ -1260,8 +1260,6 @@ namespace StardewDruid.Cast.Ether
                 added = new() { SpellHandle.Effects.knock, SpellHandle.Effects.stomping }
             };
 
-            sweep.added.Add(Mod.instance.rite.ChargeEffect(Mod.instance.rite.chargeType));
-
             Mod.instance.spellRegister.Add(sweep);
 
         }
@@ -1363,7 +1361,7 @@ namespace StardewDruid.Cast.Ether
                 instant = true
             };
 
-            sweep.added.Add(Mod.instance.rite.ChargeEffect(Mod.instance.rite.chargeType));
+            sweep.added.Add(SpellHandle.Effects.knock);
 
             Mod.instance.spellRegister.Add(sweep);
 
@@ -1981,10 +1979,10 @@ namespace StardewDruid.Cast.Ether
 
                     }
 
-                    if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
+                    if (Mod.instance.apothecaryHandle.buff.applied.ContainsKey(BuffHandle.buffTypes.spellcatch))
                     {
 
-                        if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
+                        if (Mod.instance.apothecaryHandle.buff.applied.ContainsKey(BuffHandle.buffTypes.capture))
                         {
 
                             burn.added.Add(SpellHandle.Effects.capture);

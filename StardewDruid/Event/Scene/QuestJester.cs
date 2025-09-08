@@ -81,7 +81,7 @@ namespace StardewDruid.Event.Scene
         public override void OnLocationAbort()
         {
 
-            Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
+            Mod.instance.RegisterMessage(StringData.Get(StringData.str.abortTomorrow), 3, true);
 
         }
 
@@ -1325,9 +1325,9 @@ namespace StardewDruid.Event.Scene
 
                 case 918:
 
-                    Winds windsNew = new();
+                    Souls windsNew = new();
 
-                    windsNew.EventSetup(Game1.player, new Vector2(eventVectors[900].X+3, eventVectors[900].Y+3) * 64, Rite.eventWinds);
+                    windsNew.EventSetup(Game1.player, new Vector2(eventVectors[900].X+3, eventVectors[900].Y+3) * 64, Rite.eventSouls);
 
                     windsNew.EventActivate();
 
@@ -1492,10 +1492,10 @@ namespace StardewDruid.Event.Scene
 
                     }
 
-                    if (Mod.instance.eventRegister.ContainsKey(Rite.eventWinds))
+                    if (Mod.instance.eventRegister.ContainsKey(Rite.eventSouls))
                     {
 
-                        Mod.instance.eventRegister[Rite.eventWinds].eventComplete = true;
+                        Mod.instance.eventRegister[Rite.eventSouls].eventComplete = true;
 
                     }
 

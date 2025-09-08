@@ -11,14 +11,14 @@ using System.Collections.Generic;
 
 namespace StardewDruid.Journal
 {
-    public class LorePage : QuestPage
+    public class LorePage : DruidJournal
     {
 
         public string effectQuest;
 
         public int effectIndex;
 
-        public LorePage(string QuestId, int Record) : base(QuestId, Record) 
+        public LorePage(journalTypes Type, List<string> Parameters) : base(Type, Parameters)
         {
 
         }
@@ -26,14 +26,14 @@ namespace StardewDruid.Journal
         public override void populateInterface()
         {
 
-            parentJournal = journalTypes.lore;
+            parent = journalTypes.lore;
 
             type = journalTypes.lorePage;
 
             interfaceComponents = new()
             {
 
-                [201] = addButton(journalButtons.back),
+                [201] = addButton(journalButtons.previous),
 
                 [301] = addButton(journalButtons.exit),
 
@@ -50,7 +50,7 @@ namespace StardewDruid.Journal
         public override void populateContent()
         {
 
-            LoreSet.loresets set = Enum.Parse<LoreSet.loresets>(journalId);
+            LoreSet.loresets set = Enum.Parse<LoreSet.loresets>(parameters[0]);
 
             // ----------------------------- title
 
@@ -65,7 +65,7 @@ namespace StardewDruid.Journal
                 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, "description");
 
-                contentComponents[start].text[0] = StringData.Strings(StringData.stringkeys.questTranscript);
+                contentComponents[start].text[0] = StringData.Get(StringData.str.questTranscript);
 
                 contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
 
@@ -189,54 +189,6 @@ namespace StardewDruid.Journal
 
         }
 
-
-        public override void activateInterface()
-        {
-
-            resetInterface();
-
-            scrolled = 0;
-
-            if (contentBox.Height < 512)
-            {
-
-                interfaceComponents[302].active = false;
-
-                interfaceComponents[303].active = false;
-
-                interfaceComponents[304].active = false;
-
-            }
-            else
-            {
-
-                scrollId = 303;
-
-            }
-
-        }
-
-        public override void pressButton(journalButtons button)
-        {
-
-            switch (button)
-            {
-                
-                case journalButtons.back:
-
-                    DruidJournal.openJournal(parentJournal, null, record);
-
-                    break;
-
-                default:
-
-                    base.pressButton(button);
-
-                    break;
-
-            }
-
-        }
 
     }
 

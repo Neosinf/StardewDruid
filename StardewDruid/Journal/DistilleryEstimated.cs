@@ -12,10 +12,10 @@ using System.Threading.Tasks;
 
 namespace StardewDruid.Journal
 {
-    public class DistilleryEstimated : QuestPage
+    public class DistilleryEstimated : DruidJournal
     {
 
-        public DistilleryEstimated(string QuestId, int Record) : base(QuestId, Record) 
+        public DistilleryEstimated(journalTypes Type, List<string> Parameters) : base(Type, Parameters) 
         {
 
         }
@@ -23,20 +23,24 @@ namespace StardewDruid.Journal
         public override void populateInterface()
         {
 
-            parentJournal = journalTypes.distillery;
+            parent = journalTypes.distillery;
 
             type = journalTypes.distilleryEstimated;
 
-            title = JournalData.JournalTitle(type);
-
             interfaceComponents = new()
             {
+                
+                [101] = addButton(journalButtons.openOrders),
 
-                [101] = addButton(journalButtons.openProductionRecent),
 
-                [201] = addButton(journalButtons.back),
+                [201] = addButton(journalButtons.previous),
+                [202] = addButton(journalButtons.openGuilds),
+                [203] = addButton(journalButtons.openGoodsDistillery),
+                [204] = addButton(journalButtons.openDistillery),
+                [205] = addButton(journalButtons.openDistilleryInventory),
+                [206] = addButton(journalButtons.openProductionRecent),
 
-                [202] = addButton(journalButtons.refresh),
+                [207] = addButton(journalButtons.refresh),
 
                 [301] = addButton(journalButtons.exit),
 
@@ -50,44 +54,17 @@ namespace StardewDruid.Journal
 
         }
 
-        public virtual List<string> ProductionContent()
-        {
-
-            Mod.instance.exportHandle.CalculateOutput();
-
-            return Mod.instance.exportHandle.calculations;
-
-        }
-
         public override void pressButton(journalButtons button)
         {
 
             switch (button)
             {
 
-                case journalButtons.back:
-
-                    DruidJournal.openJournal(journalTypes.distillery);
-
-                    break;
-
                 case journalButtons.refresh:
 
-                    Mod.instance.exportHandle.CalculateOutput();
+                    Mod.instance.exportHandle.Estimate();
 
                     populateContent();
-
-                    return;
-
-                case journalButtons.openProductionEstimated:
-
-                    DruidJournal.openJournal(journalTypes.distilleryEstimated);
-
-                    return;
-
-                case journalButtons.openProductionRecent:
-
-                    DruidJournal.openJournal(journalTypes.distilleryRecent);
 
                     return;
 
@@ -98,6 +75,13 @@ namespace StardewDruid.Journal
                     break;
 
             }
+
+        }
+
+        public override void prepareContent()
+        {
+
+            Mod.instance.exportHandle.Estimate();
 
         }
 
@@ -135,30 +119,10 @@ namespace StardewDruid.Journal
 
         }
 
-
-        public override void activateInterface()
+        public virtual List<string> ProductionContent()
         {
 
-            resetInterface();
-
-            scrolled = 0;
-
-            if (contentBox.Height < 512)
-            {
-
-                interfaceComponents[302].active = false;
-
-                interfaceComponents[303].active = false;
-
-                interfaceComponents[304].active = false;
-
-            }
-            else
-            {
-
-                scrollId = 303;
-
-            }
+            return Mod.instance.exportHandle.estimatedProduction;
 
         }
 

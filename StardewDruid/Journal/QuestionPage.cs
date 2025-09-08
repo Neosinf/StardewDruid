@@ -15,7 +15,7 @@ namespace StardewDruid.Journal
     {
 
 
-        public QuestionPage(string QuestId, int Record) : base(QuestId, Record) 
+        public QuestionPage(journalTypes Type, List<string> Parameters): base(Type, Parameters)
         {
 
         }
@@ -23,14 +23,14 @@ namespace StardewDruid.Journal
         public override void populateInterface()
         {
 
-            parentJournal = journalTypes.quests;
+            parent = journalTypes.quests;
 
             type = journalTypes.questPage;
 
             interfaceComponents = new()
             {
                 
-                [201] = addButton(journalButtons.back),
+                [201] = addButton(journalButtons.previous),
 
                 [301] = addButton(journalButtons.exit),
 
@@ -47,7 +47,7 @@ namespace StardewDruid.Journal
         public override void populateContent()
         {
 
-            title = StringData.Strings(StardewDruid.Data.StringData.stringkeys.questionCurrent);
+            title = StringData.Get(StardewDruid.Data.StringData.str.questionCurrent);
 
             int textHeight = 48;
 
@@ -97,7 +97,7 @@ namespace StardewDruid.Journal
                         if(!Context.IsMainPlayer)
                         {
 
-                            instruction = StringData.Strings(StardewDruid.Data.StringData.stringkeys.hostOnly);
+                            instruction = StringData.Get(StardewDruid.Data.StringData.str.hostOnly);
 
                         }
 
@@ -117,7 +117,7 @@ namespace StardewDruid.Journal
 
                         }
 
-                        instruction = StringData.Strings(StardewDruid.Data.StringData.stringkeys.questionTalkto) + CharacterHandle.CharacterTitle(special.Key);
+                        instruction = StringData.Get(StardewDruid.Data.StringData.str.questionTalkto) + CharacterHandle.CharacterTitle(special.Key);
 
                         if(Mod.instance.save.progress.ContainsKey(questId)) //|| Mod.instance.save.progress[questId].delay > 0)
                         {
@@ -125,7 +125,7 @@ namespace StardewDruid.Journal
                             if(Mod.instance.save.progress[questId].delay > 0)
                             {
 
-                                instruction += StringData.Strings(StardewDruid.Data.StringData.stringkeys.questionTomorrow);
+                                instruction += StringData.Get(StardewDruid.Data.StringData.str.questionTomorrow);
 
                             }
 
@@ -134,7 +134,7 @@ namespace StardewDruid.Journal
                         if (!Context.IsMainPlayer)
                         {
 
-                            instruction = StringData.Strings(StardewDruid.Data.StringData.stringkeys.hostOnly);
+                            instruction = StringData.Get(StardewDruid.Data.StringData.str.hostOnly);
 
                         }
 
@@ -150,9 +150,9 @@ namespace StardewDruid.Journal
             else
             {
 
-                current = StringData.Strings(StardewDruid.Data.StringData.stringkeys.questionComplete);
+                current = StringData.Get(StardewDruid.Data.StringData.str.questionComplete);
 
-                instruction = StringData.Strings(StardewDruid.Data.StringData.stringkeys.questionCongratulations);
+                instruction = StringData.Get(StardewDruid.Data.StringData.str.questionCongratulations);
 
             }
 
@@ -201,7 +201,7 @@ namespace StardewDruid.Journal
 
             contentComponents[start] = new(ContentComponent.contentTypes.text, "instructionIntro");
 
-            contentComponents[start].text[0] = StringData.Strings(StardewDruid.Data.StringData.stringkeys.questionHint);
+            contentComponents[start].text[0] = StringData.Get(StardewDruid.Data.StringData.str.questionHint);
 
             contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkGreen;
 
@@ -226,7 +226,7 @@ namespace StardewDruid.Journal
 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, "recapIntro");
 
-                contentComponents[start].text[0] = StringData.Strings(StardewDruid.Data.StringData.stringkeys.questionPreviously);
+                contentComponents[start].text[0] = StringData.Get(StardewDruid.Data.StringData.str.questionPreviously);
 
                 contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkGreen;
 
@@ -252,55 +252,6 @@ namespace StardewDruid.Journal
             contentBox = new(xPositionOnScreen, yPositionOnScreen + 64, width, textHeight);
 
         }
-
-        public override void activateInterface()
-        {
-
-            resetInterface();
-
-            scrolled = 0;
-
-            if (contentBox.Height < 512)
-            {
-
-                interfaceComponents[302].active = false;
-
-                interfaceComponents[303].active = false;
-
-                interfaceComponents[304].active = false;
-
-            }
-            else
-            {
-
-                scrollId = 303;
-
-            }
-
-        }
-
-        public override void pressButton(journalButtons button)
-        {
-            
-            switch (button)
-            {
-
-                case journalButtons.back:
-
-                    DruidJournal.openJournal(parentJournal, null, record);
-
-                    break;
-
-                default:
-
-                    base.pressButton(button);
-
-                    break;
-
-            }
-
-        }
-
 
         public override void drawContent(SpriteBatch b)
         {

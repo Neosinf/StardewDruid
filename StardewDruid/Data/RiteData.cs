@@ -141,7 +141,7 @@ namespace StardewDruid.Data
 
                 case riteStrings.riteTool:
 
-                    return "Rite requires a melee weapon or tool";
+                    return "Rite casts require a melee weapon or tool";
 
                 case riteStrings.noToolAttunement:
 

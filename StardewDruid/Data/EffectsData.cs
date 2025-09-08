@@ -765,7 +765,7 @@ namespace StardewDruid.Data
                         Effect monsters = new()
                         {
                             title = Mod.instance.Helper.Translation.Get("EffectsData.386.3"),
-                            icon = IconData.displays.pals,
+                            icon = IconData.displays.orders,
                             description = Mod.instance.Helper.Translation.Get("EffectsData.386.4"),
                             instruction = Mod.instance.Helper.Translation.Get("EffectsData.386.5"),
                             details = new()
@@ -784,7 +784,7 @@ namespace StardewDruid.Data
                     Effect monsterbattles = new()
                         {
                             title = Mod.instance.Helper.Translation.Get("EffectsData.390.8"),
-                            icon = IconData.displays.pals,
+                            icon = IconData.displays.orders,
                             description = Mod.instance.Helper.Translation.Get("EffectsData.390.9"),
                             instruction = Mod.instance.Helper.Translation.Get("EffectsData.390.10"),
                             details = new()
@@ -1243,7 +1243,7 @@ namespace StardewDruid.Data
 
             }
 
-            effects[QuestHandle.starsTwo] = new() { EffectPage.gravityWell, };
+            effects[QuestHandle.voideOne] = new() { EffectPage.gravityWell, };
 
             if (!Mod.instance.magic)
             {

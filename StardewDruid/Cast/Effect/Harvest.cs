@@ -46,7 +46,8 @@ namespace StardewDruid.Cast.Effect
 
             harvesters.Add(tile, new(location, tile));
 
-            iridium = (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areAllAreasComplete() || Mod.instance.Config.cultivateBehaviour == 4;
+            //iridium = (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areAllAreasComplete() || Mod.instance.Config.cultivateBehaviour == 4;
+            iridium = MasteryHandle.HasMastery(MasteryNode.nodes.incentive_quality);
 
         }
 
@@ -394,7 +395,7 @@ namespace StardewDruid.Cast.Effect
 
                             }
 
-                            HerbalHandle.RandomOmen(tileVector * 64 + new Vector2(32,-128), 16);
+                            ApothecaryHandle.RandomOmen(tileVector * 64 + new Vector2(32,-128), 16);
 
                             Mod.instance.rite.targetCasts[location.Name + "_harvest"][tileVector] = "Tree";
 

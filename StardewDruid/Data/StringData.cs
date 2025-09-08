@@ -3,8 +3,10 @@ using StardewDruid.Cast;
 using StardewDruid.Dialogue;
 using StardewDruid.Journal;
 using StardewValley;
+using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using System.Xml.Linq;
 
 namespace StardewDruid.Data
 {
@@ -13,32 +15,119 @@ namespace StardewDruid.Data
 
         // frequent signs
 
-        public static string colon = Mod.instance.Helper.Translation.Get("Punctuation.1");
+        public static string colon
+        {
+            get 
+            { 
+                return Mod.instance.Helper.Translation.Get("Punctuation.1"); 
+            }
+        }
 
-        public static string comma = Mod.instance.Helper.Translation.Get("Punctuation.2");
+        public static string comma
+        {
+            get
+            {
+                return Mod.instance.Helper.Translation.Get("Punctuation.2");
+            }
+        }
 
-        public static string slash = Mod.instance.Helper.Translation.Get("Punctuation.3");
+        public static string slash
+        {
+            get
+            {
+                return Mod.instance.Helper.Translation.Get("Punctuation.3");
+            }
+        }
 
-        public static string currency = Mod.instance.Helper.Translation.Get("Punctuation.4");
+        public static string currency
+        {
+            get
+            {
+                return Mod.instance.Helper.Translation.Get("Punctuation.4");
+            }
+        }
 
-        public static string plus = Mod.instance.Helper.Translation.Get("Punctuation.5");
+        public static string plus
+        {
+            get
+            {
+                return Mod.instance.Helper.Translation.Get("Punctuation.5");
+            }
+        }
 
-        public static string normal = Mod.instance.Helper.Translation.Get("DialogueData.386.31");
+        public static string ecks
+        {
+            get
+            {
+                return Mod.instance.Helper.Translation.Get("DialogueData.347.3");
+            }
+        }
 
-        public static string silver = Mod.instance.Helper.Translation.Get("DialogueData.386.32");
+        public static string dash
+        {
+            get
+            {
+                return Mod.instance.Helper.Translation.Get("DialogueData.500.dash");
+            }
+        }
 
-        public static string gold = Mod.instance.Helper.Translation.Get("DialogueData.386.33");
+        public static string normal
+        {
+            get
+            {
+                return Mod.instance.Helper.Translation.Get("DialogueData.386.31");
+            }
+        }
 
-        public static string iridium = Mod.instance.Helper.Translation.Get("DialogueData.386.34");
+        public static string silver
+        {
+            get
+            {
+                return Mod.instance.Helper.Translation.Get("DialogueData.386.32");
+            }
+        }
 
-        public static string longbreak = Mod.instance.Helper.Translation.Get("DialogueData.388.5");
+        public static string gold
+        {
+            get
+            {
+                return Mod.instance.Helper.Translation.Get("DialogueData.386.33");
+            }
+        }
 
-        public static string pluralism = Mod.instance.Helper.Translation.Get("DialogueData.388.6");
+        public static string iridium
+        {
+            get
+            {
+                return Mod.instance.Helper.Translation.Get("DialogueData.386.34");
+            }
+        }
 
-        public static string stamina = Mod.instance.Helper.Translation.Get("StringData.500.stamina");
+        public static string longbreak
+        {
+            get
+            {
+                return Mod.instance.Helper.Translation.Get("DialogueData.388.5");
+            }
+        }
 
+        public static string pluralism
+        {
+            get
+            {
+                return Mod.instance.Helper.Translation.Get("DialogueData.388.6");
+            }
+        }
 
-        public enum stringkeys
+        public static string stamina
+        {
+            get
+            {
+                return Mod.instance.Helper.Translation.Get("StringData.500.stamina");
+            }
+        }
+
+        public enum str
         {
             stardewDruid,
             magicByNeosinf,
@@ -72,11 +161,10 @@ namespace StardewDruid.Data
             bounty,
             transcript,
 
-            acEnabled,
-            acDisabled,
-            acPriority,
-            acIgnored,
-            acRestricted,
+            autoOff,
+            autoCraft,
+            autoApply,
+            autoBoth,
             MAX,
             HP,
             STM,
@@ -106,9 +194,6 @@ namespace StardewDruid.Data
             questionHint,
             questionPreviously,
 
-            multiplier,
-            currency,
-
             druidPower,
             damageLevel,
 
@@ -126,6 +211,7 @@ namespace StardewDruid.Data
 
             sendToGoods,
             sellnow,
+            nosell,
 
             applyBuff,
             activeBuff,
@@ -190,20 +276,20 @@ namespace StardewDruid.Data
             your,
             criticalHit,
 
-            level1,
-            level2,
-            level3,
-            level4,
-            level5,
-
             relicReceived,
             lessonReceived,
             questReceived,
             challengeReceived,
 
+            level,
+            nextLevel,
+            upgradeLevel,
+
+            moreAlchemy,
+
         }
 
-        public static string Strings(stringkeys key)
+        public static string Get(str key, System.Object tokens = null)
         {
 
             switch (key)
@@ -211,500 +297,467 @@ namespace StardewDruid.Data
 
                 // Mod, Rite, ModUtility, QuestHandle
 
-                case stringkeys.receivedData:
+                case str.receivedData:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.265");
 
-                case stringkeys.challengeAborted:
+                case str.challengeAborted:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.269");
 
-                case stringkeys.dragonBuff:
+                case str.dragonBuff:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.277");
 
-                case stringkeys.dragonBuffDescription:
+                case str.dragonBuffDescription:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.281");
 
-                case stringkeys.questComplete:
+                case str.questComplete:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.333");
 
-                case stringkeys.percentComplete:
+                case str.percentComplete:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.337");
 
-                case stringkeys.druidShield:
+                case str.druidShield:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.335.1");
 
-                case stringkeys.defenseIncrease:
+                case str.defenseIncrease:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.335.2");
 
-                case stringkeys.jesterBuff:
+                case str.jesterBuff:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.338.1");
 
-                case stringkeys.jesterBuffDescription:
+                case str.jesterBuffDescription:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.338.2");
                     
-                case stringkeys.jesterBuffTitle:
+                case str.jesterBuffTitle:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.338.3");
 
-                case stringkeys.herbalBuffDescription:
+                case str.herbalBuffDescription:
 
                     return Mod.instance.Helper.Translation.Get("HerbalData.1318");
 
                 // ============================================ JOURNAL
 
-                case stringkeys.stardewDruid:
+                case str.stardewDruid:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.343");
 
-                case stringkeys.magicByNeosinf:
+                case str.magicByNeosinf:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.352.1");
 
                 // ============================================ JOURNAL MOMENTS
 
-                case stringkeys.hostOnly:
+                case str.hostOnly:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.399");
 
-                case stringkeys.questReplay:
+                case str.questReplay:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.403");
 
-                case stringkeys.outOf:
+                case str.outOf:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.407");
 
-                case stringkeys.reward:
+                case str.reward:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.411");
 
-                case stringkeys.replayReward:
+                case str.replayReward:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.519");
 
-                case stringkeys.bounty:
+                case str.bounty:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.415");
 
-                case stringkeys.transcript:
+                case str.transcript:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.419");
 
-                case stringkeys.acEnabled:
+                // -------------------------------------------- Apothecary 
 
-                    return Mod.instance.Helper.Translation.Get("DialogueData.423");
+                case str.autoOff:
 
-                case stringkeys.acDisabled:
+                    return Mod.instance.Helper.Translation.Get("StringData.500.autoOff");
 
-                    return Mod.instance.Helper.Translation.Get("DialogueData.427");
+                case str.autoApply:
 
-                case stringkeys.acPriority:
+                    return Mod.instance.Helper.Translation.Get("StringData.500.autoApply");
 
-                    return Mod.instance.Helper.Translation.Get("DialogueData.431");
+                case str.autoCraft:
 
-                case stringkeys.acIgnored:
+                    return Mod.instance.Helper.Translation.Get("StringData.500.autoCraft");
 
-                    return Mod.instance.Helper.Translation.Get("DialogueData.340.1");
+                case str.autoBoth:
 
-                case stringkeys.acRestricted:
+                    return Mod.instance.Helper.Translation.Get("StringData.500.autoBoth");
 
-                    return Mod.instance.Helper.Translation.Get("DialogueData.350.1");
-
-                case stringkeys.MAX:
+                case str.MAX:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.435");
 
-                case stringkeys.HP:
+                case str.HP:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.439");
 
-                case stringkeys.STM:
+                case str.STM:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.443");
 
-                case stringkeys.relicNotFound:
+                case str.relicNotFound:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.447");
 
-                case stringkeys.relicUnknown:
+                case str.relicUnknown:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.451");
 
-                case stringkeys.lessonSkipped:
+                case str.lessonSkipped:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.319.1");
 
-                case stringkeys.mastered:
+                case str.mastered:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.319.2");
 
                 // Dragon menu
 
-                case stringkeys.primaryColour:
+                case str.primaryColour:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.455");
 
-                case stringkeys.secondaryColour:
+                case str.secondaryColour:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.459");
 
-                case stringkeys.tertiaryColour:
+                case str.tertiaryColour:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.463");
 
-                case stringkeys.dragonScheme:
+                case str.dragonScheme:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.467");
 
-                case stringkeys.breathScheme:
+                case str.breathScheme:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.471");
 
-                case stringkeys.dragonRotate:
+                case str.dragonRotate:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.475");
 
-                case stringkeys.dragonScale:
+                case str.dragonScale:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.479");
 
-                case stringkeys.dragonAccent:
+                case str.dragonAccent:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.483");
 
-                case stringkeys.dragonEye:
+                case str.dragonEye:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.487");
 
-                case stringkeys.dragonSize:
+                case str.dragonSize:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.316.3");
 
-                case stringkeys.questLore:
+                case str.questLore:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.318.4");
 
-                case stringkeys.questTranscript:
+                case str.questTranscript:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.318.5");
 
 
-                case stringkeys.questionCurrent:
+                case str.questionCurrent:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.343.1");
 
-                case stringkeys.questionTalkto:
+                case str.questionTalkto:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.343.2");
 
-                case stringkeys.questionTomorrow:
+                case str.questionTomorrow:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.343.3");
 
-                case stringkeys.questionComplete:
+                case str.questionComplete:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.343.4");
 
-                case stringkeys.questionCongratulations:
+                case str.questionCongratulations:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.343.5");
 
-                case stringkeys.questionHint:
+                case str.questionHint:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.343.6");
 
-                case stringkeys.questionPreviously:
+                case str.questionPreviously:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.343.7");
 
-                case stringkeys.multiplier:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.347.3");
-
-                case stringkeys.currency:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.347.4");
-
-
-                case stringkeys.druidPower:
+                case str.druidPower:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.356.1");
 
-                case stringkeys.damageLevel:
+                case str.damageLevel:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.356.2");
 
-                case stringkeys.experience:
+                case str.experience:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.386.10");
 
-                case stringkeys.maxLevel:
+                case str.maxLevel:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.386.11");
 
-                case stringkeys.friendship:
+                case str.friendship:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.386.13");
 
-                case stringkeys.healthLevel:
+                case str.healthLevel:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.386.14");
 
-                case stringkeys.attackLevel:
+                case str.attackLevel:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.386.15");
 
-                case stringkeys.speedLevel:
+                case str.speedLevel:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.386.16");
 
-                case stringkeys.resistLevel:
+                case str.resistLevel:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.390.4");
 
-                case stringkeys.dragonStats:
+                case str.dragonStats:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.390.5");
 
-                case stringkeys.numberHired:
+                case str.numberHired:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.386.17");
 
-                case stringkeys.winsAmount:
+                case str.winsAmount:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.390.6");
 
-                case stringkeys.sendToGoods:
+                case str.sendToGoods:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.386.27");
 
-                case stringkeys.sellnow:
+                case str.sellnow:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.390.3");
 
-                case stringkeys.relationship:
+                case str.nosell:
+
+                    return Mod.instance.Helper.Translation.Get("StringData.500.nosell");
+
+                case str.relationship:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.399.1");
 
-                case stringkeys.applyBuff:
+                case str.applyBuff:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.401.1");
 
-                case stringkeys.activeBuff:
+                case str.activeBuff:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.401.2");
 
                 // ============================ Miscellaneous
 
-                case stringkeys.trashCollected:
+                case str.trashCollected:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.529");
 
-                case stringkeys.bomberInterruptions:
+                case str.bomberInterruptions:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.533");
 
-                case stringkeys.slimesDestroyed:
+                case str.slimesDestroyed:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.537");
 
-                case stringkeys.learnRecipes:
+                case str.learnRecipes:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.541");
 
-                case stringkeys.learnCooking:
+                case str.learnCooking:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.347.1");
 
-                case stringkeys.restoreStart:
+                case str.restoreStart:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.329.1");
 
-                case stringkeys.restorePartial:
+                case str.restorePartial:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.329.2");
 
-                case stringkeys.restoreFully:
+                case str.restoreFully:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.329.3");
 
-                case stringkeys.restoreTomorrow:
+                case str.restoreTomorrow:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.330.1");
 
                 // Title for Ether/Gate challenge
-                case stringkeys.theDusting:
+                case str.theDusting:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.546");
 
-                case stringkeys.abortTomorrow:
+                case str.abortTomorrow:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.550");
 
-                case stringkeys.noJunimo:
+                case str.noJunimo:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.554");
 
-                case stringkeys.noInstructions:
+                case str.noInstructions:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.558");
 
-                case stringkeys.leftEvent:
+                case str.leftEvent:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.562");
 
-                case stringkeys.leavingEvent:
+                case str.leavingEvent:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.566");
 
-                case stringkeys.ladderAppeared:
+                case str.ladderAppeared:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.570");
 
-                case stringkeys.returnLater:
+                case str.returnLater:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.574");
 
-                case stringkeys.reachEnd:
+                case str.reachEnd:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.578");
 
-                case stringkeys.treasureHunt:
+                case str.treasureHunt:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.582");
 
-                case stringkeys.treasureGuardian:
+                case str.treasureGuardian:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.366.3");
 
-                case stringkeys.returnedHome:
+                case str.returnedHome:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.582.1");
 
-                case stringkeys.joinedPlayer:
+                case str.joinedPlayer:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.582.2");
 
-                case stringkeys.noWarpPoint:
+                case str.noWarpPoint:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.582.3");
 
-                case stringkeys.wandering:
+                case str.wandering:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.386.29");
 
-                case stringkeys.chained:
+                case str.chained:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.380.1");
 
-                case stringkeys.rapidfire:
+                case str.rapidfire:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.386.1");
 
-                case stringkeys.overheated:
+                case str.overheated:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.386.2");
 
-                case stringkeys.level1:
-
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.377.6");
-
-                case stringkeys.level2:
-
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.377.7");
-
-                case stringkeys.level3:
-
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.377.8");
-
-                case stringkeys.level4:
-
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.377.9");
-
-                case stringkeys.level5:
-
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.377.10");
-
-                case stringkeys.shortfall:
+                case str.shortfall:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.386.30");
 
-                case stringkeys.currentPrice:
+                case str.currentPrice:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.386.36");
 
-                case stringkeys.battle:
+                case str.battle:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.388.1");
                 
-                case stringkeys.damage:
+                case str.damage:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.388.2");
                 
-                case stringkeys.health:
+                case str.health:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.388.3");   
                     
-                case stringkeys.your:
+                case str.your:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.388.4");
 
                 // 3.9.3 buffs
 
-                case stringkeys.criticalHit:
+                case str.criticalHit:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.393.9");
 
-                case stringkeys.relicReceived:
+                case str.relicReceived:
 
                     return Mod.instance.Helper.Translation.Get("StringData.500.relicReceived");
 
-                case stringkeys.lessonReceived:
+                case str.lessonReceived:
 
                     return Mod.instance.Helper.Translation.Get("StringData.500.lessonReceived");
 
-                case stringkeys.questReceived:
+                case str.questReceived:
 
                     return Mod.instance.Helper.Translation.Get("StringData.500.questReceived");
 
-                case stringkeys.challengeReceived:
+                case str.challengeReceived:
 
                     return Mod.instance.Helper.Translation.Get("StringData.500.challengeReceived");
+
+                case str.level:
+
+                    return Mod.instance.Helper.Translation.Get("StringData.500.level").Tokens(tokens);
+
+                case str.nextLevel:
+
+                    return Mod.instance.Helper.Translation.Get("StringData.500.nextLevel");
+
+                case str.upgradeLevel:
+
+                    return Mod.instance.Helper.Translation.Get("StringData.500.upgradeLevel").Tokens(tokens);
+
+                case str.moreAlchemy:
+
+                    return Mod.instance.Helper.Translation.Get("StringData.500.moreAlchemy");
 
             }
 
             return Mod.instance.Helper.Translation.Get("DialogueData.586");
-
-        }
-
-        public static string LevelStrings(int level)
-        {
-
-            switch (level)
-            {
-                default:
-                case 1:
-                    return StringData.Strings(StringData.stringkeys.level1);
-                case 2:
-                    return StringData.Strings(StringData.stringkeys.level2);
-                case 3:
-                    return StringData.Strings(StringData.stringkeys.level3);
-                case 4:
-                    return StringData.Strings(StringData.stringkeys.level4);
-                case 5:
-                    return StringData.Strings(StringData.stringkeys.level5);
-
-            }
-            
 
         }
 

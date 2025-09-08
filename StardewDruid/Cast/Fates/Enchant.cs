@@ -72,7 +72,7 @@ namespace StardewDruid.Cast.Fates
             if (faeth > 0)
             {
 
-                Herbal resource = Mod.instance.herbalHandle.herbalism[HerbalHandle.herbals.faeth.ToString()];
+                ApothecaryItem resource = Mod.instance.apothecaryHandle.apothecary[ApothecaryHandle.items.faeth];
 
                 string message = "-" + faeth + " " + resource.title;
 
@@ -110,7 +110,7 @@ namespace StardewDruid.Cast.Fates
             foreach (Vector2 tile in affected)
             {
                 
-                if (HerbalHandle.GetHerbalism(HerbalHandle.herbals.faeth) == 0)
+                if (ApothecaryHandle.GetAmount(ApothecaryHandle.items.faeth) == 0)
                 {
 
                     break;
@@ -133,7 +133,7 @@ namespace StardewDruid.Cast.Fates
                         if (FairyDustCrop(hoeDirt))
                         {
 
-                            HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.faeth,-1);
+                            ApothecaryHandle.UpdateAmounts(ApothecaryHandle.items.faeth,-1);
 
                             faeth += 1;
 
@@ -147,7 +147,7 @@ namespace StardewDruid.Cast.Fates
 
                             GiantDustCrop(hoeDirt);
 
-                            HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.faeth, -1);
+                            ApothecaryHandle.UpdateAmounts(ApothecaryHandle.items.faeth, -1);
 
                             faeth += 1;
 
@@ -214,7 +214,7 @@ namespace StardewDruid.Cast.Fates
 
                         Mod.instance.rite.targetCasts[location.Name + "_enchant"][tile] = target.name;
 
-                        HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.faeth, -1);
+                        ApothecaryHandle.UpdateAmounts(ApothecaryHandle.items.faeth, -1);
 
                         Vector2 fairyVector = tile * 64 + new Vector2(32, 32);
 
@@ -319,7 +319,7 @@ namespace StardewDruid.Cast.Fates
 
                     case "Heavy Furnace":
 
-                        if (HerbalHandle.GetHerbalism(HerbalHandle.herbals.faeth) < 3)
+                        if (ApothecaryHandle.GetAmount(ApothecaryHandle.items.faeth) < 3)
                         {
 
                             continue;
@@ -361,7 +361,7 @@ namespace StardewDruid.Cast.Fates
 
                 }
 
-                HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.faeth, 0 - cost);
+                ApothecaryHandle.UpdateAmounts(ApothecaryHandle.items.faeth, 0 - cost);
 
                 Vector2 cursorVector = tile * 64 + new Vector2(32, 32);
 

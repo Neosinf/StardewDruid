@@ -11,14 +11,14 @@ using StardewValley.Network;
 using StardewValley.Quests;
 using System;
 using System.Collections.Generic;
-using static StardewDruid.Character.Character;
+using System.Reflection.Emit;
 
 namespace StardewDruid.Journal
 {
     public class PalPage : DruidJournal
     {
 
-        public PalPage(string RecruitId, int Record) : base(RecruitId, Record) 
+        public PalPage(journalTypes Type, List<string> Parameters) : base(Type, Parameters)
         {
 
         }
@@ -26,7 +26,7 @@ namespace StardewDruid.Journal
         public override void populateInterface()
         {
 
-            parentJournal = journalTypes.relics;
+            parent = journalTypes.relics;
 
             type = journalTypes.palPage;
 
@@ -44,28 +44,22 @@ namespace StardewDruid.Journal
 
                 [114] = addButton(journalButtons.rewildPal),
 
-                [201] = addButton(journalButtons.back),
+                [201] = addButton(journalButtons.previous),
 
                 [301] = addButton(journalButtons.exit),
 
             };
 
         }
-        public override void activateInterface()
-        {
-
-            resetInterface();
-
-        }
 
         public override void populateContent()
         {
 
-            CharacterHandle.characters character = Enum.Parse<CharacterHandle.characters>(journalId);
+            CharacterHandle.characters character = Enum.Parse<CharacterHandle.characters>(parameters[0]);
 
             PalData data = Mod.instance.save.pals[character];
 
-            int level = PalHandle.UnitLevel(data.experience);
+            int Level = PalHandle.UnitLevel(data.experience);
 
             // ----------------------------- title
 
@@ -101,6 +95,8 @@ namespace StardewDruid.Journal
 
             recruitTitle.text[0] = data.name;
 
+            recruitTitle.textScales[0] = 0.8f;
+
             recruitTitle.SetText(416);
 
             contentComponents[start++] = recruitTitle;
@@ -109,12 +105,14 @@ namespace StardewDruid.Journal
 
             // -----------------------------------------------------
 
-            ContentComponent recruitLevel = new(ContentComponent.contentTypes.textsmall, "level")
+            ContentComponent recruitLevel = new(ContentComponent.contentTypes.text, "level")
             {
                 bounds = new Rectangle(xPositionOnScreen + (width / 2) - 32, yPositionOnScreen + textStart, 320, 64)
             };
 
-            recruitLevel.text[0] = StringData.LevelStrings(level);
+            recruitLevel.text[0] = StringData.Get(StringData.str.level, new { level = Level });
+
+            recruitLevel.textScales[0] = 0.8f;
 
             recruitLevel.SetText(416);
 
@@ -124,7 +122,7 @@ namespace StardewDruid.Journal
 
             // -----------------------------------------------------
 
-            ContentComponent recruitExperience = new(ContentComponent.contentTypes.textsmall, "experience")
+            ContentComponent recruitExperience = new(ContentComponent.contentTypes.text, "experience")
             {
                 bounds = new Rectangle(xPositionOnScreen + (width / 2) - 32, yPositionOnScreen + textStart, 320, 64)
             };
@@ -134,17 +132,17 @@ namespace StardewDruid.Journal
             if (nextlevel == -1)
             {
 
-                recruitExperience.text[0] = StringData.Strings(StringData.stringkeys.maxLevel);
+                recruitExperience.text[0] = StringData.Get(StringData.str.maxLevel);
 
             }
             else
             {
 
-                recruitExperience.text[0] = StringData.Strings(StringData.stringkeys.experience) + data.experience + StringData.slash + nextlevel;
+                recruitExperience.text[0] = StringData.Get(StringData.str.experience) + data.experience + StringData.slash + nextlevel;
 
             }
 
-            recruitExperience.SetText(416);
+            recruitLevel.textScales[0] = 0.8f;
 
             contentComponents[start++] = recruitExperience;
 
@@ -154,12 +152,14 @@ namespace StardewDruid.Journal
 
             int statStart = textStart;
 
-            ContentComponent caught = new(ContentComponent.contentTypes.textsmall, "hired")
+            ContentComponent caught = new(ContentComponent.contentTypes.text, "hired")
             {
                 bounds = new Rectangle(xPositionOnScreen + (width / 2) - 32, yPositionOnScreen + statStart, 320, 64)
             };
 
-            caught.text[0] = StringData.Strings(StringData.stringkeys.numberHired) + data.hired.ToString() + StringData.slash + data.caught.ToString();
+            caught.text[0] = StringData.Get(StringData.str.numberHired) + data.hired.ToString() + StringData.slash + data.caught.ToString();
+
+            caught.textScales[0] = 0.8f;
 
             caught.SetText(416);
 
@@ -169,12 +169,14 @@ namespace StardewDruid.Journal
 
             // ----------------------------------------------------------------
 
-            ContentComponent health = new(ContentComponent.contentTypes.textsmall, "health")
+            ContentComponent health = new(ContentComponent.contentTypes.text, "health")
             {
                 bounds = new Rectangle(xPositionOnScreen + (width / 2) - 32, yPositionOnScreen + statStart, 320, 56)
             };
 
-            health.text[0] = StringData.Strings(StringData.stringkeys.healthLevel) + PalHandle.HealthLevel(data.type,level,data.health);
+            health.text[0] = StringData.Get(StringData.str.healthLevel) + PalHandle.HealthLevel(data.type,Level,data.health);
+
+            health.textScales[0] = 0.8f;
 
             health.SetText(416);
 
@@ -186,12 +188,14 @@ namespace StardewDruid.Journal
 
             int specialStart = statStart;
 
-            ContentComponent attack = new(ContentComponent.contentTypes.textsmall, "attack")
+            ContentComponent attack = new(ContentComponent.contentTypes.text, "attack")
             {
                 bounds = new Rectangle(xPositionOnScreen + (width / 2) - 32, yPositionOnScreen + statStart, 320, 56)
             };
 
-            attack.text[0] = StringData.Strings(StringData.stringkeys.attackLevel) + PalHandle.AttackLevel(data.type, level, data.attack);
+            attack.text[0] = StringData.Get(StringData.str.attackLevel) + PalHandle.AttackLevel(data.type, Level, data.attack);
+
+            attack.textScales[0] = 0.8f;
 
             attack.SetText(416);
 
@@ -201,12 +205,14 @@ namespace StardewDruid.Journal
 
             // ----------------------------------------------------------------
 
-            ContentComponent speed = new(ContentComponent.contentTypes.textsmall, "speed")
+            ContentComponent speed = new(ContentComponent.contentTypes.text, "speed")
             {
                 bounds = new Rectangle(xPositionOnScreen + (width / 2) - 32, yPositionOnScreen + statStart, 320, 56)
             };
 
-            speed.text[0] = StringData.Strings(StringData.stringkeys.speedLevel) + PalHandle.SpeedLevel(data.type, level, data.speed);
+            speed.text[0] = StringData.Get(StringData.str.speedLevel) + PalHandle.SpeedLevel(data.type, Level, data.speed);
+
+            speed.textScales[0] = 0.8f;
 
             speed.SetText(416);
 
@@ -216,12 +222,14 @@ namespace StardewDruid.Journal
 
             // ----------------------------------------------------------------
 
-            ContentComponent resist = new(ContentComponent.contentTypes.textsmall, "resist")
+            ContentComponent resist = new(ContentComponent.contentTypes.text, "resist")
             {
                 bounds = new Rectangle(xPositionOnScreen + (width / 2) - 32, yPositionOnScreen + statStart, 320, 56)
             };
 
-            resist.text[0] = StringData.Strings(StringData.stringkeys.resistLevel) + PalHandle.ResistLevel(data.type, level, data.speed);
+            resist.text[0] = StringData.Get(StringData.str.resistLevel) + PalHandle.ResistLevel(data.type, Level, data.speed);
+
+            resist.textScales[0] = 0.8f;
 
             resist.SetText(416);
 
@@ -231,12 +239,12 @@ namespace StardewDruid.Journal
 
             // ----------------------------------------------------------------
 
-            ContentComponent wins = new(ContentComponent.contentTypes.textsmall, "wins")
+            ContentComponent wins = new(ContentComponent.contentTypes.text, "wins")
             {
                 bounds = new Rectangle(xPositionOnScreen + (width / 2) - 32, yPositionOnScreen + statStart, 320, 56)
             };
 
-            wins.text[0] = StringData.Strings(StringData.stringkeys.winsAmount) + PalHandle.BattleWins(data.type);
+            wins.text[0] = StringData.Get(StringData.str.winsAmount) + PalHandle.BattleWins(data.type);
 
             wins.SetText(320);
 
@@ -245,7 +253,7 @@ namespace StardewDruid.Journal
 
             // SPECIALS ===============================================================================================
 
-            ContentComponent specialAbilities = new(ContentComponent.contentTypes.textsmall, "abilities")
+            ContentComponent specialAbilities = new(ContentComponent.contentTypes.text, "abilities")
             {
                 bounds = new Rectangle(xPositionOnScreen + (width / 2) - 416, yPositionOnScreen + specialStart, 320, 56)
             };
@@ -260,14 +268,14 @@ namespace StardewDruid.Journal
 
             // ----------------------------------------------------------------
 
-            Dictionary<BattleCombatant.battleoptions, BattleAbility.battleabilities> specials = PalHandle.SpecialMoves(new(), data.type, level);
+            Dictionary<BattleCombatant.battleoptions, BattleAbility.battleabilities> specials = PalHandle.SpecialMoves(new(), data.type, Level);
 
             foreach(KeyValuePair<BattleCombatant.battleoptions, BattleAbility.battleabilities> abilities in specials)
             {
 
                 BattleAbility ability = new(abilities.Value);
 
-                ContentComponent special = new(ContentComponent.contentTypes.textsmall, ability.button)
+                ContentComponent special = new(ContentComponent.contentTypes.text, ability.button)
                 {
                     bounds = new Rectangle(xPositionOnScreen + (width / 2) - 416, yPositionOnScreen + specialStart, 320, 64)
                 };
@@ -300,7 +308,7 @@ namespace StardewDruid.Journal
         public virtual void RenamePal(string nameInput)
         {
 
-            CharacterHandle.characters entity = Enum.Parse<CharacterHandle.characters>(journalId);
+            CharacterHandle.characters entity = Enum.Parse<CharacterHandle.characters>(parameters[0]);
 
             Mod.instance.save.pals[entity].name = Utility.FilterDirtyWords(nameInput);
 
@@ -319,7 +327,7 @@ namespace StardewDruid.Journal
         public override void pressButton(journalButtons button)
         {
 
-            CharacterHandle.characters entity = Enum.Parse<CharacterHandle.characters>(journalId);
+            CharacterHandle.characters entity = Enum.Parse<CharacterHandle.characters>(parameters[0]);
 
             switch (button)
             {
@@ -337,7 +345,7 @@ namespace StardewDruid.Journal
 
                     Mod.instance.save.pals[entity].PalLoad(Character.Character.mode.track);
 
-                    Mod.instance.RegisterMessage(Mod.instance.save.pals[entity].name + StringData.Strings(StringData.stringkeys.joinedPlayer), 0, true);
+                    Mod.instance.RegisterMessage(Mod.instance.save.pals[entity].name + StringData.Get(StringData.str.joinedPlayer), 0, true);
 
                     exitThisMenu();
 
@@ -358,7 +366,7 @@ namespace StardewDruid.Journal
 
                     Mod.instance.save.pals[entity].PalLoad(Character.Character.mode.home);
 
-                    Mod.instance.RegisterMessage(Mod.instance.save.pals[entity].name + StringData.Strings(StringData.stringkeys.returnedHome), 0, true);
+                    Mod.instance.RegisterMessage(Mod.instance.save.pals[entity].name + StringData.Get(StringData.str.returnedHome), 0, true);
 
                     exitThisMenu();
 
@@ -379,7 +387,7 @@ namespace StardewDruid.Journal
 
                     Mod.instance.save.pals[entity].PalLoad(Character.Character.mode.limbo);
 
-                    Mod.instance.RegisterMessage(Mod.instance.save.pals[entity].name + StringData.Strings(StringData.stringkeys.wandering), 0, true);
+                    Mod.instance.RegisterMessage(Mod.instance.save.pals[entity].name + StringData.Get(StringData.str.wandering), 0, true);
 
                     exitThisMenu();
 
@@ -408,12 +416,6 @@ namespace StardewDruid.Journal
                     Game1.activeClickableMenu = namingMenu;
 
                     return;
-
-                case journalButtons.back:
-
-                    DruidJournal.openJournal(parentJournal, null, record);
-
-                    break;
 
                 default:
 

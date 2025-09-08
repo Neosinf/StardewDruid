@@ -208,7 +208,7 @@ namespace StardewDruid.Location
             if(Name == LocationHandle.druid_grove_name)
             {
                 
-                if (Mod.instance.Config.decorateGrove)
+                if (Mod.instance.Config.decorateLocations)
                 {
 
                     return base.CanItemBePlacedHere(tile, itemIsPassable, collisionMask, ignorePassables, useFarmerTile, ignorePassablesExactly);

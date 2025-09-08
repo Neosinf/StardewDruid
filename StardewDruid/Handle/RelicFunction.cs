@@ -58,7 +58,7 @@ namespace StardewDruid.Handle
 
                 }
 
-                if (RelicFunction(relic.ToString()) == 1)
+                if (ClickFunction(relic.ToString()) == 1)
                 {
 
                     return;
@@ -77,7 +77,7 @@ namespace StardewDruid.Handle
             if(Mod.instance.relicHandle.favourite != IconData.relics.none)
             {
 
-                if (RelicFunction(Mod.instance.relicHandle.favourite.ToString()) == 1)
+                if (ClickFunction(Mod.instance.relicHandle.favourite.ToString()) == 1)
                 {
 
                     return;
@@ -90,7 +90,7 @@ namespace StardewDruid.Handle
 
         }
 
-        public static int RelicFunction(string id, int record = 0)
+        public static int ClickFunction(string id)
         {
 
             if (Mod.instance.activeEvent.Count > 0) { return 0; }
@@ -128,7 +128,7 @@ namespace StardewDruid.Handle
 
                             Mod.instance.characters[crestSummon].SwitchToMode(Character.Character.mode.track, Game1.player);
 
-                            Mod.instance.RegisterMessage(CharacterHandle.CharacterTitle(crestSummon) + StringData.Strings(StringData.stringkeys.joinedPlayer), 0, true);
+                            Mod.instance.RegisterMessage(CharacterHandle.CharacterTitle(crestSummon) + StringData.Get(StringData.str.joinedPlayer), 0, true);
 
                             Mod.instance.relicHandle.favourite = relic;
 
@@ -160,7 +160,7 @@ namespace StardewDruid.Handle
                             Mod.instance.characters[CharacterHandle.characters.Jester].SwitchToMode(Character.Character.mode.track, Game1.player);
 
                             Mod.instance.RegisterMessage(CharacterHandle.CharacterTitle(CharacterHandle.characters.Jester) +
-                                StringData.Strings(StringData.stringkeys.joinedPlayer), 0, true);
+                                StringData.Get(StringData.str.joinedPlayer), 0, true);
 
                             Mod.instance.relicHandle.favourite = relic;
 
@@ -192,7 +192,7 @@ namespace StardewDruid.Handle
                             Mod.instance.characters[CharacterHandle.characters.Shadowtin].SwitchToMode(Character.Character.mode.track, Game1.player);
 
                             Mod.instance.RegisterMessage(CharacterHandle.CharacterTitle(CharacterHandle.characters.Shadowtin) +
-                                StringData.Strings(StringData.stringkeys.joinedPlayer), 0, true);
+                                StringData.Get(StringData.str.joinedPlayer), 0, true);
 
                             Mod.instance.relicHandle.favourite = relic;
 
@@ -224,7 +224,7 @@ namespace StardewDruid.Handle
                             Mod.instance.characters[CharacterHandle.characters.Blackfeather].SwitchToMode(Character.Character.mode.track, Game1.player);
 
                             Mod.instance.RegisterMessage(CharacterHandle.CharacterTitle(CharacterHandle.characters.Blackfeather) +
-                                StringData.Strings(StringData.stringkeys.joinedPlayer), 0, true);
+                                StringData.Get(StringData.str.joinedPlayer), 0, true);
 
                             Mod.instance.relicHandle.favourite = relic;
 
@@ -238,19 +238,19 @@ namespace StardewDruid.Handle
 
                 case IconData.relics.druid_grimoire:
 
-                    DruidJournal.openJournal(DruidJournal.journalTypes.masteries, id, record);
+                    DruidJournal.openJournal(DruidJournal.journalTypes.masteries, id);
 
                     return 5;
 
                 case IconData.relics.druid_runeboard:
 
-                    DruidJournal.openJournal(DruidJournal.journalTypes.alchemy, id, record);
+                    DruidJournal.openJournal(DruidJournal.journalTypes.alchemy, id);
 
                     return 5;
 
-                case IconData.relics.herbalism_apothecary:
+                case IconData.relics.druid_apothecary:
 
-                    DruidJournal.openJournal(DruidJournal.journalTypes.herbalism, id, record);
+                    DruidJournal.openJournal(DruidJournal.journalTypes.potions, id);
 
                     return 5;
 
@@ -263,7 +263,7 @@ namespace StardewDruid.Handle
 
                     }
 
-                    DruidJournal.openJournal(DruidJournal.journalTypes.ledger, id, record);
+                    DruidJournal.openJournal(DruidJournal.journalTypes.ledger, id);
 
                     return 5;
 
@@ -491,7 +491,7 @@ namespace StardewDruid.Handle
                     else
                     {
 
-                        Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.noWarpPoint));
+                        Mod.instance.RegisterMessage(StringData.Get(StringData.str.noWarpPoint));
 
                     }
 
@@ -620,7 +620,7 @@ namespace StardewDruid.Handle
 
                     }
 
-                    DruidJournal.openJournal(DruidJournal.journalTypes.palPage,entity.ToString(),record);
+                    DruidJournal.openJournal(DruidJournal.journalTypes.palPage,entity.ToString());
 
                     Mod.instance.relicHandle.favourite = relic;
 
@@ -632,24 +632,24 @@ namespace StardewDruid.Handle
                 case IconData.relics.crest_associate:
                 case IconData.relics.crest_smuggler:
 
-                    ExportHandle.exports guild = ExportHandle.exports.church;
+                    ExportGuild.guilds guild = ExportGuild.guilds.church;
 
                     switch (relic)
                     {
 
                         case IconData.relics.crest_dwarf:
-                            guild = ExportHandle.exports.dwarf;
+                            guild = ExportGuild.guilds.dwarf;
                             break;
                         case IconData.relics.crest_associate:
-                            guild = ExportHandle.exports.associate;
+                            guild = ExportGuild.guilds.associate;
                             break;
                         case IconData.relics.crest_smuggler:
-                            guild = ExportHandle.exports.smuggler;
+                            guild = ExportGuild.guilds.smuggler;
                             break;
 
                     }
 
-                    DruidJournal.openJournal(DruidJournal.journalTypes.guildPage, guild.ToString(), record);
+                    DruidJournal.openJournal(DruidJournal.journalTypes.guildPage, guild.ToString());
                     
                     return 5;
 
@@ -660,13 +660,13 @@ namespace StardewDruid.Handle
                 case IconData.relics.book_annal:
                 case IconData.relics.book_knight:
 
-                    DruidJournal.openJournal(DruidJournal.journalTypes.relicPage, id, record);
+                    DruidJournal.openJournal(DruidJournal.journalTypes.relicPage, id);
 
                     return 5;
 
                 case IconData.relics.druid_dragonomicon:
 
-                    DruidJournal.openJournal(DruidJournal.journalTypes.dragon, id, record);
+                    DruidJournal.openJournal(DruidJournal.journalTypes.dragon, id);
 
                     return 5;
 
@@ -719,7 +719,7 @@ namespace StardewDruid.Handle
 
                             Mod.instance.RegisterMessage(
                                 CharacterHandle.CharacterTitle(crestSummon) +
-                                StringData.Strings(StringData.stringkeys.returnedHome), 0, true);
+                                StringData.Get(StringData.str.returnedHome), 0, true);
 
                             return 1;
 
@@ -749,7 +749,7 @@ namespace StardewDruid.Handle
                             Mod.instance.characters[CharacterHandle.characters.Jester].SwitchToMode(Character.Character.mode.home, Game1.player);
 
                             Mod.instance.RegisterMessage(CharacterHandle.CharacterTitle(CharacterHandle.characters.Jester) +
-                                StringData.Strings(StringData.stringkeys.returnedHome), 0, true);
+                                StringData.Get(StringData.str.returnedHome), 0, true);
 
                             if (Mod.instance.trackers.ContainsKey(CharacterHandle.characters.Buffin))
                             {
@@ -787,7 +787,7 @@ namespace StardewDruid.Handle
                             Mod.instance.characters[CharacterHandle.characters.Shadowtin].SwitchToMode(Character.Character.mode.home, Game1.player);
 
                             Mod.instance.RegisterMessage(CharacterHandle.CharacterTitle(CharacterHandle.characters.Shadowtin) +
-                                StringData.Strings(StringData.stringkeys.returnedHome), 0, true);
+                                StringData.Get(StringData.str.returnedHome), 0, true);
 
                             return 1;
 
@@ -817,7 +817,7 @@ namespace StardewDruid.Handle
                             Mod.instance.characters[CharacterHandle.characters.Blackfeather].SwitchToMode(Character.Character.mode.home, Game1.player);
 
                             Mod.instance.RegisterMessage(CharacterHandle.CharacterTitle(CharacterHandle.characters.Blackfeather) +
-                                StringData.Strings(StringData.stringkeys.returnedHome), 0, true);
+                                StringData.Get(StringData.str.returnedHome), 0, true);
 
                             return 1;
 
@@ -928,7 +928,7 @@ namespace StardewDruid.Handle
 
                     }
 
-                    DruidJournal.openJournal(DruidJournal.journalTypes.palPage, entity.ToString(), record);
+                    DruidJournal.openJournal(DruidJournal.journalTypes.palPage, entity.ToString());
 
                     return 5;
 

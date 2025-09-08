@@ -652,7 +652,7 @@ namespace StardewDruid.Location.Druid
 
             // CIRCLE
 
-            if (Mod.instance.Config.decorateGrove)
+            if (Mod.instance.Config.decorateLocations)
             {
 
                 RitualCircle circle = new(circlePosition);

@@ -1,31 +1,33 @@
-﻿using StardewDruid.Cast;
+﻿using Microsoft.Xna.Framework;
+using StardewDruid.Cast;
 using StardewDruid.Cast.Effect;
 using StardewDruid.Cast.Weald;
+using StardewDruid.Handle;
 using StardewDruid.Location;
+using StardewDruid.Location.Druid;
+using StardewDruid.Location.Terrain;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Enchantments;
+using StardewValley.GameData;
+using StardewValley.GameData.Crops;
+using StardewValley.GameData.Locations;
+using StardewValley.GameData.Shops;
+using StardewValley.ItemTypeDefinitions;
 using StardewValley.Locations;
+using StardewValley.Menus;
+using StardewValley.Monsters;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using xTile.Dimensions;
-using System.Runtime.CompilerServices;
-using StardewValley.GameData.Locations;
 using System.Linq;
-using StardewValley.GameData.Shops;
-using StardewValley.Monsters;
-using StardewValley.GameData.Crops;
-using StardewValley.ItemTypeDefinitions;
-using StardewDruid.Location.Druid;
-using StardewValley.Menus;
 using System.Reflection.Metadata.Ecma335;
-using StardewValley.GameData;
+using System.Runtime.CompilerServices;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
-using StardewDruid.Handle;
+using xTile.Dimensions;
+using static StardewDruid.Data.SpawnData;
 
 namespace StardewDruid.Data
 {
@@ -52,6 +54,7 @@ namespace StardewDruid.Data
             forest,
             neptune,
             holy,
+            vampire,
             lava,
             scythe,
             cutlass,
@@ -61,89 +64,122 @@ namespace StardewDruid.Data
         public static MeleeWeapon SpawnSword(Swords sword)
         {
 
+            StardewValley.Tools.MeleeWeapon blade;
+
             switch (sword)
             {
 
                 default:
                 case Swords.forest:
 
+                    blade = new("15");
+
                     if (Mod.instance.Helper.ModRegistry.IsLoaded("DaLion.Overhaul"))
                     {
-                        return new MeleeWeapon("44");
-                    }                    
 
-                    return new MeleeWeapon("15");
+                        blade = new("44");
+
+                    }
+
+                    break;
 
                 case Swords.neptune:
 
+                    blade = new("14");
+
                     if (Mod.instance.Helper.ModRegistry.IsLoaded("DaLion.Overhaul"))
                     {
-                        return new MeleeWeapon("7");
+                        blade = new("7");
                     }
 
-                    return new MeleeWeapon("14");
+                    EmeraldEnchantment speedEnchantment = new();
+
+                    speedEnchantment.SetLevel(blade, 3);
+
+                    blade.enchantments.Add(speedEnchantment);
+
+                    break;
 
                 case Swords.holy:
 
-                    StardewValley.Tools.MeleeWeapon holyBlade = new("3");
+                    blade = new("3");
 
-                    holyBlade.enchantments.Add(new BugKillerEnchantment());
+                    blade.enchantments.Add(new BugKillerEnchantment());
 
-                    holyBlade.enchantments.Add(new CrusaderEnchantment());
+                    blade.enchantments.Add(new CrusaderEnchantment());
 
                     RubyEnchantment powerEnchantment = new();
 
-                    powerEnchantment.SetLevel(holyBlade, 3);
+                    powerEnchantment.SetLevel(blade, 3);
 
-                    holyBlade.enchantments.Add(powerEnchantment);
+                    blade.enchantments.Add(powerEnchantment);
 
-                    return holyBlade;
+                    break;
+
+                case Swords.vampire:
+
+                    blade = new("2");
+
+                    blade.enchantments.Add(new VampiricEnchantment());
+
+                    break;
 
                 case Swords.lava:
 
-                    return new MeleeWeapon("9");
+                    blade = new("9");
+
+                    break;
 
                 case Swords.scythe:
 
-                    return new MeleeWeapon("53");
+                    blade = new("53");
+
+                    break;
 
                 case Swords.cutlass:
 
-                    return new MeleeWeapon("57");
+                    blade = new("57");
+
+                    break;
 
                 case Swords.knife:
 
-                    return new MeleeWeapon("16");
+                    blade = new("16");
+
+                    break;
+
             }
+
+            return blade;
 
         }
 
-        public static Dictionary<int, Rite.Rites> WeaponAttunement(bool reserved = false)
+        public static Dictionary<string, Rite.Rites> WeaponAttunement(bool reserved = false)
         {
 
-            Dictionary<int, Rite.Rites> weapons = new();
+            Dictionary<string, Rite.Rites> attunement = new();
 
-            if (!reserved)
+            Dictionary<Swords,Rite.Rites> swords = new()
             {
-                weapons = Mod.instance.save.attunement;
+                [Swords.forest] = Rite.Rites.weald,
+                [Swords.neptune] = Rite.Rites.mists,
+                [Swords.holy] = Rite.Rites.stars,
+                [Swords.vampire] = Rite.Rites.voide,
+                [Swords.scythe] = Rite.Rites.fates,
+                [Swords.cutlass] = Rite.Rites.ether,
+                [Swords.knife] = Rite.Rites.witch,
+            };
+
+            foreach(KeyValuePair< Swords,Rite.Rites > sword in swords)
+            {
+
+                MeleeWeapon weapon = SpawnSword(sword.Key);
+
+                attunement[weapon.Name] = sword.Value;
 
             }
 
-            weapons[15] = Rite.Rites.weald;
-            weapons[14] = Rite.Rites.mists;
-            weapons[3] = Rite.Rites.stars;
-            weapons[53] = Rite.Rites.fates;
-            weapons[57] = Rite.Rites.ether;
-            weapons[16] = Rite.Rites.witch;
-
-            if (Mod.instance.Helper.ModRegistry.IsLoaded("DaLion.Overhaul"))
-            {
-                weapons[44] = Rite.Rites.weald;
-                weapons[7] = Rite.Rites.mists;
-
-            }
-
-            return weapons;
+            return attunement;
 
         }
 
@@ -2273,7 +2309,7 @@ namespace StardewDruid.Data
             if (learnedRecipes >= 1)
             {
 
-                Game1.addHUDMessage(new HUDMessage(learnedRecipes + " " + StringData.Strings(StringData.stringkeys.learnRecipes), 2));
+                Game1.addHUDMessage(new HUDMessage(learnedRecipes + " " + StringData.Get(StringData.str.learnRecipes), 2));
 
             }
 

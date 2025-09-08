@@ -1,48 +1,141 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using StardewDruid.Cast.Fates;
 using StardewDruid.Data;
 using StardewDruid.Journal;
 using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Characters;
-using StardewValley.Delegates;
+using StardewValley.Enchantments;
 using StardewValley.GameData.Machines;
 using StardewValley.GameData.Shops;
-using StardewValley.Locations;
-using StardewValley.Monsters;
+using StardewValley.ItemTypeDefinitions;
 using StardewValley.Objects;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Reflection.Emit;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using xTile.Dimensions;
 
 namespace StardewDruid.Handle
 {
 
-    public class ExportHandle
+    public class ExportResource
     {
 
-        public enum exports
+        public enum resources
+        {
+            malt,
+            must,
+            tribute,
+            nectar,
+
+            labour,
+            heavy,
+            special,
+            materials,
+
+        }
+
+        public resources resource;
+
+        public string name;
+
+        public string description;
+
+        public List<string> details;
+
+        public ExportResource()
+        {
+
+        }
+
+        public static IconData.displays ResourceDisplay(resources resource)
+        {
+
+            switch (resource)
+            {
+                default:
+                case resources.malt:
+                    return IconData.displays.malt;
+
+                case resources.must:
+                    return IconData.displays.must;
+
+                case resources.tribute:
+                    return IconData.displays.tribute;
+
+                case resources.nectar:
+                    return IconData.displays.nectar;
+
+                case resources.labour:
+                    return IconData.displays.labour;
+
+                case resources.heavy:
+                    return IconData.displays.heavy;
+
+                case resources.special:
+                    return IconData.displays.special;
+
+                case resources.materials:
+                    return IconData.displays.materials;
+
+            }
+
+        }
+
+    }
+
+    public class ExportGood
+    {
+
+        public enum goods
         {
 
             potions,
             powders,
-            whiskey,
-            brandy,
-
-            weapons,
-            supplies,
             trophies,
             omens,
+
+            whiskey,
+            brandy,
+            aquavitae,
+            ambrosia,
+
+        }
+
+        public goods good;
+
+        public string name;
+
+        public string description;
+
+        public int price;
+
+        public int peak;
+
+        public List<string> details = new();
+
+        public int sell;
+
+        public ExportGuild.guilds guild;
+
+        public ExportGood()
+        {
+
+        }
+
+        public static Microsoft.Xna.Framework.Rectangle GoodRectangles(goods goodId)
+        {
+
+            int slot = (int)goodId;
+
+            return new(slot % 4 * 32, slot == 0 ? 0 : slot / 4 * 32, 32, 32);
+
+        }
+
+    }
+
+    public class ExportMachine
+    {
+        public enum machines
+        {
 
             crushers,
             press,
@@ -54,30 +147,140 @@ namespace StardewDruid.Handle
             barrel,
             packer,
 
+        }
+
+        public machines machine;
+
+        public string name;
+
+        public string description;
+
+        public string technical;
+
+        public List<int> graduation = new();
+
+        public ExportResource.resources labour = ExportResource.resources.labour;
+
+        public List<int> hireage = new();
+
+        public List<int> materials = new();
+
+        public ExportMachine()
+        {
+
+        }
+
+        public static Microsoft.Xna.Framework.Rectangle MachineRectangles(machines workshop)
+        {
+
+            int slot = (int)workshop;
+
+            return new(slot % 4 * 32, 64 + (slot == 0 ? 0 : slot / 4 * 32), 32, 32);
+
+        }
+
+    }
+
+    public class MachineRecord
+    {
+
+        public ExportMachine.machines machine;
+
+        public int level;
+
+        public int status;
+
+    }
+
+    public class ExportGuild
+    {
+
+        public enum guilds
+        {
             church,
             dwarf,
             associate,
             smuggler,
+        }
+
+        public guilds guild;
+
+        public string name;
+
+        public string intro;
+
+        public string description;
+
+        public Dictionary<int, string> benefits = new();
+
+        public IconData.relics license;
+
+        public Dictionary<int, string> orderTitles = new();
+
+        public Dictionary<int, string> orderDescriptions = new();
+
+        public string orderFulfilled;
+
+        public ExportGuild()
+        {
 
         }
 
-        public Dictionary<exports, List<int>> stock = new();
+    }
 
-        public Dictionary<exports, ExportGood> goods = new();
+    public class GuildRecord
+    {
 
-        public Dictionary<exports, ExportMachine> machines = new();
+        public ExportGuild.guilds guild;
 
-        public Dictionary<exports, ExportGuild> guilds = new();
+        public int experience;
+
+        public int status;
+
+    }
+
+    public class ExportOrder
+    {
+
+        public ExportGood.goods good;
+
+        public ExportGuild.guilds guild = ExportGuild.guilds.church;
+
+        public int requirement;
+
+        public int floor;
+
+        public int timer;
+
+        public int level;
+
+        public bool complete;
+
+        public int sale;
+
+        public ExportOrder()
+        {
+
+        }
+
+    }
+
+    public class ExportHandle
+    {
+
+        public Dictionary<ExportResource.resources, ExportResource> resources = new();
+
+        public Dictionary<ExportGood.goods, ExportGood> goods = new();
+
+        public Dictionary<ExportMachine.machines, ExportMachine> machines = new();
+
+        public Dictionary<ExportGuild.guilds, ExportGuild> guilds = new();
 
         public int day = 0;
 
-        public List<string> recents = new();
+        public List<string> recentProduction = new();
 
-        public List<string> calculations = new();
-
-        public Dictionary<exports, int> products = new();
-
-        public Dictionary<exports, int> estimates = new();
+        public List<string> estimatedProduction = new();
 
         public ExportHandle()
         {
@@ -87,11 +290,57 @@ namespace StardewDruid.Handle
         public void LoadExports()
         {
 
-            goods = ExportData.LoadGoods();
+            resources = ResourceData.LoadResources();
 
-            machines = ExportData.LoadMachines();
+            goods = GoodData.LoadGoods();
 
-            guilds = ExportData.LoadGuilds();
+            machines = Data.WorkshopData.LoadMachines();
+
+            guilds = GuildData.LoadGuilds();
+
+        }
+
+        public void Produce()
+        {
+
+            recentProduction.Clear();
+
+            if (!RelicHandle.HasRelic(IconData.relics.crest_dwarf))
+            {
+
+                return;
+
+            }
+
+            List<string> processedResources = ResourceProcessing(true);
+
+            List<string> producedGoods = GoodsProduction(true);
+
+            recentProduction.AddRange(processedResources);
+
+            recentProduction.AddRange(producedGoods);
+
+        }
+
+        public void Estimate()
+        {
+
+            estimatedProduction.Clear();
+
+            if (!RelicHandle.HasRelic(IconData.relics.crest_dwarf))
+            {
+
+                return;
+
+            }
+
+            List<string> processedResources = ResourceProcessing();
+
+            List<string> producedGoods = GoodsProduction();
+
+            estimatedProduction.AddRange(processedResources);
+
+            estimatedProduction.AddRange(producedGoods);
 
         }
 
@@ -109,14 +358,13 @@ namespace StardewDruid.Handle
 
                 ContentComponent content = new(ContentComponent.contentTypes.order, orderEntry.Key.ToString());
 
-                content.textureSources[0] = IconData.WorkshopRectangles(goods[order.good].display);
+                content.textureSources[0] = ExportGood.GoodRectangles(goods[order.good].good);
 
                 content.textureSources[1] = IconData.RelicRectangles(guilds[order.guild].license);
 
                 ExportGuild guild = guilds[order.guild];
 
                 content.text[0] = guild.orderTitles[order.level];
-
 
                 if (order.complete)
                 {
@@ -138,27 +386,27 @@ namespace StardewDruid.Handle
                     content.textColours[4] = Color.DarkSlateGray;
 
                 }
-                else if (!Mod.instance.save.exports.ContainsKey(order.good))
+                else if (!Mod.instance.save.goods.ContainsKey(order.good))
                 {
 
                     content.text[1] = guild.orderDescriptions[order.level];
 
                     content.text[2] = 0 + StringData.slash + order.requirement;
 
-                    content.text[3] = StringData.Strings(StringData.stringkeys.shortfall);
+                    content.text[3] = StringData.Get(StringData.str.shortfall);
 
                     content.textColours[3] = Color.DarkRed;
 
 
                 }
-                else if (Mod.instance.save.exports[order.good] < order.floor)
+                else if (Mod.instance.save.goods[order.good] < order.floor)
                 {
 
                     content.text[1] = guild.orderDescriptions[order.level];
 
-                    content.text[2] = Mod.instance.save.exports[order.good] + StringData.slash + order.requirement;
+                    content.text[2] = Mod.instance.save.goods[order.good] + StringData.slash + order.requirement;
 
-                    content.text[3] = StringData.Strings(StringData.stringkeys.shortfall);
+                    content.text[3] = StringData.Get(StringData.str.shortfall);
 
                     content.textColours[3] = Color.DarkRed;
 
@@ -168,7 +416,7 @@ namespace StardewDruid.Handle
 
                     content.text[1] = guild.orderDescriptions[order.level];
 
-                    int provided = Math.Min(Mod.instance.save.exports[order.good], order.requirement);
+                    int provided = Math.Min(Mod.instance.save.goods[order.good], order.requirement);
 
                     content.text[2] = provided + StringData.slash + order.requirement;
 
@@ -190,99 +438,19 @@ namespace StardewDruid.Handle
 
         }
 
-        public void StockTake()
-        {
-            
-            if (!Context.IsMainPlayer)
-            {
-
-                QueryData queryData = new();
-
-                Mod.instance.EventQuery(queryData, QueryData.queries.RequestGoods);
-
-                return;
-
-            }
-
-            stock.Clear();
-
-            int season = (int)Game1.season;
-
-            day = season * 28 + Game1.dayOfMonth;
-
-            foreach (KeyValuePair<exports, ExportGood> good in goods)
-            {
-
-                int amount = 0;
-
-                if (Mod.instance.save.exports.ContainsKey(good.Value.good))
-                {
-
-                    amount = Mod.instance.save.exports[good.Value.good];
-
-                }
-
-                int currentPrice = GoodsPrice(good.Key, day);
-
-                int sellPrice = 0;
-
-                if(GuildLevel(good.Value.guild) >= 4)
-                {
-
-                    sellPrice = (int)(currentPrice * 0.6f);
-
-                }
-
-                stock[good.Key] = new()
-                {
-                    amount,
-                    currentPrice,
-                    sellPrice,
-                };
-
-            }
-
-        }
-
-        public void PostStock()
+        public Dictionary<int, ContentComponent> JournalByType(DruidJournal.journalTypes type)
         {
 
-            if (!Context.IsMainPlayer)
+            switch (type)
             {
+                default:
+                case DruidJournal.journalTypes.goods:
 
-                return;
+                    return JournalGoods();
 
-            }
+                case DruidJournal.journalTypes.distillery:
 
-            StockTake();
-
-            QueryData query = new()
-            {
-
-                value = System.Text.Json.JsonSerializer.Serialize(stock),
-
-            };
-
-            Mod.instance.EventQuery(query, QueryData.queries.SyncGoods);
-
-        }
-
-        public void SynchroniseStock(string stockData)
-        {
-
-            if (Context.IsMainPlayer)
-            {
-
-                return;
-
-            }
-
-            stock = System.Text.Json.JsonSerializer.Deserialize<Dictionary<exports, List<int>>>(stockData);
-
-            if(Game1.activeClickableMenu is GoodsJournal goodsJournal)
-            {
-
-                goodsJournal.populateContent();
+                    return JournalDistillery();
 
             }
 
@@ -293,55 +461,115 @@ namespace StardewDruid.Handle
 
             Dictionary<int, ContentComponent> journal = new();
 
-            if (stock.Count <= 0)
-            {
-
-                return journal;
-
-            }
-
             int start = 0;
 
-            foreach (KeyValuePair<exports, ExportGood> good in goods)
+            int season = (int)Game1.season;
+
+            int grid = 0;
+
+            day = season * 28 + Game1.dayOfMonth;
+
+            foreach (KeyValuePair<ExportGood.goods, ExportGood> good in goods)
             {
 
-                ContentComponent content = new(ContentComponent.contentTypes.goods, good.Key.ToString());
+                int amount = 0;
 
-                List<int> goodStock = stock[good.Key];
-
-                content.text[0] = goodStock[0].ToString();
-
-                content.textureSources[0] = IconData.WorkshopRectangles(good.Value.display);
-
-                // -------------------------------------
-
-
-                content.text[1] = goodStock[1].ToString() + StringData.currency;
-
-                // -------------------------------------
-
-                int priceDifference = goodStock[1] - good.Value.price;
-
-                if (priceDifference > 0)
+                if (Mod.instance.save.goods.ContainsKey(good.Value.good))
                 {
 
-                    content.textColours[2] = Color.DarkGreen;
-
-                    content.text[2] = StringData.plus + priceDifference.ToString() + StringData.currency;
+                    amount = Mod.instance.save.goods[good.Key];
 
                 }
-                else
-                {
 
-                    content.textColours[2] = Color.DarkRed;
+                // ------------------------------------ good
 
-                    content.text[2] = priceDifference.ToString() + StringData.currency;
+                ContentComponent content = new(ContentComponent.contentTypes.custom, good.Key.ToString());
 
-                }
+                content.grid = grid;
+
+                content.serial = 1;
+
+                content.text[0] = amount.ToString();
+
+                content.textureSources[0] = ExportGood.GoodRectangles(good.Value.good);
 
                 journal[start++] = content;
 
-                
+                // ------------------------------------ quicksell
+
+                ContentComponent button = new(ContentComponent.contentTypes.toggle, good.Key.ToString());
+
+                button.grid = grid;
+
+                button.serial = 2;
+
+                button.textureSources[0] = IconData.DisplayRectangle(IconData.displays.sell);
+
+                int sellPrice = QuickSell(good.Key);
+
+                button.text[0] = sellPrice.ToString();
+
+                if (sellPrice == 0) 
+                {
+
+                    button.text[1] = StringData.Get(StringData.str.nosell);
+
+                }
+
+                journal[start++] = button;
+
+                grid++;
+
+            }
+
+            List<ExportResource.resources> useResources = new()
+            {
+                ExportResource.resources.malt,
+                ExportResource.resources.must,
+                ExportResource.resources.tribute,
+                ExportResource.resources.nectar,
+
+            };
+
+            foreach (ExportResource.resources useResource in useResources)
+            {
+
+                int amount = 0;
+
+                if (Mod.instance.save.resources.ContainsKey(useResource))
+                {
+
+                    amount = Mod.instance.save.resources[useResource];
+
+                }
+
+                // ------------------------------------ resource
+
+                ContentComponent content = new(ContentComponent.contentTypes.custom, useResource.ToString());
+
+                content.grid = grid;
+
+                content.serial = 3;
+
+                content.text[0] = amount.ToString();
+
+                content.textureSources[0] = IconData.DisplayRectangle(ExportResource.ResourceDisplay(useResource));
+
+                journal[start++] = content;
+
+                // ------------------------------------ quicksell for row formatting only
+
+                ContentComponent button = new(ContentComponent.contentTypes.toggle, useResource.ToString());
+
+                button.grid = grid;
+
+                button.serial = 2;
+
+                button.active = false;
+
+                journal[start++] = button;
+
+                grid++;
 
             }
 
@@ -356,87 +584,131 @@ namespace StardewDruid.Handle
 
             int start = 0;
 
-            foreach (KeyValuePair<exports, ExportMachine> machine in machines)
+            int grid = 0;
+
+            foreach (KeyValuePair<ExportMachine.machines, ExportMachine> machine in machines)
             {
 
-                ContentComponent content = new(ContentComponent.contentTypes.machine, machine.Key.ToString());
+                int level = 1;
 
-                int amount = 0;
-
-                if (Mod.instance.save.exports.ContainsKey(machine.Value.machine))
+                if (Mod.instance.save.machines.ContainsKey(machine.Key))
                 {
 
-                    amount = Mod.instance.save.exports[machine.Value.machine];
+                    level = Mod.instance.save.machines[machine.Key].level;
 
                 }
 
-                content.text[0] = amount.ToString();
+                // ------------------------------------ machine
 
-                content.textureSources[0] = IconData.WorkshopRectangles(machine.Value.display);
+                ContentComponent content = new(ContentComponent.contentTypes.custom, machine.Key.ToString());
+
+                content.grid = grid;
+
+                content.serial = 1;
+
+                content.text[0] = level.ToString();
+
+                content.textureSources[0] = ExportMachine.MachineRectangles(machine.Key);
 
                 journal[start++] = content;
 
+                // ------------------------------------ craft
+
+                ContentComponent button = new(ContentComponent.contentTypes.toggle, machine.Key.ToString());
+
+                button.grid = grid;
+
+                button.serial = 2;
+
+                button.textureSources[0] = IconData.DisplayRectangle(IconData.displays.upgrade);
+
+                journal[start++] = button;
+
+                grid++;
+
             }
 
-            List<exports> exportContent = new()
+            List<ExportResource.resources> useResources = new()
             {
-                exports.whiskey,
-                exports.brandy,
-                exports.weapons,
-                exports.supplies,
+                ExportResource.resources.labour,
+                ExportResource.resources.heavy,
+                ExportResource.resources.special,
+                ExportResource.resources.materials,
+
             };
 
-            for (int e = 0; e < exportContent.Count; e++)
+            foreach (ExportResource.resources useResource in useResources)
             {
 
-                exports good = exportContent.ElementAt(e);
+                int amount = 0;
 
-                ContentComponent content = new(ContentComponent.contentTypes.estimate, good.ToString());
-
-                content.textures[0] = Mod.instance.iconData.workshopTexture;
-
-                content.textureSources[0] = IconData.WorkshopRectangles(goods[good].display);
-
-                int estimate = Mod.instance.exportHandle.estimates[good];
-
-                if (Mod.instance.exportHandle.estimates.ContainsKey(good))
+                if (Mod.instance.save.resources.ContainsKey(useResource))
                 {
 
-                    estimate = Mod.instance.exportHandle.estimates[good];
+                    amount = Mod.instance.save.resources[useResource];
 
                 }
 
-                content.text[0] = estimate.ToString();
+                // ------------------------------------ resource
 
-                int product = 0;
+                ContentComponent content = new(ContentComponent.contentTypes.custom, useResource.ToString());
 
-                if (Mod.instance.exportHandle.products.ContainsKey(good))
+                content.grid = grid;
+
+                content.serial = 3;
+
+                content.text[0] = amount.ToString();
+
+                content.textureSources[0] = IconData.DisplayRectangle(ExportResource.ResourceDisplay(useResource));
+
+                journal[start++] = content;
+
+                // ------------------------------------ craft for row formatting only
+
+                ContentComponent button = new(ContentComponent.contentTypes.toggle, useResource.ToString());
+
+                button.grid = grid;
+
+                button.serial = 2;
+
+                button.active = false;
+
+                journal[start++] = button;
+
+                grid++;
+
+            }
+
+            return journal;
+
+        }
+
+        public Dictionary<int, ContentComponent> JournalGuilds()
+        {
+
+            Dictionary<int, ContentComponent> journal = new();
+
+            int start = 0;
+
+            foreach(KeyValuePair<ExportGuild.guilds, ExportGuild> guildData in guilds)
+            {
+
+                if (!RelicHandle.HasRelic(guildData.Value.license))
                 {
 
-                    product = Mod.instance.exportHandle.products[good];
+                    continue;
 
                 }
 
-                // -------------------------------------
+                Journal.ContentComponent content = new(ContentComponent.contentTypes.list, guildData.Key.ToString());
 
-                int difference = estimate - product;
+                content.text[0] = guildData.Value.name;
 
-                if (difference > 0)
-                {
+                content.text[1] = StringData.Get(StringData.str.level, new { level = GuildLevel(guildData.Key) });
 
-                    content.textColours[1] = Color.DarkGreen;
+                content.textures[0] = Mod.instance.iconData.relicsTexture;
 
-                    content.text[1] = StringData.plus +difference.ToString();
-
-                }
-                else
-                {
-
-                    content.textColours[1] = Color.DarkRed;
-
-                    content.text[1] = difference.ToString();
-
-                }
+                content.textureSources[0] = IconData.RelicRectangles(guildData.Value.license);
 
                 journal[start++] = content;
 
@@ -446,126 +718,84 @@ namespace StardewDruid.Handle
 
         }
 
-        public int GoodsPrice(exports export, int target)
+        public int GoodsPrice(ExportGood.goods export)
         {
 
             ExportGood good = goods[export];
 
             float diff;
 
-            if (target > good.peak)
+            if(day == -1)
             {
 
-                diff = Math.Min(target - good.peak, good.peak + 112 - target);
+                int season = (int)Game1.season;
+
+                day = season * 28 + Game1.dayOfMonth;
+
+            }
+
+            if (day > good.peak)
+            {
+
+                diff = Math.Min(day- good.peak, good.peak + 112 -day);
 
             }
             else
             {
 
-                diff = Math.Min(good.peak - target, target + 112 - good.peak);
+                diff = Math.Min(good.peak - day, day+ 112 - good.peak);
 
 
             }
 
             float diff2 = diff / 112f;
 
+            if (MasteryHandle.HasMastery(MasteryNode.nodes.potion_bolster))
+            {
+
+                diff2 *= 0.75f;
+
+            }
+
             float diff3 = 1.25f - diff2;
 
             int adjustPrice = (int)(good.price * diff3);
 
-            switch (export)
-            {
-                case exports.potions:
-
-                    if(GuildLevel(exports.church) > 1)
-                    {
-
-                        adjustPrice = (int)(adjustPrice * 1.2f);
-
-                    }
-
-                    break;
-
-                case exports.powders:
-
-                    if (GuildLevel(exports.associate) > 1)
-                    {
-
-                        adjustPrice = (int)(adjustPrice * 1.2f);
-
-                    }
-
-                    break;
-
-                case exports.whiskey:
-
-                    if (GuildLevel(exports.dwarf) > 1)
-                    {
-
-                        adjustPrice = (int)(adjustPrice * 1.2f);
-
-                    }
-
-                    break;
-                case exports.brandy:
-
-                    if (GuildLevel(exports.dwarf) > 1)
-                    {
-
-                        adjustPrice = (int)(adjustPrice * 1.2f);
-
-                    }
-
-                    break;
-
-                case exports.trophies:
-
-                    if (GuildLevel(exports.smuggler) > 1)
-                    {
-
-                        adjustPrice = (int)(adjustPrice * 1.2f);
-
-                    }
-
-                    break;
-                case exports.omens:
-
-                    if (GuildLevel(exports.church) > 1)
-                    {
-
-                        adjustPrice = (int)(adjustPrice * 1.2f);
-
-                    }
-
-                    break;
-
-                case exports.weapons:
-
-                    if (GuildLevel(exports.smuggler) > 1)
-                    {
-
-                        adjustPrice = (int)(adjustPrice * 1.2f);
-
-                    }
-
-                    break;
-                case exports.supplies:
-
-                    if (GuildLevel(exports.associate) > 1)
-                    {
-
-                        adjustPrice = (int)(adjustPrice * 1.2f);
-
-                    }
-
-                    break;
-            }
-
             return adjustPrice;
 
         }
+        
+        public void AddResource(ExportResource.resources export, int amount = 1)
+        {
 
-        public void AddExport(exports export, int amount = 1)
+            if (amount == 0)
+            {
+
+                return;
+
+            }
+
+            if (!Mod.instance.save.resources.ContainsKey(export))
+            {
+
+                Mod.instance.save.resources[export] = amount;
+
+                return;
+
+            }
+
+            Mod.instance.save.resources[export] += amount;
+
+            if (Mod.instance.save.resources[export] > 99999)
+            {
+
+                Mod.instance.save.resources[export] = 99999;
+
+            }
+
+        }
+
+        public void AddGood(ExportGood.goods export, int amount = 1)
         {
 
             if(amount == 0)
@@ -575,51 +805,30 @@ namespace StardewDruid.Handle
 
             }
 
-            if (!Context.IsMainPlayer)
+            if (!Mod.instance.save.goods.ContainsKey(export))
             {
 
-                QueryData queryData = new()
-                {
-
-                    name = export.ToString(),
-                    value = amount.ToString(),
-
-                };
-
-                Mod.instance.EventQuery(queryData, QueryData.queries.AddExport);
+                Mod.instance.save.goods[export] = amount;
 
                 return;
 
             }
 
-            if (!Mod.instance.save.exports.ContainsKey(export))
+            Mod.instance.save.goods[export] += amount;
+
+            if (Mod.instance.save.goods[export] > 9999)
             {
 
-                Mod.instance.save.exports[export] = amount;
-
-                return;
-
-            }
-
-            Mod.instance.save.exports[export] += amount;
-
-            if (Mod.instance.save.exports[export] > 9999)
-            {
-
-                Mod.instance.save.exports[export] = 0;
+                Mod.instance.save.goods[export] = 9999;
 
             }
 
         }
 
-        public int OrderPrice(exports good, int requirement, int provided, int timer)
+        public int OrderPrice(ExportGood.goods good, int requirement, int provided, int timer)
         {
 
-            int season = (int)Game1.season;
-
-            day = season * 28 + Game1.dayOfMonth;
-
-            int basePrice = GoodsPrice(good,day);
+            int basePrice = GoodsPrice(good);
 
             int price = requirement * basePrice;
 
@@ -659,17 +868,31 @@ namespace StardewDruid.Handle
 
         }
 
-        public bool CraftMachine(exports export, int amount)
+        public bool UpdateMachine(ExportMachine.machines machineId)
         {
 
-            ExportMachine machine = machines[export];
+            ExportMachine machine = machines[machineId];
 
-            if (Mod.instance.save.pals.ContainsKey(machine.pal))
+            List<int> required = new();
+
+            if (!Mod.instance.save.machines.ContainsKey(machineId))
             {
 
-                int labour = (Mod.instance.save.pals[machine.pal].caught - Mod.instance.save.pals[machine.pal].hired) / machine.labour;
+                Mod.instance.save.machines[machineId] = new() { machine = machineId, level = 1 };
 
-                amount = Math.Min(labour,amount);
+            }
+
+            int level = Mod.instance.save.machines[machineId].level;
+
+            if (Mod.instance.save.resources.ContainsKey(machine.labour))
+            {
+
+                if (Mod.instance.save.resources[machine.labour] < machine.hireage[level])
+                {
+
+                    return false;
+
+                }
 
             }
             else
@@ -679,66 +902,40 @@ namespace StardewDruid.Handle
 
             }
 
-            foreach (KeyValuePair<string, int> item in machine.resources)
+            if (Mod.instance.save.resources.ContainsKey(ExportResource.resources.materials))
             {
 
-                int required = Game1.player.Items.CountId(item.Key) / item.Value;
+                if (Mod.instance.save.resources[ExportResource.resources.materials] < machine.materials[level])
+                {
 
-                amount = Math.Min(required, amount);
+                    return false;
+
+                }
 
             }
-
-            if(amount < 1)
+            else
             {
 
                 return false;
 
             }
 
-            Mod.instance.save.pals[machine.pal].hired += amount * machine.labour;
+            Mod.instance.save.resources[machine.labour] -= machine.hireage[level];
 
-            foreach (KeyValuePair<string, int> item in machine.resources)
-            {
+            Mod.instance.save.resources[ExportResource.resources.materials] -= machine.materials[level];
 
-                int consumed = item.Value * amount;
-
-                Game1.player.Items.ReduceId(item.Key,consumed);
-
-            }
-
-            Mod.instance.exportHandle.AddExport(export, amount);
+            Mod.instance.save.machines[machineId].level++;
 
             return true;
-
-        }
-
-        public void Produce()
-        {
-
-            if (!Context.IsMainPlayer)
-            {
-
-                return;
-
-            }
-
-            if (!Mod.instance.questHandle.IsComplete(QuestHandle.distillery))
-            {
-
-                return;
-
-            }
-
-            CalculateOutput(true);
 
         }
 
         public void Orders()
         {
 
-            Dictionary<exports, int> currentGoods = new();
+            Dictionary<ExportGood.goods, int> currentGoods = new();
 
-            Dictionary<exports, int> currentGuilds = new();
+            Dictionary<ExportGuild.guilds, int> currentGuilds = new();
 
             for (int o = Mod.instance.save.orders.Count - 1; o >= 0; o--)
             {
@@ -776,17 +973,10 @@ namespace StardewDruid.Handle
 
             }
 
-            Dictionary<exports,int> viableGoods = new();
+            Dictionary<ExportGood.goods,int> viableGoods = new();
 
-            foreach (KeyValuePair<exports, ExportGood> viable in goods)
+            foreach (KeyValuePair<ExportGood.goods, ExportGood> viable in goods)
             {
-
-                if (!RelicHandle.HasRelic(viable.Value.license))
-                {
-
-                    continue;
-
-                }
 
                 if (currentGoods.ContainsKey(viable.Key))
                 {
@@ -799,7 +989,7 @@ namespace StardewDruid.Handle
 
             }
 
-            foreach (KeyValuePair<exports, ExportGuild> contracts in guilds)
+            foreach (KeyValuePair<ExportGuild.guilds, ExportGuild> contracts in guilds)
             {
 
                 ExportGuild guild = contracts.Value;
@@ -829,7 +1019,7 @@ namespace StardewDruid.Handle
 
                 int randomGood = Mod.instance.randomIndex.Next(viableGoods.Count);
 
-                exports good = viableGoods.ElementAt(randomGood).Key;
+                ExportGood.goods good = viableGoods.ElementAt(randomGood).Key;
 
                 int factor = 3;
 
@@ -851,215 +1041,84 @@ namespace StardewDruid.Handle
 
                 int orderLevel = Mod.instance.randomIndex.Next(factor);
 
-                int orderRequirement = 10;
-
-                int orderFloor = 8;
-
-                int orderTimer = 2;
+                float goodRequirement = 2f;
 
                 switch (good)
                 {
 
-                    case exports.potions:
-                    case exports.whiskey:
+                    case ExportGood.goods.potions:
+                    case ExportGood.goods.whiskey:
 
-                        switch (orderLevel)
-                        {
-
-                            case 1:
-
-                                orderRequirement = 25;
-                                
-                                orderFloor = 20;
-
-                                break;
-
-                            case 2:
-
-                                orderTimer = 3;
-
-                                orderRequirement = 100;
-
-                                orderFloor = 80;
-
-                                break;
-
-                            case 3:
-
-                                orderTimer = 3;
-
-                                orderRequirement = 250;
-
-                                orderFloor = 200;
-
-                                break;
-
-                            case 4:
-
-                                orderTimer = 4;
-
-                                orderRequirement = 500;
-
-                                orderFloor = 400;
-
-                                break;
-
-                        }
-                        break;
-
-                    case exports.powders:
-                    case exports.brandy:
-
-                        switch (orderLevel)
-                        {
-
-                            case 1:
-
-                                orderRequirement = 15;
-
-                                orderFloor = 10;
-
-                                break;
-
-                            case 2:
-
-                                orderTimer = 3;
-
-                                orderRequirement = 60;
-
-                                orderFloor = 45;
-
-                                break;
-
-                            case 3:
-
-                                orderTimer = 3;
-
-                                orderRequirement = 120;
-
-                                orderFloor = 100;
-
-                                break;
-
-                            case 4:
-
-                                orderTimer = 4;
-
-                                orderRequirement = 300;
-
-                                orderFloor = 200;
-
-                                break;
-
-
-                        }
+                        goodRequirement = 5f;
 
                         break;
 
-                    case exports.weapons:
+                    case ExportGood.goods.powders:
+                    case ExportGood.goods.brandy:
 
-                        orderRequirement = 5;
-
-                        orderFloor = 4;
-
-                        switch (orderLevel)
-                        {
-
-                            case 1:
-
-                                orderRequirement = 5;
-
-                                orderFloor = 3;
-
-                                break;
-
-                            case 2:
-
-                                orderTimer = 3;
-
-                                orderRequirement = 10;
-
-                                orderFloor = 6;
-
-                                break;
-
-                            case 3:
-
-                                orderTimer = 3;
-
-                                orderRequirement = 25;
-
-                                orderFloor = 15;
-
-                                break;
-
-                            case 4:
-
-                                orderTimer = 4;
-
-                                orderRequirement = 50;
-
-                                orderFloor = 30;
-
-                                break;
-
-                        }
+                        goodRequirement = 3f;
 
                         break;
 
-                    default:
+                    case ExportGood.goods.aquavitae:
+                    case ExportGood.goods.ambrosia:
 
-                        orderRequirement = 5;
-
-                        orderFloor = 4;
-
-                        switch (orderLevel)
-                        {
-
-                            case 1:
-
-                                orderRequirement = 10;
-
-                                orderFloor = 8;
-
-                                break;
-
-                            case 2:
-
-                                orderTimer = 3;
-
-                                orderRequirement = 25;
-
-                                orderFloor = 20;
-
-                                break;
-
-                            case 3:
-
-                                orderTimer = 3;
-
-                                orderRequirement = 50;
-
-                                orderFloor = 40;
-
-                                break;
-
-                            case 4:
-
-                                orderTimer = 4;
-
-                                orderRequirement = 100;
-
-                                orderFloor = 80;
-
-                                break;
-
-                        }
+                        goodRequirement = 1f;
 
                         break;
 
 
                 }
+
+                float orderRequirement = goodRequirement * 5;
+
+                float orderFloor = goodRequirement * 4;
+
+                int orderTimer = 2;
+
+                switch (orderLevel)
+                {
+
+                    case 1:
+
+                        orderRequirement = goodRequirement * 10;
+
+                        orderFloor = goodRequirement * 8;
+
+                        break;
+
+                    case 2:
+
+                        orderTimer = 3;
+
+                        orderRequirement = goodRequirement * 20;
+
+                        orderFloor = goodRequirement * 16;
+
+                        break;
+
+                    case 3:
+
+                        orderTimer = 3;
+
+                        orderRequirement = goodRequirement * 50;
+
+                        orderFloor = goodRequirement * 40;
+
+                        break;
+
+                    case 4:
+
+                        orderTimer = 4;
+
+                        orderRequirement = goodRequirement * 100;
+
+                        orderFloor = goodRequirement * 80;
+
+                        break;
+
+                }
+
 
                 ExportOrder order = new();
 
@@ -1069,9 +1128,9 @@ namespace StardewDruid.Handle
 
                 order.level = orderLevel;
 
-                order.requirement = orderRequirement;
+                order.requirement = (int)orderRequirement;
 
-                order.floor = orderFloor;
+                order.floor = (int)orderFloor;
 
                 order.guild = guild.guild;
 
@@ -1104,36 +1163,43 @@ namespace StardewDruid.Handle
 
             }
 
-            if (!Mod.instance.save.exports.ContainsKey(order.good))
+            if (!Mod.instance.save.goods.ContainsKey(order.good))
             {
 
                 return false;
 
             }
 
-            if (Mod.instance.save.exports[order.good] < order.floor)
+            if (Mod.instance.save.goods[order.good] < order.floor)
             {
 
                 return false;
 
             }
 
-            int provide = Math.Min(Mod.instance.save.exports[order.good], order.requirement);
+            int provide = Math.Min(Mod.instance.save.goods[order.good], order.requirement);
 
             int sale = OrderPrice(order.good, order.requirement, provide, order.timer);
 
             Game1.player.Money += sale;
 
-            Mod.instance.save.exports[order.good] -= provide;
+            Mod.instance.save.goods[order.good] -= provide;
 
-            if (Mod.instance.save.exports[order.good] <= 0)
+            if (Mod.instance.save.goods[order.good] <= 0)
             {
 
-                Mod.instance.save.exports.Remove(order.good);
+                Mod.instance.save.goods[order.good] = 0;
 
             }
 
-            Mod.instance.exportHandle.AddExport(order.guild, order.level * 5);
+            if (!Mod.instance.save.guilds.ContainsKey(order.guild))
+            { 
+            
+                
+
+            }
+
+            Mod.instance.save.guilds[order.guild].experience = order.level * 5;
 
             GuildLevel(order.guild);
 
@@ -1145,7 +1211,7 @@ namespace StardewDruid.Handle
 
         }
 
-        public int QuickSell(exports export)
+        public int QuickSell(ExportGood.goods export)
         {
 
             if (!Context.IsMainPlayer)
@@ -1155,25 +1221,11 @@ namespace StardewDruid.Handle
 
             }
 
-            if (stock.ContainsKey(export))
-            {
-
-                return stock[export][2];
-
-            }
-
-            if (!Mod.instance.save.exports.ContainsKey(export))
-            {
-
-                return 0;
-
-            }
-
-            ExportGood good = Mod.instance.exportHandle.goods[export];
-
-            int currentPrice = GoodsPrice(export, day);
+            int currentPrice = GoodsPrice(export);
 
             int sellPrice = 0;
+
+            ExportGood good = Mod.instance.exportHandle.goods[export];
 
             if (GuildLevel(good.guild) >= 4)
             {
@@ -1186,7 +1238,7 @@ namespace StardewDruid.Handle
 
         }
 
-        public bool SellNow(exports export, int amount)
+        public bool SellNow(ExportGood.goods export, int amount)
         {
 
             ExportGood good = Mod.instance.exportHandle.goods[export];
@@ -1200,16 +1252,16 @@ namespace StardewDruid.Handle
 
             }
 
-            int provide = Math.Min(Mod.instance.save.exports[export], amount);
+            int provide = Math.Min(Mod.instance.save.goods[export], amount);
 
             Game1.player.Money += provide * price;
 
-            Mod.instance.save.exports[export] -= provide;
+            Mod.instance.save.goods[export] -= provide;
 
-            if (Mod.instance.save.exports[export] <= 0)
+            if (Mod.instance.save.goods[export] <= 0)
             {
 
-                Mod.instance.save.exports.Remove(export);
+                Mod.instance.save.goods.Remove(export);
 
             }
 
@@ -1217,17 +1269,17 @@ namespace StardewDruid.Handle
 
         }
 
-        public static int GuildLevel(exports guild)
+        public static int GuildLevel(ExportGuild.guilds guild)
         {
 
-            if (!Mod.instance.save.exports.ContainsKey(guild))
+            if (!Mod.instance.save.guilds.ContainsKey(guild))
             {
 
-                return 0;
+                Mod.instance.save.guilds[guild] = new();
 
             }
 
-            int experience = Mod.instance.save.exports[guild];
+            int experience = Mod.instance.save.guilds[guild].experience;
 
             int level = 1;
 
@@ -1272,17 +1324,17 @@ namespace StardewDruid.Handle
 
         }
 
-        public static int GuildNext(exports guild)
+        public static int GuildNext(ExportGuild.guilds guild)
         {
 
-            if (!Mod.instance.save.exports.ContainsKey(guild))
+            if (!Mod.instance.save.guilds.ContainsKey(guild))
             {
 
                 return 10;
 
             }
 
-            int experience = Mod.instance.save.exports[guild];
+            int experience = Mod.instance.save.guilds[guild].experience;
 
             if (experience >= 100)
             {
@@ -1313,855 +1365,373 @@ namespace StardewDruid.Handle
 
         }
 
-        public static int GuildRelationship(exports guild)
+
+        public int MachineStat(ExportMachine.machines machine)
         {
 
-            if (!Mod.instance.save.exports.ContainsKey(guild))
+            ExportMachine machineData = machines[machine];
+
+            int stat = machineData.graduation[0];
+
+            if (Mod.instance.save.machines.ContainsKey(machine))
             {
 
-                return 0;
+                MachineRecord machineRecord = Mod.instance.save.machines[machine];
+
+                stat = machineData.graduation[machineRecord.level-1];
 
             }
 
-            return Mod.instance.save.exports[guild];
+            return stat;
 
         }
 
-        public void CalculateOutput(bool confirm = false)
+
+        public List<string> ResourceProcessing(bool consume = false)
         {
 
-            estimates.Clear();
+            ChestHandle.RetrieveInventory(ChestHandle.chests.Distillery);
 
-            calculations.Clear();
+            List<string> conversions = new();
 
-            string stringToAdd = string.Empty;
+            string sta = string.Empty;
 
-            // WHISKEY ===============================================================
+            sta = "==== ESTIMATED PROCESSING ====";
 
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.1.1");
-
-            calculations.Add(stringToAdd);
-
-            CharacterHandle.characters sb = CharacterHandle.characters.spring_bench;
-
-            int whiskeyOutput = 0;
-
-            int kilns = 0;
-
-            if (Mod.instance.save.exports.ContainsKey(exports.kiln))
+            if (consume)
             {
 
-                kilns = Mod.instance.save.exports[exports.kiln];
+                sta = "==== DISTILLERY PROCESSING ====";
 
             }
 
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.1").Tokens(new { value = kilns, });
+            conversions.Add(sta);
 
-            calculations.Add(stringToAdd);
+            int crusherLimit = MachineStat(ExportMachine.machines.crushers);
 
-            float mash = 0f;
+            sta = "Input crushing capacity: {{value}}";//.Tokens(new { value = crusherLimit, });
 
-            if (Mod.instance.save.exports.ContainsKey(exports.mashtun))
+            conversions.Add(sta);
+
+            int kilnBonus = MachineStat(ExportMachine.machines.kiln);
+
+            kilnBonus += 5;
+
+            if (MasteryHandle.HasMastery(MasteryNode.nodes.alchemy_byproduct))
             {
 
-                mash = Mod.instance.save.exports[exports.mashtun];
+                kilnBonus += 10;
 
             }
 
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.2").Tokens(new { value = mash, });
+            sta = "{{value}}% Potential byproduct Tribute produced by Kiln";//.Tokens(new { value = kilnBonus, });
 
-            calculations.Add(stringToAdd);
+            conversions.Add(sta);
 
-            int whiskeyLimit = (int)(kilns * 10f * (mash * 0.2f));
+            int fermentStat = MachineStat(ExportMachine.machines.fermentation);
 
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.3").Tokens(new { value = whiskeyLimit, });
+            int fermentBonus = (100 + fermentStat) / 50;
 
-            calculations.Add(stringToAdd);
+            sta = "{{value}}% Potential byproduct Nectar produced by Fermentation Tank";//.Tokens(new { value = fermentBonus, });
 
-            CharacterHandle.RetrieveInventory(sb);
+            conversions.Add(sta);
 
-            List<string> grains = new()
+            int mashtunBonus = MachineStat(ExportMachine.machines.mashtun);
+
+            sta = "{{value}}% Bonus Malt produced by Mash Tun";//.Tokens(new { value = mashtunBonus, });
+
+            conversions.Add(sta);
+
+            int pressBonus = MachineStat(ExportMachine.machines.press);
+
+            sta = "{{value}}% Bonus Must produced by Wine Press";//.Tokens(new { value = pressBonus, });
+
+            conversions.Add(sta);
+
+            sta = "--------- Item Conversion ---------";
+
+            conversions.Add(sta);
+
+            int processed = crusherLimit;
+
+            for (int i = Mod.instance.chests[ChestHandle.chests.Distillery].Items.Count - 1; i >= 0; i--)
             {
-                "(O)262", // wheat
-                "(O)270", // corn
-                "(O)271", // rice
-                "(O)304", // hops
-                "(O)188", // bean
-                "(O)192", // potato
-                "(O)433" // coffee
-            };
 
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.1.2");
 
-            calculations.Add(stringToAdd);
+                Item getItem = Mod.instance.chests[ChestHandle.chests.Distillery].Items.ElementAt(i);
 
-            for (int i = Mod.instance.chests[sb].Items.Count - 1; i >= 0; i--)
-            {
-
-                Item getItem = Mod.instance.chests[sb].Items.ElementAt(i);
-
-                if (!grains.Contains(getItem.QualifiedItemId))
+                if (getItem is not StardewValley.Object)
                 {
 
-                    stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.4").Tokens(new { value = getItem.DisplayName, });
+                    sta = "Skipped non-object {{display}}";//.Tokens(new { display = getItem.DisplayName, });
 
-                    calculations.Add(stringToAdd);
+                    conversions.Add(sta);
 
                     continue;
 
                 }
 
-                string qual = StringData.normal;
+                ParsedItemData itemData = ItemRegistry.GetDataOrErrorItem(getItem.QualifiedItemId);
 
-                switch (getItem.Quality)
+                if (itemData.IsErrorItem)
                 {
-                    case 1:
-                        qual = StringData.silver; break;
-                    case 2:
-                        qual = StringData.gold; break;
-                    case 4:
-                        qual = StringData.iridium; break;
+
+                    sta = "Skipped error item {{display}}";//.Tokens(new { display = getItem.DisplayName, });
+
+                    conversions.Add(sta);
+
+                    continue;
+
                 }
 
-                int consumed = Math.Min(whiskeyLimit, getItem.Stack);
+                StardewValley.Object getObject = getItem as StardewValley.Object;
 
-                int grainYield = consumed;
+                int available = Math.Min(processed, getItem.Stack);
 
-                stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.5").Tokens(new { value = consumed, valueTwo = qual, valueThree = getItem.DisplayName});
+                int byproductChance = 0;
 
-                calculations.Add(stringToAdd);
+                float mustFactor = 0f;
+
+                float maltFactor = 0f;
 
                 switch (getItem.QualifiedItemId)
                 {
-  
-                    case "(O)433":
 
-                        stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.6").Tokens(new { value = getItem.DisplayName });
+                    case "(O)262": // wheat
+                    case "(O)270": // corn
+                    case "(O)271": // rice
+                    case "(O)304": // hops
+                    case "(O)188": // bean
+                    case "(O)192": // potato
 
-                        calculations.Add(stringToAdd);
-
-                        grainYield = grainYield / 2;
+                        maltFactor = 1f;
 
                         break;
 
+                    case "(O)433": // coffee
 
-                }
+                        maltFactor = 0.5f;
 
-                whiskeyLimit -= consumed;
+                        break;
 
-                int grainQuality = 25 * getItem.Quality;
-
-                int grainBonus = grainYield * grainQuality / 100;
-
-                int mashOutput = grainYield + grainBonus;
-
-                whiskeyOutput += mashOutput;
-
-                stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.7").Tokens(new { value = grainQuality });
-
-                calculations.Add(stringToAdd);
-
-                stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.8").Tokens(new { value = consumed, valueTwo = getItem.DisplayName });
-
-                calculations.Add(stringToAdd);
-
-                if (confirm)
-                {
-
-                    getItem.Stack -= consumed;
-
-                    if(getItem.Stack <= 0)
-                    {
-
-                        Mod.instance.chests[sb].Items.RemoveAt(i);
-
-                    }
-
-                }
-
-                if(whiskeyLimit <= 0)
-                {
-
-                    break;
-
-                }
-
-            }
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.9").Tokens(new { value = whiskeyOutput });
-
-            calculations.Add(stringToAdd);
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.10");
-
-            calculations.Add(stringToAdd);
-
-            int tanks = 0;
-
-            if (Mod.instance.save.exports.ContainsKey(exports.fermentation))
-            {
-
-                tanks = Mod.instance.save.exports[exports.fermentation];
-
-            }
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.11").Tokens(new { value = tanks });
-            
-            calculations.Add(stringToAdd);
-
-            int stills = 0;
-
-            if (Mod.instance.save.exports.ContainsKey(exports.distillery))
-            {
-
-                stills = Mod.instance.save.exports[exports.distillery];
-
-            }
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.12").Tokens(new { value = stills });
-
-            calculations.Add(stringToAdd);
-
-            int tankBonus = tanks * 5;
-
-            int stillsBonus = stills * 10;
-
-            int whiskeyProduct = whiskeyOutput;
-
-            int extraWhiskeyProduct = 0;
-
-            if (confirm)
-            {
-
-                int bonusFactor = Mod.instance.randomIndex.Next(tankBonus, tankBonus + stillsBonus);
-
-                stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.13").Tokens(new { value = bonusFactor });
-
-                calculations.Add(stringToAdd);
-
-                if (bonusFactor > 0)
-                {
-
-                    extraWhiskeyProduct = (int)(whiskeyOutput * (bonusFactor / 100f));
-
-                }
-
-            }
-            else
-            {
-
-                int bonusAverage = tankBonus + stillsBonus / 2;
-
-                stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.14").Tokens(new { value = bonusAverage });
-
-                calculations.Add(stringToAdd);
-
-                if (bonusAverage > 0)
-                {
-
-                    extraWhiskeyProduct = (int)(whiskeyOutput * (bonusAverage / 100f));
-
-                }
-
-            }
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.15").Tokens(new { value = extraWhiskeyProduct });
-
-            calculations.Add(stringToAdd);
-
-            whiskeyProduct += extraWhiskeyProduct;
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.16").Tokens(new { value = whiskeyProduct });
-
-            calculations.Add(stringToAdd);
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.17");
-
-            calculations.Add(stringToAdd);
-
-            int barrels = 0;
-
-            if (Mod.instance.save.exports.ContainsKey(exports.barrel))
-            {
-
-                barrels = Mod.instance.save.exports[exports.barrel];
-
-            }
-
-            int qualityFactor = 0;
-
-            if (barrels > 0)
-            {
-
-                qualityFactor = barrels * 2;
-
-            }
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.18").Tokens(new { value = barrels });
-
-            calculations.Add(stringToAdd);
-
-            int whiskeyTotal = whiskeyProduct;
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.19").Tokens(new { value = qualityFactor });
-
-            calculations.Add(stringToAdd);
-
-            int whiskeyQuality = (int)(qualityFactor / 100f * whiskeyProduct);
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.20").Tokens(new { value = whiskeyQuality });
-
-            calculations.Add(stringToAdd);
-
-            whiskeyTotal += whiskeyQuality;
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.21");
-
-            calculations.Add(stringToAdd);
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.22").Tokens(new { value = whiskeyTotal });
-
-            calculations.Add(stringToAdd);
-
-            if (confirm)
-            {
-
-                Mod.instance.exportHandle.AddExport(exports.whiskey, whiskeyTotal);
-
-            }
-
-            estimates[exports.whiskey] = whiskeyTotal;
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.23");
-
-            calculations.Add(stringToAdd);
-
-
-            // BRANDY ===============================================================
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.24");
-
-            calculations.Add(stringToAdd);
-
-            CharacterHandle.characters sv = CharacterHandle.characters.spring_vintner;
-
-            int brandyOutput = 0;
-
-            int crushers = 0;
-
-            if (Mod.instance.save.exports.ContainsKey(exports.crushers))
-            {
-
-                crushers = Mod.instance.save.exports[exports.crushers];
-
-            }
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.25").Tokens(new { value = crushers });
-
-            calculations.Add(stringToAdd);
-
-            float press = 0f;
-
-            if (Mod.instance.save.exports.ContainsKey(exports.press))
-            {
-
-                press = Mod.instance.save.exports[exports.press];
-
-            }
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.26").Tokens(new { value = press });
-
-            calculations.Add(stringToAdd);
-
-            int brandyLimit = (int)(crushers * 5f * (press * 0.2f));
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.27").Tokens(new { value = brandyLimit });
-
-            calculations.Add(stringToAdd);
-
-            CharacterHandle.RetrieveInventory(sv);
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.28");
-
-            calculations.Add(stringToAdd);
-
-            for (int i = Mod.instance.chests[sv].Items.Count - 1; i >= 0; i--)
-            {
-
-                Item getItem = Mod.instance.chests[sv].Items.ElementAt(i);
-
-
-                if (getItem.Category != -79)
-                {
-                
-                    stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.29").Tokens(new { value = getItem.DisplayName, });
-
-                    calculations.Add(stringToAdd);
-
-                    continue;
-
-                }
-
-                string qual = StringData.normal;
-
-                switch (getItem.Quality)
-                {
-                    case 1:
-                        qual = StringData.silver; break;
-                    case 2:
-                        qual = StringData.gold; break;
-                    case 4:
-                        qual = StringData.iridium; break;
-                }
-
-                int consumed = Math.Min(brandyLimit, getItem.Stack);
-
-                stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.5").Tokens(new { value = consumed, valueTwo = qual, valueThree = getItem.DisplayName });
-
-                calculations.Add(stringToAdd);
-
-                brandyLimit -= consumed;
-
-                int fruitYield = consumed;
-
-                switch (getItem.QualifiedItemId)
-                {
                     case "(O)400": // strawberry
                     case "PowderMelon": // powdermelon
                     case "(O)832": // pineapple
 
-                        stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.30").Tokens(new { value = getItem.DisplayName });
+                        mustFactor = 1f;
 
-                        calculations.Add(stringToAdd);
-
-                        fruitYield = consumed * 2;
+                        byproductChance += 15;
 
                         break;
 
                     case "(O)454": // ancientFruit
                     case "(O)268": // starfruit
 
-                        stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.31").Tokens(new { value = getItem.DisplayName });
+                        mustFactor = 1f;
 
-                        calculations.Add(stringToAdd);
+                        byproductChance += 25;
 
-                        fruitYield = consumed * 3;
+                        break;
+
+                    case "(O)772":
+                    case "(O)773": // elixir
+                    case "(O)349": // energy tonic
+                    case "(O)184": // milk
+                    case "(O)186": // large milk
+                    case "(O)436": // goat milk
+                    case "(O)438": // large goat milk
+                    case "(O)180": // egg
+                    case "(O)182": // large egg
+                    case "(O)176": // brown egg
+                    case "(O)174": // large brown egg
+                    case "(O)442": // duck egg
+                    case "(O)424": // cheese
+                    case "(O)426": // goat cheese
+                    case "(O)306": // mayo
+                    case "(O)307": // duck mayo
+
+                        maltFactor = 0.2f;
+
+                        byproductChance = 100;
+
+                        break;
+
+                    default:
+
+                        if (getObject.Edibility < 0)
+                        {
+
+                            sta = "Skipped inedible {{display}}";//.Tokens(new { display = getItem.DisplayName, });
+
+                            conversions.Add(sta);
+
+                        }
+
+                        switch (getObject.Category)
+                        {
+
+                            case StardewValley.Object.artisanGoodsCategory:
+
+                                sta = "Skipped artisanal good {{display}}";//.Tokens(new { display = getItem.DisplayName, });
+
+                                break;
+
+                            case StardewValley.Object.CookingCategory:
+
+                                maltFactor = 0.2f;
+
+                                byproductChance = 100;
+
+                                break;
+
+                            case StardewValley.Object.FruitsCategory:
+
+                                mustFactor = 1f;
+
+                                break;
+
+                            case StardewValley.Object.VegetableCategory:
+                            case StardewValley.Object.GreensCategory:
+
+                                maltFactor = 0.4f;
+
+                                byproductChance -= 10;
+
+                                if (byproductChance < 0)
+                                {
+
+                                    byproductChance = 0;
+
+                                }
+
+                                break;
+
+                            case StardewValley.Object.flowersCategory:
+
+                                mustFactor = 0.5f;
+
+                                byproductChance += 50;
+
+                                break;
+
+                        }
 
                         break;
 
                 }
 
-                int fruitQuality = 25 * getItem.Quality;
+                string qual = StringData.normal;
 
-                int fruitBonus = fruitYield * fruitQuality / 100;
+                switch (getItem.Quality)
+                {
+                    case 1:
 
-                int juiceOutput = fruitYield + fruitBonus;
+                        qual = StringData.silver;
 
-                brandyOutput += juiceOutput;
+                        byproductChance += 5;
 
-                stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.32").Tokens(new { value = fruitQuality });
+                        break;
 
-                calculations.Add(stringToAdd);
+                    case 2:
 
-                stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.33").Tokens(new { value = juiceOutput, valueTwo = getItem.DisplayName });
+                        qual = StringData.gold;
 
-                calculations.Add(stringToAdd);
+                        byproductChance += 10;
 
-                if (confirm)
+                        break;
+
+                    case 4:
+
+                        qual = StringData.iridium;
+
+                        byproductChance += 15;
+
+                        break;
+                }
+
+                int byproduct = Mod.instance.randomIndex.Next(byproductChance);
+
+                int convert = (int)(getObject.sellToStorePrice() / 50);
+
+                int malt = (int)(convert * maltFactor);
+
+                int producedMalt = 0;
+
+                int producedTribute = 0;
+
+                int producedMust = 0;
+
+                int producedNectar = 0;
+
+                if (malt > 0)
                 {
 
-                    getItem.Stack -= consumed;
+                    int tributeChance = kilnBonus + byproductChance;
 
-                    if (getItem.Stack <= 0)
+                    malt += (int)(mashtunBonus * malt / 100);
+
+                    int tribute = Math.Min(malt, (int)(malt * byproductChance / 100));
+
+                    malt -= tribute;
+
+                    producedMalt = malt * available;
+
+                    producedTribute = tribute * available;
+
+                    sta = "Produced {{malt}} Malt and {{tribute}} Tribute from {{amount}} {{qual}} {{display}}";//.Tokens(new {  malt = producedMalt, tribute = producedTribute, amount = available, qual = qual, display = getItem.DisplayName, });
+
+                    conversions.Add(sta);
+
+                }
+
+                int must = (int)(convert * mustFactor);
+
+                if (must > 0)
+                {
+
+                    int tributeChance = fermentBonus + byproductChance;
+
+                    must += (int)(pressBonus * must / 100);
+
+                    int nectar = Math.Min(must, (int)(must * byproductChance / 100));
+
+                    must -= nectar;
+
+                    producedMust = nectar * available;
+
+                    producedNectar = nectar * available;
+
+                    sta = "Produced {{must}} Malt and {{nectar}} Tribute from {{amount}} {{qual}} {{display}}";//.Tokens(new {  must = producedMust, nectar = producedNectar, amount = available, qual = qual, display = getItem.DisplayName, });
+
+                    conversions.Add(sta);
+
+                }
+
+                if (consume)
+                {
+
+                    int totalProduct = producedMalt + producedTribute + producedMust + producedNectar;
+
+                    if (totalProduct > 0)
                     {
 
-                        Mod.instance.chests[sv].Items.RemoveAt(i);
+                        Mod.instance.save.resources[ExportResource.resources.must] += producedMust;
+
+                        Mod.instance.save.resources[ExportResource.resources.malt] += producedMalt;
+
+                        Mod.instance.save.resources[ExportResource.resources.tribute] += producedTribute;
+
+                        Mod.instance.save.resources[ExportResource.resources.nectar] += producedNectar;
+
+                        Mod.instance.chests[ChestHandle.chests.Distillery].Stack = Mod.instance.chests[ChestHandle.chests.Distillery].Stack - available;
 
                     }
 
                 }
 
-                if (brandyLimit <= 0)
-                {
+                processed -= available;
 
-                    break;
-
-                }
-
-            }
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.34").Tokens(new { value = brandyOutput });
-
-            calculations.Add(stringToAdd);
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.10");
-
-            calculations.Add(stringToAdd);
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.11").Tokens(new { value = tanks });
-
-            calculations.Add(stringToAdd);
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.12").Tokens(new { value = stills });
-
-            calculations.Add(stringToAdd);
-
-
-            int brandyProduct = brandyOutput;
-
-            int extraProduct = 0;
-
-            if (confirm)
-            {
-
-                int bonusFactor = Mod.instance.randomIndex.Next(tankBonus, tankBonus + stillsBonus);
-
-                stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.13").Tokens(new { value = bonusFactor });
-
-                calculations.Add(stringToAdd);
-
-                if (bonusFactor > 0)
-                {
-
-                    extraProduct = (int)(brandyOutput * (bonusFactor / 100f));
-
-                }
-
-            }
-            else
-            {
-
-                int bonusAverage = tankBonus + stillsBonus / 2;
-
-                stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.14").Tokens(new { value = bonusAverage });
-
-                calculations.Add(stringToAdd);
-
-                if (bonusAverage > 0)
-                {
-
-                    extraProduct = (int)(brandyOutput * (bonusAverage / 100f));
-
-                }
-
-            }
-
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.15").Tokens(new { value = extraProduct });
-
-            calculations.Add(stringToAdd);
-
-            whiskeyProduct += extraWhiskeyProduct;
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.16").Tokens(new { value = brandyProduct });
-
-            calculations.Add(stringToAdd);
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.17");
-
-            calculations.Add(stringToAdd);
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.18").Tokens(new { value = barrels });
-
-            calculations.Add(stringToAdd);
-
-            int brandyTotal = brandyProduct;
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.19").Tokens(new { value = qualityFactor });
-
-            calculations.Add(stringToAdd);
-
-            int brandyQuality = (int)(qualityFactor / 100f * brandyProduct);
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.20").Tokens(new { value = brandyQuality });
-
-            calculations.Add(stringToAdd);
-
-            brandyTotal += brandyQuality;
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.21");
-
-            calculations.Add(stringToAdd);
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.35").Tokens(new { value = brandyTotal });
-
-            calculations.Add(stringToAdd);
-
-            if (confirm)
-            {
-
-                Mod.instance.exportHandle.AddExport(exports.brandy, brandyTotal);
-
-            }
-
-            estimates[exports.brandy] = brandyTotal;
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.23");
-
-            calculations.Add(stringToAdd);
-
-
-            // WEAPONS / SUPPLIES ===============================================================
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.36");
-
-            calculations.Add(stringToAdd);
-
-            CharacterHandle.characters sp = CharacterHandle.characters.spring_packer;
-
-            int weaponOutput = 0;
-
-            int supplyOutput = 0;
-
-            int packers = 0;
-
-            if (Mod.instance.save.exports.ContainsKey(exports.packer))
-            {
-
-                packers = Mod.instance.save.exports[exports.packer];
-
-            }
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.37").Tokens(new { value = packers });
-
-            calculations.Add(stringToAdd);
-
-            int packingLimit = packers * 3;
-
-            int packingUse = packingLimit;
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.40");
-
-            calculations.Add(stringToAdd);
-
-            CharacterHandle.RetrieveInventory(sp);
-
-            Dictionary<string,int> supplies = new()
-            {
-                ["(O)93"] = 10, // torch
-                ["(O)286"] = 30, // cherry bomb
-                ["(O)287"] = 40, // bomb
-                ["(O)288"] = 60, // mega bomb
-                ["(O)772"] = 40, // garlic
-                ["(O)773"] = 40, // elixir
-                ["(O)349"] = 60, // energy tonic
-                ["(O)243"] = 60, // miner treat
-                ["(O)261"] = 30, // desert
-                ["(O)688"] = 30, // farm
-                ["(O)689"] = 30, // mountain
-                ["(O)690"] = 30, // beach
-                ["(O)886"] = 60, // island
-                ["(O)184"] = 50, // milk
-                ["(O)186"] = 100, // large milk
-                ["(O)436"] = 100, // goat milk
-                ["(O)438"] = 180, // large goat milk
-                ["(O)180"] = 20, // egg
-                ["(O)182"] = 40, // large egg
-                ["(O)176"] = 20, // brown egg
-                ["(O)174"] = 40, // large brown egg
-                ["(O)442"] = 70, // duck egg
-                ["(O)424"] = 120, // cheese
-                ["(O)426"] = 240, // goat cheese
-                ["(O)306"] = 80, // mayo
-                ["(O)307"] = 140, // duck mayo
-                ["(O)440"] = 120, // wool
-                ["(O)428"] = 180, // cloth
-            };
-
-            Dictionary<string, int> supplyQuality = new()
-            {
-                ["(O)184"] = 1, // milk
-                ["(O)186"] = 1, // large milk
-                ["(O)436"] = 1, // goat milk
-                ["(O)438"] = 1, // large goat milk
-                ["(O)180"] = 1, // egg
-                ["(O)182"] = 1, // large egg
-                ["(O)176"] = 1, // brown egg
-                ["(O)174"] = 1, // large brown egg
-                ["(O)442"] = 1, // duck egg
-                ["(O)424"] = 1, // cheese
-                ["(O)426"] = 1, // goat cheese
-                ["(O)440"] = 1, // wool
-
-            };
-
-            int supplyAvailable = 0;
-
-            int weaponAvailable = 0;
-
-            Dictionary<string, int> packingTotals = new();
-
-            Dictionary<string, int> packingYields = new();
-
-            for (int i = Mod.instance.chests[sp].Items.Count - 1; i >= 0; i--)
-            {
-
-                Item getItem = Mod.instance.chests[sp].Items.ElementAt(i);
-
-                if (getItem is MeleeWeapon weapon)
-                {
-
-                    if (weapon.isScythe())
-                    {
-
-                        stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.41").Tokens(new { value = getItem.DisplayName });
-
-                        calculations.Add(stringToAdd);
-
-                        continue;
-
-
-                    }
-
-                    int weaponYield = weapon.getItemLevel() * 10;
-
-                    weaponAvailable += weaponYield;
-
-                    packingUse--;
-
-                    if (!packingTotals.ContainsKey(Mod.instance.chests[sp].Items.ElementAt(i).DisplayName))
-                    {
-
-                        packingTotals[Mod.instance.chests[sp].Items.ElementAt(i).DisplayName] = 1;
-
-                        packingYields[Mod.instance.chests[sp].Items.ElementAt(i).DisplayName] = weaponYield;
-
-                    }
-                    else
-                    {
-
-                        packingTotals[Mod.instance.chests[sp].Items.ElementAt(i).DisplayName] += 1;
-
-                    }
-
-                    if (confirm)
-                    {
-
-                        Mod.instance.chests[sp].Items.RemoveAt(i);
-
-                    }
-
-                }
-                else if(getItem is Boots boot)
-                {
-
-                    int weaponYield = (boot.defenseBonus.Value + boot.immunityBonus.Value) * 20; 
-
-                    weaponAvailable += weaponYield;
-
-                    packingUse--;
-
-                    if (!packingTotals.ContainsKey(Mod.instance.chests[sp].Items.ElementAt(i).DisplayName))
-                    {
-
-                        packingTotals[Mod.instance.chests[sp].Items.ElementAt(i).DisplayName] = 1;
-
-                        packingYields[Mod.instance.chests[sp].Items.ElementAt(i).DisplayName] = weaponYield;
-
-                    }
-                    else
-                    {
-
-                        packingTotals[Mod.instance.chests[sp].Items.ElementAt(i).DisplayName] += 1;
-
-                    }
-
-                    if (confirm)
-                    {
-
-                        Mod.instance.chests[sp].Items.RemoveAt(i);
-
-                    }
-
-                }
-                else if (getItem.Category == StardewValley.Object.ringCategory || getItem is Ring)
-                {
-
-                    int weaponYield = 50;
-
-                    weaponAvailable += weaponYield;
-
-                    packingUse--;
-
-                    if (!packingTotals.ContainsKey(Mod.instance.chests[sp].Items.ElementAt(i).DisplayName))
-                    {
-
-                        packingTotals[Mod.instance.chests[sp].Items.ElementAt(i).DisplayName] = 1;
-
-                        packingYields[Mod.instance.chests[sp].Items.ElementAt(i).DisplayName] = weaponYield;
-
-                    }
-                    else
-                    {
-
-                        packingTotals[Mod.instance.chests[sp].Items.ElementAt(i).DisplayName] += 1;
-
-                    }
-
-                    if (confirm)
-                    {
-
-                        Mod.instance.chests[sp].Items.RemoveAt(i);
-
-                    }
-
-                }
-                else
-                {
-
-                    if (!supplies.ContainsKey(getItem.QualifiedItemId))
-                    {
-
-                        stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.42").Tokens(new { value = getItem.DisplayName });
-
-                        calculations.Add(stringToAdd);
-
-                        continue;
-
-                    }
-
-                    int supplyUse = Math.Min(packingUse, getItem.Stack);
-
-                    int supplyYield = supplies[getItem.QualifiedItemId];
-
-                    if (supplyQuality.ContainsKey(getItem.QualifiedItemId))
-                    {
-
-                        int supplyBonus = (int)(supplyYield * 0.25f * getItem.Quality);
-
-                        supplyYield += supplyBonus;
-
-                    }
-
-                    packingUse -= supplyUse;
-
-                    supplyAvailable += supplyUse * supplyYield;
-
-                    if (!packingTotals.ContainsKey(Mod.instance.chests[sp].Items.ElementAt(i).DisplayName))
-                    {
-
-                        packingTotals[Mod.instance.chests[sp].Items.ElementAt(i).DisplayName] = supplyUse;
-
-                        packingYields[Mod.instance.chests[sp].Items.ElementAt(i).DisplayName] = supplyYield;
-
-                    }
-                    else
-                    {
-
-                        packingTotals[Mod.instance.chests[sp].Items.ElementAt(i).DisplayName] += supplyUse;
-
-                    }
-
-                    if (confirm)
-                    {
-
-                        Mod.instance.chests[sp].Items.RemoveAt(i);
-
-                    }
-
-                }
-
-                if (packingUse == 0)
+                if (processed <= 0)
                 {
 
                     break;
@@ -2170,175 +1740,154 @@ namespace StardewDruid.Handle
 
             }
 
-            if(weaponAvailable > 0)
+            if (consume)
             {
 
-                weaponOutput = (int)Math.Ceiling((decimal)weaponAvailable / 100);
+                ChestHandle.CleanInventory(ChestHandle.chests.Distillery);
 
             }
 
-            if (supplyAvailable > 0)
+            return conversions;
+
+        }
+
+        public List<string> GoodsProduction(bool consume = false)
+        {
+
+            List<string> conversions = new();
+
+            string sta = string.Empty;
+
+            sta = "==== ESTIMATED PRODUCTION ====";
+
+            if (consume)
             {
 
-                supplyOutput = (int)Math.Ceiling((decimal)supplyAvailable / 100);
+                sta = "===== DISTILLERY PRODUCTION ====";
 
             }
 
-            foreach (KeyValuePair<string, int> packedTotal in packingTotals)
+            conversions.Add(sta);
+
+            int fermentationLimit = MachineStat(ExportMachine.machines.fermentation);
+
+            sta = "Base production capacity of Fermentation Tank: {{value}}";//.Tokens(new { value = fermentationLimit, });
+
+            conversions.Add(sta);
+
+            int distilleryBonus = MachineStat(ExportMachine.machines.distillery);
+
+            sta = "{{value}}% increased capacity of goods production from Distillery";//.Tokens(new { value = distilleryBonus, });
+
+            conversions.Add(sta);
+
+            int barrelBonus = MachineStat(ExportMachine.machines.barrel);
+
+            sta = "{{value}}% Potential bonus product from Aging Barrels";//.Tokens(new { value = barrelBonus, });
+
+            conversions.Add(sta);
+
+            int packerBonus = MachineStat(ExportMachine.machines.packer);
+
+            sta = "{{value}}% increase to overall production via Bottling, Blending and Packing";//.Tokens(new { value = packerBonus, });
+
+            conversions.Add(sta);
+
+            sta = "--------- Goods Production ---------";
+
+            conversions.Add(sta);
+
+            int production = fermentationLimit + (fermentationLimit * distilleryBonus / 100);
+
+            List<ExportResource.resources> resourcing = new()
             {
 
-                stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.43").Tokens(new { number = packedTotal.Value.ToString(), itemname = packedTotal.Key, yield = packingYields[packedTotal.Key] });
+                ExportResource.resources.malt,
+                ExportResource.resources.must,
+                ExportResource.resources.tribute,
+                ExportResource.resources.nectar,
 
-                calculations.Add(stringToAdd);
+            };
+
+            List<ExportGood.goods> goodsAvailable = new()
+            {
+
+                ExportGood.goods.whiskey,
+                ExportGood.goods.brandy,
+                ExportGood.goods.aquavitae,
+                ExportGood.goods.ambrosia,
+
+            };
+
+            List<int> goodsFactors = new()
+            {
+                5,
+                10,
+                20,
+                10,
+            };
+
+            for(int i = 0; i < 4; i++)
+            {
+
+                ExportResource.resources resource = resourcing[i];
+
+                ExportGood.goods good = goodsAvailable[i];
+
+                int available = 0;
+
+                if (Mod.instance.save.resources.ContainsKey(resource))
+                {
+
+                    available = Math.Min(production, Mod.instance.save.resources[resource]);
+
+                }
+
+                int excess = available % goodsFactors[i];
+
+                available -= excess;
+
+                if (available <= 0)
+                {
+
+                    sta = "Skipped production of {{good}} due to lack of {{resource}}";//.Tokens(new { good = goods[good],resource = resources[resource].name, });
+
+                    conversions.Add(sta);
+
+                    continue;
+
+                }
+
+                int goodsProduced = available / goodsFactors[i];
+
+                int bonusProduct = Mod.instance.randomIndex.Next(barrelBonus) + packerBonus;
+
+                goodsProduced += (goodsProduced * bonusProduct / 100);
+
+                sta = "Produced {{amount}} of {{good}} from {{used}} {{resource}}";//.Tokens(new { amount = goodsProduced, good = goods[good], used = available, resource = resources[resource].name, });
+
+                conversions.Add(sta);
+
+                sta = "{{bonus}}% bonus {{good}} produced through Barrelling and Bottling process";//.Tokens(new { bonus = bonusProduct, good = goods[good],});
+
+                conversions.Add(sta);
+
+                if (consume)
+                {
+
+                    Mod.instance.save.resources[resource] -= available;
+
+                    Mod.instance.save.goods[good] += goodsProduced;
+
+                }
 
             }
 
-            calculations.Add("");
+            return conversions;
 
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.44");
-
-            calculations.Add(stringToAdd);
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.45").Tokens(new { value = weaponOutput });
-
-            calculations.Add(stringToAdd);
-
-            stringToAdd = Mod.instance.Helper.Translation.Get("ExportData.386.46").Tokens(new { value = supplyOutput });
-
-            calculations.Add(stringToAdd);
-
-            estimates[exports.weapons] = weaponOutput;
-
-            estimates[exports.supplies] = supplyOutput;
-
-            if (confirm)
-            {
-
-                Mod.instance.exportHandle.AddExport(exports.weapons, weaponOutput);
-
-                Mod.instance.exportHandle.AddExport(exports.supplies, supplyOutput);
-
-                recents = new(calculations);
-
-                products = new(estimates);
-
-            }
 
         }
 
-    }
-
-    public class ExportGood
-    {
-
-        public string name;
-
-        public string description;
-
-        public string technical;
-
-        public ExportHandle.exports good;
-
-        public IconData.workshops display;
-
-        public IconData.relics license;
-
-        public ExportHandle.exports guild;
-
-        public int price;
-
-        public int peak;
-
-        public List<string> details = new();
-
-        public int sell;
-
-        public ExportGood()
-        {
-
-        }
-
-    }
-
-    public class ExportMachine
-    {
-
-        public string name;
-
-        public string description;
-
-        public string technical;
-
-        public ExportHandle.exports machine;
-
-        public IconData.workshops display;
-
-        public CharacterHandle.characters pal;
-
-        public int labour;
-
-        public Dictionary<string, int> resources = new();
-
-        public ExportMachine()
-        {
-
-        }
-
-    }
-
-    public class ExportGuild
-    {
-
-        public ExportHandle.exports guild;
-
-        public string name;
-
-        public string intro;
-
-        public string description;
-
-        public Dictionary<int,string> benefits = new();
-
-        public IconData.relics license;
-
-        public Dictionary<int,string> orderTitles = new();
-
-        public Dictionary<int,string> orderDescriptions = new();
-
-        public string orderFulfilled;
-
-        public ExportGuild()
-        {
-
-        }
-
-    }
-
-    public class ExportOrder
-    {
-
-        public ExportHandle.exports good;
-
-        public int requirement;
-
-        public int floor;
-
-        public int timer;
-
-        public int level;
-
-        public bool complete;
-
-        public int sale;
-
-        //public int display;
-
-        public ExportHandle.exports guild = ExportHandle.exports.church;
-
-        public ExportOrder()
-        {
-
-        }
 
     }
 

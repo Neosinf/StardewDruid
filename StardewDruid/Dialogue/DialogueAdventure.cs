@@ -628,7 +628,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.anvil:
 
-                    Mod.instance.herbalHandle.ConvertGeodes();
+                    Mod.instance.apothecaryHandle.ConvertGeodes();
 
                     return null;
 

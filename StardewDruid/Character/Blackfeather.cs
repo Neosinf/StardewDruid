@@ -278,17 +278,16 @@ namespace StardewDruid.Character
 
             if (specialTimer == 50)
             {
+                ChestHandle.RetrieveInventory(ChestHandle.chests.Companions);
 
-                CharacterHandle.RetrieveInventory(CharacterHandle.characters.Blackfeather);
-
-                if (Mod.instance.chests[CharacterHandle.characters.Blackfeather].Items.Count > 0)
+                if (Mod.instance.chests[ChestHandle.chests.Companions].Items.Count > 0)
                 {
 
                     Cultivate cultivateEvent = new();
 
                     cultivateEvent.EventSetup(currentLocation, workVector * 64, "blackfeather_cultivate_" + workVector.ToString());
 
-                    cultivateEvent.inventory = Mod.instance.chests[CharacterHandle.characters.Blackfeather].Items;
+                    cultivateEvent.inventory = Mod.instance.chests[ChestHandle.chests.Companions].Items;
 
                     cultivateEvent.EventActivate();
 

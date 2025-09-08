@@ -85,7 +85,7 @@ namespace StardewDruid.Handle
 
             [milestones.effigy] = new() { approachEffigy, },
             [milestones.sworn_weapon] = new() { squireWinds, },
-            [milestones.sworn_lessons] = new() { windsOne, windsTwo, windsThree,},
+            [milestones.sworn_lessons] = new() { casting, alchemy, herbalism, bombPowders, },
             [milestones.weald_weapon] = new() { swordWeald, },
             [milestones.weald_lessons] = new() { herbalism, wealdOne, wealdTwo, wealdThree, wealdFour, chargeUps, bombs, wealdFive, },
             [milestones.weald_challenge] = new() { challengeWeald, },
@@ -94,7 +94,7 @@ namespace StardewDruid.Handle
             [milestones.quest_effigy] = new() { questEffigy, },
             [milestones.mists_challenge] = new() { challengeMists, },
             [milestones.stars_weapon] = new() { swordStars, },
-            [milestones.stars_lessons] = new() { orders, starsOne, captures, starsTwo, },
+            [milestones.stars_lessons] = new() { orders, starsOne, captures, voideOne, },
             [milestones.stars_challenge] = new() { challengeStars, },
             [milestones.stars_threats] = new() { challengeAtoll, challengeDragon, },
             [milestones.jester] = new() { distillery, approachJester,  },
@@ -124,15 +124,15 @@ namespace StardewDruid.Handle
 
         public const string squireWinds = "squireWinds";
 
-        public const string windsOne = "castlesson";
+        public const string casting = "casting";
 
-        public const string windsTwo = "alchemylesson";
+        public const string alchemy = "alchemy";
 
-        public const string windsThree = "bomblesson";
+        public const string herbalism = "potions";
+
+        public const string bombPowders = "powders";
 
         public const string swordWeald = "swordWeald";
-
-        public const string herbalism = "herbalism";
 
         public const string wealdOne = "clearance";
 
@@ -170,7 +170,9 @@ namespace StardewDruid.Handle
 
         public const string orders = "orders";
 
-        public const string starsTwo = "gravity";
+        public const string swordVoide = "swordVoide";
+
+        public const string voideOne = "gravity";
 
         public const string captures = "levelMonsters";
 
@@ -347,7 +349,7 @@ namespace StardewDruid.Handle
 
                 content.text[0] = quests[page].title;
 
-                content.icons[0] = quests[page].icon;
+                content.textureSources[0] = IconData.DisplayRectangle(quests[page].icon);
 
                 IconData.displays questIcon;
 
@@ -374,7 +376,7 @@ namespace StardewDruid.Handle
 
                 }
 
-                content.icons[1] = questIcon;
+                content.textureSources[1] = IconData.DisplayRectangle(questIcon);
 
                 journal[start++] = content;
 
@@ -384,13 +386,13 @@ namespace StardewDruid.Handle
 
         }
 
-        public KeyValuePair<string, int> questEffects(string questId)
+        public string questEffects(string questId)
         {
 
             if (quests[questId].effect == EffectsData.EffectPage.none)
             {
 
-                return new(null, 0);
+                return null;
 
             }
 
@@ -408,13 +410,13 @@ namespace StardewDruid.Handle
                 if (effectId == effectPage)
                 {
 
-                    return new(effectComponent.Value.id, effectComponent.Key);
+                    return effectComponent.Value.id;
 
                 }
 
             }
 
-            return new(null, 0);
+            return null;
 
         }
 
@@ -489,7 +491,7 @@ namespace StardewDruid.Handle
 
                     content.text[0] = effect.title;
 
-                    content.icons[0] = effect.icon;
+                    content.textureSources[0] = IconData.DisplayRectangle(effect.icon);
 
                     journal[start++] = content;
 
@@ -501,7 +503,7 @@ namespace StardewDruid.Handle
 
         }
 
-        public KeyValuePair<string, int> effectQuests(string combinedId)
+        public string effectQuests(string combinedId)
         {
 
             string[] effectParts = combinedId.Split(".");
@@ -518,13 +520,13 @@ namespace StardewDruid.Handle
                 if (quests[questComponent.Value.id].effect == effectPage)
                 {
 
-                    return new(questComponent.Value.id, questComponent.Key);
+                    return questComponent.Value.id;
 
                 }
 
             }
 
-            return new(null, 0);
+            return null;
 
         }
 
@@ -579,12 +581,12 @@ namespace StardewDruid.Handle
 
                     case LoreSet.settypes.transcript:
 
-                        content.text[0] = loresets[id].title + StringData.Strings(StringData.stringkeys.transcript);
+                        content.text[0] = loresets[id].title + StringData.Get(StringData.str.transcript);
 
                         break;
                 }
 
-                content.icons[0] = loresets[id].display;
+                content.textureSources[0] = IconData.DisplayRectangle(loresets[id].display);
 
                 journal[start++] = content;
 
@@ -731,6 +733,7 @@ namespace StardewDruid.Handle
 
                 if (mile.Key == milestone)
                 {
+                    
                     foreach (string questId in mile.Value)
                     {
 
@@ -845,6 +848,7 @@ namespace StardewDruid.Handle
 
             if (!Context.IsMainPlayer)
             {
+                
                 return;
 
             }
@@ -877,7 +881,7 @@ namespace StardewDruid.Handle
 
             }
 
-            Mod.instance.RegisterMessage(quests[questId].title + " " + StringData.Strings(StringData.stringkeys.questComplete), 1, true);
+            Mod.instance.RegisterMessage(quests[questId].title + " " + StringData.Get(StringData.str.questComplete), 1, true);
 
             if (quests[questId].reward > 0)
             {
@@ -966,7 +970,7 @@ namespace StardewDruid.Handle
                 if (progress % portion == 0)
                 {
 
-                    Mod.instance.RegisterMessage(quests[quest].title + " " + (progress * 100 / limit).ToString() + " " + StringData.Strings(StringData.stringkeys.percentComplete), 2, true);
+                    Mod.instance.RegisterMessage(quests[quest].title + " " + (progress * 100 / limit).ToString() + " " + StringData.Get(StringData.str.percentComplete), 2, true);
                 }
 
             }
@@ -1430,13 +1434,13 @@ namespace StardewDruid.Handle
 
                 case starsOne:
 
-                    CheckAssignment(starsTwo, 1);
+                    CheckAssignment(voideOne, 1);
 
                     CheckAssignment(captures, 1);
 
                     return;
 
-                case starsTwo:
+                case voideOne:
 
                     CheckAssignment(challengeStars, 1);
 
@@ -2163,7 +2167,7 @@ namespace StardewDruid.Handle
 
                     CheckAssignment(captures, 1);
 
-                    CheckAssignment(starsTwo, 1);
+                    CheckAssignment(voideOne, 1);
 
                     CharacterHandle.CharacterLoad(CharacterHandle.characters.Revenant, CharacterHandle.CharacterSaveMode(CharacterHandle.characters.Revenant));
 
@@ -2173,11 +2177,11 @@ namespace StardewDruid.Handle
 
                     CheckAssignment(captures, 0);
 
-                    CheckAssignment(starsTwo, 0);
+                    CheckAssignment(voideOne, 0);
 
                     return;
 
-                case starsTwo:
+                case voideOne:
 
                     CheckAssignment(challengeStars, 0);
 
@@ -2426,7 +2430,7 @@ namespace StardewDruid.Handle
         public void OnAccept(string questId)
         {
 
-            StringData.stringkeys messageKey = StringData.stringkeys.questReceived;
+            StringData.str messageKey = StringData.str.questReceived;
 
             switch (quests[questId].type)
             {
@@ -2440,7 +2444,7 @@ namespace StardewDruid.Handle
 
             }
 
-            string acceptMessage = quests[questId].title + StringData.Strings(messageKey);
+            string acceptMessage = quests[questId].title + StringData.Get(messageKey);
 
             DisplayMessage displayMessage = new(acceptMessage, quests[questId].icon);
 
@@ -2461,20 +2465,20 @@ namespace StardewDruid.Handle
 
                     Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.herbalism_pan.ToString());
 
-                    List<HerbalHandle.herbals> satius = new()
+                    List<ApothecaryHandle.items> satius = new()
                     {
-                        HerbalHandle.herbals.satius_ligna,
+                        ApothecaryHandle.items.satius_ligna,
 
-                        HerbalHandle.herbals.satius_impes,
+                        ApothecaryHandle.items.satius_vigores,
 
-                        HerbalHandle.herbals.satius_celeri,
+                        ApothecaryHandle.items.satius_celeri,
 
                     };
 
-                    foreach (HerbalHandle.herbals sat in satius)
+                    foreach (ApothecaryHandle.items sat in satius)
                     {
 
-                        HerbalHandle.UpdateHerbalism(sat, 3);
+                        ApothecaryHandle.UpdateAmounts(sat, 3);
 
                     }
 
@@ -2538,20 +2542,20 @@ namespace StardewDruid.Handle
 
                     Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.herbalism_still.ToString());
 
-                    List<HerbalHandle.herbals> magnus = new()
+                    List<ApothecaryHandle.items> magnus = new()
                     {
-                        HerbalHandle.herbals.magnus_ligna,
+                        ApothecaryHandle.items.magnus_ligna,
 
-                        HerbalHandle.herbals.magnus_impes,
+                        ApothecaryHandle.items.magnus_vigores,
 
-                        HerbalHandle.herbals.magnus_celeri,
+                        ApothecaryHandle.items.magnus_celeri,
 
                     };
 
-                    foreach (HerbalHandle.herbals mag in magnus)
+                    foreach (ApothecaryHandle.items mag in magnus)
                     {
 
-                        HerbalHandle.UpdateHerbalism(mag, 3);
+                        ApothecaryHandle.UpdateAmounts(mag, 3);
 
                     }
 
@@ -2605,7 +2609,7 @@ namespace StardewDruid.Handle
 
                     Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.herbalism_crucible.ToString());
 
-                    HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.faeth, 5);
+                    ApothecaryHandle.UpdateAmounts(ApothecaryHandle.items.faeth, 5);
 
                     break;
 
@@ -2635,22 +2639,22 @@ namespace StardewDruid.Handle
 
                     throwRelic.register();
 
-                    List<HerbalHandle.herbals> optimus = new()
+                    List<ApothecaryHandle.items> optimus = new()
                     {
-                        HerbalHandle.herbals.optimus_ligna,
+                        ApothecaryHandle.items.optimus_ligna,
 
-                        HerbalHandle.herbals.optimus_impes,
+                        ApothecaryHandle.items.optimus_vigores,
 
-                        HerbalHandle.herbals.optimus_celeri,
+                        ApothecaryHandle.items.optimus_celeri,
 
-                        HerbalHandle.herbals.aether,
+                        ApothecaryHandle.items.aether,
 
                     };
 
-                    foreach (HerbalHandle.herbals opt in optimus)
+                    foreach (ApothecaryHandle.items opt in optimus)
                     {
 
-                        HerbalHandle.UpdateHerbalism(opt, 3);
+                        ApothecaryHandle.UpdateAmounts(opt, 3);
 
                     }
 
@@ -2749,26 +2753,20 @@ namespace StardewDruid.Handle
 
                     throwRelic.register();
 
-                    List<HerbalHandle.herbals> melius = new()
+                    List<ApothecaryHandle.items> melius = new()
                     {
-                        HerbalHandle.herbals.ligna,
+                        ApothecaryHandle.items.ligna,
 
-                        HerbalHandle.herbals.impes,
+                        ApothecaryHandle.items.vigores,
 
-                        HerbalHandle.herbals.celeri,
-
-                        HerbalHandle.herbals.melius_ligna,
-
-                        HerbalHandle.herbals.melius_impes,
-
-                        HerbalHandle.herbals.melius_celeri,
+                        ApothecaryHandle.items.celeri,
 
                     };
 
-                    foreach (HerbalHandle.herbals mel in melius)
+                    foreach (ApothecaryHandle.items mel in melius)
                     {
 
-                        HerbalHandle.UpdateHerbalism(mel, 3);
+                        ApothecaryHandle.UpdateAmounts(mel, 3);
 
                     }
 
@@ -2895,23 +2893,28 @@ namespace StardewDruid.Handle
 
                     throwRelic.register();
 
-                    List<ExportHandle.exports> machines = new()
+                    List<ExportMachine.machines> machines = new()
                     {
-                        ExportHandle.exports.crushers,
-                        ExportHandle.exports.press,
-                        ExportHandle.exports.kiln,
-                        ExportHandle.exports.mashtun,
-                        ExportHandle.exports.fermentation,
-                        ExportHandle.exports.distillery,
-                        ExportHandle.exports.barrel,
-                        ExportHandle.exports.packer,
+                        ExportMachine.machines.crushers,
+                        ExportMachine.machines.press,
+                        ExportMachine.machines.kiln,
+                        ExportMachine.machines.mashtun,
+                        ExportMachine.machines.fermentation,
+                        ExportMachine.machines.distillery,
+                        ExportMachine.machines.barrel,
+                        ExportMachine.machines.packer,
 
                     };
 
-                    foreach (ExportHandle.exports machine in machines)
+                    foreach (ExportMachine.machines machine in machines)
                     {
 
-                        Mod.instance.exportHandle.AddExport(machine, 1);
+                        if (!Mod.instance.save.machines.ContainsKey(machine))
+                        {
+
+                            Mod.instance.save.machines[machine] = new() { machine = machine, level = 1 };
+
+                        }
 
                     }
 
@@ -3041,7 +3044,7 @@ namespace StardewDruid.Handle
 
                     VillagerData.CommunityFriendship(VillagerData.villagerLocales.mountain, friendship, questRating);
 
-                    HerbalHandle.RandomHerbal(throwPosition);
+                    ApothecaryHandle.RandomApothecaryItem(throwPosition);
 
                     break;
 
@@ -3051,7 +3054,7 @@ namespace StardewDruid.Handle
 
                     VillagerData.CommunityFriendship(VillagerData.villagerLocales.town, friendship, questRating);
 
-                    HerbalHandle.RandomHerbal(throwPosition);
+                    ApothecaryHandle.RandomApothecaryItem(throwPosition);
 
                     break;
 
@@ -3061,7 +3064,7 @@ namespace StardewDruid.Handle
 
                     VillagerData.CommunityFriendship(VillagerData.villagerLocales.forest, friendship, questRating);
 
-                    HerbalHandle.RandomHerbal(throwPosition);
+                    ApothecaryHandle.RandomApothecaryItem(throwPosition);
 
                     break;
 
@@ -3072,7 +3075,7 @@ namespace StardewDruid.Handle
 
                     throwItem.register();
 
-                    HerbalHandle.RandomHerbal(throwPosition);
+                    ApothecaryHandle.RandomApothecaryItem(throwPosition);
 
                     break;
 
@@ -3083,7 +3086,7 @@ namespace StardewDruid.Handle
 
                     throwItem.register();
 
-                    HerbalHandle.RandomHerbal(throwPosition);
+                    ApothecaryHandle.RandomApothecaryItem(throwPosition);
 
                     break;
 
@@ -3094,22 +3097,22 @@ namespace StardewDruid.Handle
 
                     throwItem.register();
 
-                    HerbalHandle.RandomHerbal(throwPosition);
+                    ApothecaryHandle.RandomApothecaryItem(throwPosition);
 
                     break;
 
                 case swordEther:
 
                     // faeth *20
-                    Herbal Faeth = Mod.instance.herbalHandle.herbalism[HerbalHandle.herbals.faeth.ToString()];
+                    ApothecaryItem Faeth = Mod.instance.apothecaryHandle.apothecary[ApothecaryHandle.items.faeth];
 
                     DisplayMessage hudmessage = new("+20 " + Faeth.title, Faeth);
 
                     Game1.addHUDMessage(hudmessage);
 
-                    HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.faeth, 20);
+                    ApothecaryHandle.UpdateAmounts(ApothecaryHandle.items.faeth, 20);
 
-                    HerbalHandle.RandomHerbal(throwPosition);
+                    ApothecaryHandle.RandomApothecaryItem(throwPosition);
 
                     break;
 
@@ -3120,7 +3123,7 @@ namespace StardewDruid.Handle
 
                     throwItem.register();
 
-                    HerbalHandle.RandomHerbal(throwPosition);
+                    ApothecaryHandle.RandomApothecaryItem(throwPosition);
 
                     break;
 

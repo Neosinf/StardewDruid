@@ -16,7 +16,7 @@ namespace StardewDruid.Journal
     public class RelicJournal : DruidJournal
     {
 
-        public RelicJournal(string QuestId, int Record) : base(QuestId, Record)
+        public RelicJournal(journalTypes Type, List<string> Parameters) : base(Type, Parameters)
         {
 
         }
@@ -32,7 +32,8 @@ namespace StardewDruid.Journal
                 [104] = addButton(journalButtons.openAlchemy),
                 [105] = addButton(journalButtons.openPotions),
                 [106] = addButton(journalButtons.openCompanions),
-                [107] = addButton(journalButtons.openDragonomicon),
+                [107] = addButton(journalButtons.openOrders),
+                [108] = addButton(journalButtons.openDragonomicon),
 
                 [201] = addButton(journalButtons.back),
                 [202] = addButton(journalButtons.start),
@@ -51,8 +52,6 @@ namespace StardewDruid.Journal
 
             type = journalTypes.relics;
 
-            title = JournalData.JournalTitle(type);
-
             contentColumns = 6;
 
             pagination = 18;
@@ -61,12 +60,7 @@ namespace StardewDruid.Journal
 
             otherComponents = Mod.instance.relicHandle.JournalHeaders();
 
-            if (record >= contentComponents.Count)
-            {
-
-                record = 0;
-
-            }
+            ParameterRecord();
 
             foreach (KeyValuePair<int, ContentComponent> component in contentComponents)
             {
@@ -82,46 +76,6 @@ namespace StardewDruid.Journal
 
             }
 
-        }
-
-        public override void activateInterface()
-        {
-
-            resetInterface();
-
-            reviseInterface();
-
-            int firstOnThisPage = record - (record % pagination);
-
-            int thispage = firstOnThisPage == 0 ? 0 : firstOnThisPage / pagination;
-
-            int last = contentComponents.Count - 1;
-
-            int firstOnLastPage = last - (last % pagination);
-
-            int lastpage = firstOnLastPage == 0 ? 0 : firstOnLastPage / pagination;
-
-            if (thispage == 0)
-            {
-
-                // back
-                interfaceComponents[201].active = false;
-
-                // start
-                interfaceComponents[202].active = false;
-
-            }
-
-            if (lastpage == thispage)
-            {
-
-                // forward
-                interfaceComponents[305].active = false;
-
-                // end
-                interfaceComponents[306].active = false;
-
-            }
         }
 
         public override void pressContent()
@@ -143,7 +97,7 @@ namespace StardewDruid.Journal
 
             }
 
-            int function = RelicFunction.RelicFunction(relicId, focus);
+            int function = RelicFunction.ClickFunction(relicId);
 
             switch (function)
             {
@@ -297,9 +251,9 @@ namespace StardewDruid.Journal
             else
             {
 
-                relicTitle = StringData.Strings(StringData.stringkeys.relicUnknown);
+                relicTitle = StringData.Get(StringData.str.relicUnknown);
 
-                relicDescription = StringData.Strings(StringData.stringkeys.relicNotFound);
+                relicDescription = StringData.Get(StringData.str.relicNotFound);
 
                 relicDetails.Add(relic.hint);
 
@@ -387,18 +341,10 @@ namespace StardewDruid.Journal
 
             textPosition += 8 + titleSize.Y;
 
-            Color outerTop = new(167, 81, 37);
-
-            Color outerBot = new(139, 58, 29);
-
-            Color inner = new(246, 146, 30);
-
             // --------------------------------
             // top
 
-            b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition, 488, 2), outerTop);
-
-            b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition + 2, 488, 3), inner);
+            DrawSeparator(b, (int)textMargin - 4, (int)textPosition);
 
             textPosition += 12;
 
@@ -417,9 +363,7 @@ namespace StardewDruid.Journal
             if (relicDetails.Count > 0)
             {
 
-                b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition, 488, 2), outerTop);
-
-                b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition + 2, 488, 3), inner);
+                DrawSeparator(b, (int)textMargin - 4, (int)textPosition);
 
                 textPosition += 12;
 

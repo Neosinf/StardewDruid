@@ -119,10 +119,10 @@ namespace StardewDruid.Cast.Mists
                 }
 
 
-                if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
+                if (Mod.instance.apothecaryHandle.buff.applied.ContainsKey(BuffHandle.buffTypes.spellcatch))
                 {
 
-                    if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
+                    if (Mod.instance.apothecaryHandle.buff.applied.ContainsKey(BuffHandle.buffTypes.capture))
                     {
 
                         bolt.added.Add(SpellHandle.Effects.capture);

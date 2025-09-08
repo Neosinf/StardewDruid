@@ -22,11 +22,10 @@ namespace StardewDruid.Data
 
         public enum queries
         {
-            RequestProgress,
-            SyncProgress,
+            FarmhandRequestsProgress,
+            HostProvidesProgress,
             QuestUpdate,
             EventDisplay,
-            //EventDialogue,
             EventQuestion,
             ReceiveRelic,
             ThrowSword,
@@ -36,13 +35,9 @@ namespace StardewDruid.Data
             HaltCharacter,
             GimmeMoney,
             WarpFarmhands,
-            RequestPreferences,
-            PostPreferences,
-            SyncPreferences,
-            AddExport,
-            AddPal,
-            RequestGoods,
-            SyncGoods,
+            FarmhandRequestsData,
+            FarmhandProvidesSave,
+            HostProvidesData,
 
         }
 

@@ -13,52 +13,22 @@ using System.Threading.Tasks;
 
 namespace StardewDruid.Journal
 {
-    public class EffectPage : QuestPage
+    public class EffectPage : DruidJournal
     {
 
         public string effectQuest;
 
-        public int effectIndex;
-
-        public EffectPage(string QuestId, int Record) : base(QuestId, Record) 
+        public EffectPage(journalTypes Type, List<string> Parameters) : base(Type, Parameters)
         {
 
-        }
-
-        public override void populateInterface()
-        {
-
-            parentJournal = journalTypes.effects;
-
-            type = journalTypes.effectPage;
-
-            interfaceComponents = new()
-            {
-
-                [101] = addButton(journalButtons.viewQuest),
-
-                [201] = addButton(journalButtons.back),
-
-                [301] = addButton(journalButtons.exit),
-
-                [302] = addButton(journalButtons.scrollUp),
-
-                [303] = addButton(journalButtons.scrollBar),
-
-                [304] = addButton(journalButtons.scrollDown),
-
-            };
+            parent = journalTypes.effects;
 
         }
 
         public override void populateContent()
         {
 
-            string[] effectParts = journalId.Split(".");
-
-            effectQuest = effectParts[0];
-
-            effectIndex = Convert.ToInt32(effectParts[1]);
+            effectQuest = parameters[0];
 
             EffectsData.EffectPage effectPage = Enum.Parse<EffectsData.EffectPage>(effectQuest);
 
@@ -119,59 +89,49 @@ namespace StardewDruid.Journal
 
         }
 
-
-        public override void activateInterface()
+        public override void populateInterface()
         {
 
-            resetInterface();
-
-            scrolled = 0;
-
-            if (contentBox.Height < 512)
+            interfaceComponents = new()
             {
 
-                interfaceComponents[302].active = false;
+                [101] = addButton(journalButtons.openMasteries),
 
-                interfaceComponents[303].active = false;
+                [201] = addButton(journalButtons.previous),
 
-                interfaceComponents[304].active = false;
+                [202] = addButton(journalButtons.viewQuest),
 
-            }
-            else
+                [301] = addButton(journalButtons.exit),
+
+                [302] = addButton(journalButtons.scrollUp),
+
+                [303] = addButton(journalButtons.scrollBar),
+
+                [304] = addButton(journalButtons.scrollDown),
+
+            };
+
+            string viewIndice = Mod.instance.questHandle.effectQuests(effectQuest);
+
+            if (viewIndice == null)
             {
 
-                scrollId = 303;
-
-            }
-
-            KeyValuePair<string, int> viewIndices = Mod.instance.questHandle.effectQuests(effectQuest);
-
-            if(viewIndices.Key == null)
-            {
-                
-                interfaceComponents[101].active = false;
+                interfaceComponents.Remove(202);
 
             }
 
         }
-
         public override void pressButton(journalButtons button)
         {
 
             switch (button)
             {
-                
-                case journalButtons.back:
-
-                    DruidJournal.openJournal(parentJournal, null, record);
-
-                    break;
 
                 case journalButtons.viewQuest:
 
-                    KeyValuePair<string, int> findQuest = Mod.instance.questHandle.effectQuests(journalId);
+                    string findQuest = Mod.instance.questHandle.effectQuests(effectQuest);
 
-                    openJournal(journalTypes.questPage, findQuest.Key, findQuest.Value);
+                    openJournal(journalTypes.questPage,findQuest);
 
                     break;
 

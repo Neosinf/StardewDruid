@@ -321,7 +321,7 @@ namespace StardewDruid.Cast.Effect
 
             snareVictims.Add(Victim, snare);
 
-            EventBar bar = ProgressBar(StringData.Strings(StringData.stringkeys.chained) + Victim.displayName, snare.index);
+            EventBar bar = ProgressBar(StringData.Get(StringData.str.chained) + Victim.displayName, snare.index);
 
             bar.colour = Mod.instance.iconData.SchemeColour(IconData.schemes.death);
 
@@ -349,7 +349,7 @@ namespace StardewDruid.Cast.Effect
 
             snarePlayers.Add(Game1.player,snare);
 
-            EventBar bar = ProgressBar(StringData.Strings(StringData.stringkeys.chained) + Game1.player.Name, snare.index);
+            EventBar bar = ProgressBar(StringData.Get(StringData.str.chained) + Game1.player.Name, snare.index);
 
             bar.colour = Mod.instance.iconData.SchemeColour(IconData.schemes.death);
 

@@ -327,10 +327,10 @@ namespace StardewDruid.Data
             // ====================================================================
             // Herbalism Relics
 
-            relics[IconData.relics.herbalism_apothecary.ToString()] = new()
+            relics[IconData.relics.druid_apothecary.ToString()] = new()
             {
                 title = Mod.instance.Helper.Translation.Get("RelicData.500.herbalism_apothecary.1"),
-                relic = IconData.relics.herbalism_apothecary,
+                relic = IconData.relics.druid_apothecary,
                 line = relicsets.herbalism,
                 function = true,
                 description = Mod.instance.Helper.Translation.Get("RelicData.500.herbalism_apothecary.2"),

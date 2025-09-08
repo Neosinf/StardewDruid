@@ -385,7 +385,7 @@ namespace StardewDruid.Event
                 if (Game1.timeOfDay < triggerTime)
                 {
 
-                    Mod.instance.RegisterDisplay(StringData.Strings(StringData.stringkeys.returnLater));
+                    Mod.instance.RegisterDisplay(StringData.Get(StringData.str.returnLater));
 
                     return false;
 
@@ -1653,7 +1653,7 @@ namespace StardewDruid.Event
             List<string> summons = new()
             {
                 Rite.eventWisps,
-                Rite.eventWinds,
+                Rite.eventSouls,
             };
 
             foreach(string riteSummon in summons)

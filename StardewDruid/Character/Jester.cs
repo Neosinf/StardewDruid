@@ -118,11 +118,11 @@ namespace StardewDruid.Character
 
             Buff luckBuff = new(
                 Rite.buffIdJester, 
-                source: StringData.Strings(StringData.stringkeys.jesterBuff), 
-                displaySource: StringData.Strings(StringData.stringkeys.jesterBuff), 
+                source: StringData.Get(StringData.str.jesterBuff), 
+                displaySource: StringData.Get(StringData.str.jesterBuff), 
                 duration: Buff.ENDLESS, 
-                displayName: StringData.Strings(StringData.stringkeys.jesterBuffTitle), 
-                description: StringData.Strings(StringData.stringkeys.jesterBuffDescription), 
+                displayName: StringData.Get(StringData.str.jesterBuffTitle), 
+                description: StringData.Get(StringData.str.jesterBuffDescription), 
                 effects: buffEffect
                 );
 
@@ -243,8 +243,7 @@ namespace StardewDruid.Character
 
         public override bool TargetWork()
         {
-
-            CharacterHandle.RetrieveInventory(CharacterHandle.characters.Jester);
+            ChestHandle.RetrieveInventory(ChestHandle.chests.Companions);
 
             if (currentLocation.characters.Count > 0 && Mod.instance.activeEvent.Count == 0)
             {
@@ -496,7 +495,7 @@ namespace StardewDruid.Character
             
             }
 
-            Chest chest = Mod.instance.chests[CharacterHandle.characters.Jester];
+            Chest chest = Mod.instance.chests[ChestHandle.chests.Companions];
 
             StardewValley.Object @object = ItemRegistry.Create<StardewValley.Object>("(O)" + cow.currentProduce.Value);
 

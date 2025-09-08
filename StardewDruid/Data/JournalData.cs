@@ -1,5 +1,8 @@
-﻿using StardewDruid.Character;
+﻿using StardewDruid.Cast.Fates;
+using StardewDruid.Cast.Mists;
+using StardewDruid.Character;
 using StardewDruid.Journal;
+using StardewDruid.Handle;
 using StardewDruid.Location.Druid;
 using StardewValley.Menus;
 using System;
@@ -26,7 +29,7 @@ namespace StardewDruid.Data
 
                 case DruidJournal.journalTypes.masteries: 
 
-                    return "Skillboard";
+                    return "Disciplines";
 
                 case DruidJournal.journalTypes.relics: 
 
@@ -34,9 +37,9 @@ namespace StardewDruid.Data
 
                 case DruidJournal.journalTypes.alchemy: 
 
-                    return "Alchemy";
+                    return "Runeboard";
 
-                case DruidJournal.journalTypes.herbalism: 
+                case DruidJournal.journalTypes.potions: 
 
                     return "Apothecary";
 
@@ -64,14 +67,14 @@ namespace StardewDruid.Data
 
                 case DruidJournal.journalTypes.lore: 
                     return "Chronicle";
-                //case DruidJournal.journalTypes.lorePage: 
+                //case DruidJournal.journalTypes.lorePage:
 
                 // relics
                 //case DruidJournal.journalTypes.relicPage: 
 
                 // alchemy
                 case DruidJournal.journalTypes.omens: 
-                    return "Satchel";
+                    return "Omens Satchel";
 
                 case DruidJournal.journalTypes.trophies: 
                     return "Trophy Case";
@@ -92,6 +95,10 @@ namespace StardewDruid.Data
                 case DruidJournal.journalTypes.orders: 
 
                     return "Guild Orders";
+
+                case DruidJournal.journalTypes.guilds:
+
+                    return "Guild Details";
 
                 case DruidJournal.journalTypes.distillery: 
 
@@ -150,7 +157,7 @@ namespace StardewDruid.Data
 
                 case DruidJournal.journalButtons.openMasteries:
 
-                    return "View skills";
+                    return "View masteries";
 
                 case DruidJournal.journalButtons.openRelics:
 
@@ -189,7 +196,8 @@ namespace StardewDruid.Data
                     return "View companion";
 
                 case DruidJournal.journalButtons.openGoods:
-
+                case DruidJournal.journalButtons.openGoodsDistillery:
+  
                     return "View goods";
 
                 case DruidJournal.journalButtons.openOmens:
@@ -199,6 +207,23 @@ namespace StardewDruid.Data
                 case DruidJournal.journalButtons.openTrophies:
 
                     return "View collected trophies";
+
+
+                case DruidJournal.journalButtons.openOrders:
+
+                    return "View guild orders";
+
+                case DruidJournal.journalButtons.openGuilds:
+
+                    return "View guild details";
+
+                case DruidJournal.journalButtons.openDistillery:
+
+                    return "View distillery machines";
+
+                case DruidJournal.journalButtons.openDistilleryInventory:
+
+                    return "View distillery inventory";
 
                 case DruidJournal.journalButtons.openProductionEstimated:
 
@@ -287,11 +312,19 @@ namespace StardewDruid.Data
 
                 case DruidJournal.journalButtons.HP:
 
-                    return StringData.Strings(StardewDruid.Data.StringData.stringkeys.HP);
+                    return StringData.Get(StardewDruid.Data.StringData.str.HP);
 
                 case DruidJournal.journalButtons.STM:
 
-                    return StringData.Strings(StardewDruid.Data.StringData.stringkeys.STM);
+                    return StringData.Get(StardewDruid.Data.StringData.str.STM);
+
+                case DruidJournal.journalButtons.previous:
+
+                    return "Previous Menu";
+
+                case DruidJournal.journalButtons.levelUp:
+
+                    return "Level Up";
 
                 default:
 
@@ -299,7 +332,6 @@ namespace StardewDruid.Data
             }
 
         }
-
 
     }
 

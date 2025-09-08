@@ -35,7 +35,7 @@ namespace StardewDruid.Journal
 
             type = journalTypes.battle;
 
-            title = StringData.Strings(StringData.stringkeys.battle);
+            title = StringData.Get(StringData.str.battle);
 
             pagination = 0;
 
@@ -89,13 +89,6 @@ namespace StardewDruid.Journal
 
         }
 
-        public override void activateInterface()
-        {
-
-            resetInterface();
-
-        }
-
         public override void pressContent()
         {
 
@@ -117,7 +110,7 @@ namespace StardewDruid.Journal
 
             }
 
-            if (contentComponents[focus].type == ContentComponent.contentTypes.potion)
+            if (contentComponents[focus].type == ContentComponent.contentTypes.custom) // apothecary
             {
 
                 if(!handle.ItemOption(contentComponents[focus].id, focus))
@@ -259,18 +252,10 @@ namespace StardewDruid.Journal
 
             textPosition += 8 + titleSize.Y;
 
-            Color outerTop = new(167, 81, 37);
-
-            Color outerBot = new(139, 58, 29);
-
-            Color inner = new(246, 146, 30);
-
             // --------------------------------
             // top
 
-            b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition, 488, 2), outerTop);
-
-            b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition + 2, 488, 3), inner);
+            DrawSeparator(b, (int)textMargin - 4, (int)textPosition);
 
             textPosition += 12;
 

@@ -49,7 +49,7 @@ namespace StardewDruid.Cast.Weald
                 if (Mod.instance.save.restoration[location.Name] >= maxRestoration)
                 {
 
-                    Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.restoreFully));
+                    Mod.instance.RegisterMessage(StringData.Get(StringData.str.restoreFully));
 
                     return;
                 
@@ -58,7 +58,7 @@ namespace StardewDruid.Cast.Weald
                 if (Mod.instance.rite.specialCasts[location.Name].Contains("restoration"))
                 {
 
-                    Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.restoreTomorrow));
+                    Mod.instance.RegisterMessage(StringData.Get(StringData.str.restoreTomorrow));
 
                     location.playSound(SpellHandle.Sounds.ghost.ToString());
 
@@ -79,13 +79,13 @@ namespace StardewDruid.Cast.Weald
                 if (Mod.instance.save.restoration[location.Name] == 1)
                 {
 
-                    Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.restoreStart));
+                    Mod.instance.RegisterMessage(StringData.Get(StringData.str.restoreStart));
 
                 }
                 else if (Mod.instance.save.restoration[location.Name] >= maxRestoration)
                 {
 
-                    Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.restoreFully));
+                    Mod.instance.RegisterMessage(StringData.Get(StringData.str.restoreFully));
 
                     if (Game1.player.currentLocation is Clearing clearing)
                     {
@@ -98,7 +98,7 @@ namespace StardewDruid.Cast.Weald
                 else
                 {
 
-                    Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.restorePartial));
+                    Mod.instance.RegisterMessage(StringData.Get(StringData.str.restorePartial));
 
                 }
 

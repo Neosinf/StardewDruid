@@ -15,7 +15,7 @@ namespace StardewDruid.Journal
     public class DistilleryRecent : DistilleryEstimated
     {
 
-        public DistilleryRecent(string QuestId, int Record) : base(QuestId, Record) 
+        public DistilleryRecent(journalTypes Type, List<string> Parameters) : base(Type, Parameters) 
         {
 
         }
@@ -23,27 +23,27 @@ namespace StardewDruid.Journal
         public override void populateInterface()
         {
 
-            parentJournal = journalTypes.distillery;
+            parent = journalTypes.distillery;
 
             type = journalTypes.distilleryRecent;
-
-            title = JournalData.JournalTitle(type);
 
             interfaceComponents = new()
             {
 
-                [101] = addButton(journalButtons.openProductionEstimated),
+                [101] = addButton(journalButtons.openOrders),
 
-                [201] = addButton(journalButtons.back),
 
-                [202] = addButton(journalButtons.refresh),
+                [201] = addButton(journalButtons.previous),
+
+                [203] = addButton(journalButtons.openGuilds),
+                [204] = addButton(journalButtons.openGoodsDistillery),
+                [205] = addButton(journalButtons.openDistillery),
+                [206] = addButton(journalButtons.openDistilleryInventory),
+                [207] = addButton(journalButtons.openProductionEstimated),
 
                 [301] = addButton(journalButtons.exit),
-
                 [302] = addButton(journalButtons.scrollUp),
-
                 [303] = addButton(journalButtons.scrollBar),
-
                 [304] = addButton(journalButtons.scrollDown),
 
             };
@@ -53,7 +53,7 @@ namespace StardewDruid.Journal
         public override List<string> ProductionContent()
         {
 
-            return Mod.instance.exportHandle.recents;
+            return Mod.instance.exportHandle.recentProduction;
 
         }
 

@@ -1,14 +1,18 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using StardewDruid.Cast;
-using StardewDruid.Cast.Mists;
-using StardewDruid.Data;
 using StardewDruid.Battle;
+using StardewDruid.Cast;
+using StardewDruid.Cast.Effect;
+using StardewDruid.Cast.Ether;
+using StardewDruid.Cast.Mists;
+using StardewDruid.Character;
+using StardewDruid.Data;
 using StardewDruid.Dialogue;
 using StardewDruid.Journal;
 using StardewValley;
 using StardewValley.Companions;
+using StardewValley.Constants;
 using StardewValley.Extensions;
 using StardewValley.GameData.HomeRenovations;
 using StardewValley.Locations;
@@ -20,10 +24,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.Metrics;
 using System.Linq;
-using StardewDruid.Character;
-using StardewValley.Constants;
-using StardewDruid.Cast.Ether;
-using StardewDruid.Cast.Effect;
+using System.Reflection.Emit;
 using xTile.ObjectModel;
 
 namespace StardewDruid.Handle
@@ -1490,17 +1491,17 @@ namespace StardewDruid.Handle
 
                     PalData pal = PalHandle.DataFromRelic(relicName);
 
-                    int level = PalHandle.UnitLevel(pal.experience);
+                    int Level = PalHandle.UnitLevel(pal.experience);
 
                     content.text[1] = PalHandle.PalScheme(pal.type);
 
-                    content.text[2] = StringData.LevelStrings(level);
+                    content.text[2] = StringData.Get(StringData.str.level, new { level = Level });
 
-                    int vitality = PalHandle.HealthLevel(pal.type, level, pal.health);
+                    int vitality = PalHandle.HealthLevel(pal.type, Level, pal.health);
 
-                    int attack = PalHandle.AttackLevel(pal.type, level, pal.attack);
+                    int attack = PalHandle.AttackLevel(pal.type, Level, pal.attack);
 
-                    int speed = PalHandle.SpeedLevel(pal.type, level, pal.speed);
+                    int speed = PalHandle.SpeedLevel(pal.type, Level, pal.speed);
 
                     content.text[3] = Mod.instance.Helper.Translation.Get("BattleHandle.388.743").Tokens(new { vitality = vitality, attack = attack, speed = speed, });
 
@@ -1512,7 +1513,7 @@ namespace StardewDruid.Handle
 
             ContentComponent returnButton = new(ContentComponent.contentTypes.battlereturn, readoutforfeit);
 
-            returnButton.icons[0] = IconData.displays.exit;
+            returnButton.textureSources[0] = IconData.DisplayRectangle(IconData.displays.exit);
 
             returnButton.text[0] = Mod.instance.Helper.Translation.Get("BattleHandle.388.749");
 
@@ -1582,7 +1583,7 @@ namespace StardewDruid.Handle
 
                         component.text[2] = Mod.instance.Helper.Translation.Get("BattleHandle.388.777");
 
-                        component.icons[0] = IconData.displays.herbalism;
+                        component.textureSources[0] = IconData.DisplayRectangle(IconData.displays.herbalism);
 
                         break;
 
@@ -1594,7 +1595,7 @@ namespace StardewDruid.Handle
 
                         component.text[2] = Mod.instance.Helper.Translation.Get("BattleHandle.388.783");
 
-                        component.icons[0] = IconData.displays.exit;
+                        component.textureSources[0] = IconData.DisplayRectangle(IconData.displays.exit);
 
                         break;
 
@@ -1612,7 +1613,7 @@ namespace StardewDruid.Handle
 
                         component.text[3] = Mod.instance.Helper.Translation.Get("BattleHandle.388.792").Tokens(new { damage = useAbility.damage, speed = useAbility.speed, accuracy = useAbility.accuracy, defense = useAbility.defense, });
 
-                        component.icons[0] = championCombat.abilities[ability].display;
+                        component.textureSources[0] = IconData.DisplayRectangle(championCombat.abilities[ability].display);
 
                         break;
 
@@ -1706,42 +1707,32 @@ namespace StardewDruid.Handle
 
             headerText = Mod.instance.Helper.Translation.Get("BattleHandle.388.805");
 
-            HerbalHandle.herbals bestLigna = Mod.instance.herbalHandle.BestHerbal(HerbalHandle.herbals.ligna);
-            HerbalHandle.herbals bestImpes = Mod.instance.herbalHandle.BestHerbal(HerbalHandle.herbals.impes);
-            HerbalHandle.herbals bestCeleri = Mod.instance.herbalHandle.BestHerbal(HerbalHandle.herbals.celeri);
+            ApothecaryHandle.items bestLigna = Mod.instance.apothecaryHandle.BestHerbal(ApothecaryHandle.items.ligna);
+            ApothecaryHandle.items bestImpes = Mod.instance.apothecaryHandle.BestHerbal(ApothecaryHandle.items.vigores);
+            ApothecaryHandle.items bestCeleri = Mod.instance.apothecaryHandle.BestHerbal(ApothecaryHandle.items.celeri);
 
-            List<HerbalHandle.herbals> potions = new()
+            List<ApothecaryHandle.items> potions = new()
             {
-                bestLigna,
-                bestImpes,
-                bestCeleri,
-                HerbalHandle.herbals.faeth,
-                HerbalHandle.herbals.trophy_shroom,
-                HerbalHandle.herbals.trophy_eye,
+                bestLigna != ApothecaryHandle.items.none ? bestLigna : ApothecaryHandle.items.ligna,
+                bestImpes != ApothecaryHandle.items.none ? bestImpes : ApothecaryHandle.items.vigores,
+                bestCeleri != ApothecaryHandle.items.none ? bestCeleri : ApothecaryHandle.items.celeri,
+                ApothecaryHandle.items.faeth,
+                ApothecaryHandle.items.trophy_shroom,
+                ApothecaryHandle.items.trophy_eye,
             };
 
-            foreach (HerbalHandle.herbals potionName in potions)
+            foreach (ApothecaryHandle.items potionName in potions)
             {
 
-                ContentComponent content = new(ContentComponent.contentTypes.potion, potionName.ToString());
+                ContentComponent content = new(ContentComponent.contentTypes.custom, potionName.ToString());
 
-                int amount = HerbalHandle.GetHerbalism(potionName);
+                int amount = ApothecaryHandle.GetAmount(potionName);
 
                 string amountString = amount.ToString();
 
                 content.text[0] = amount.ToString();
 
-                if (amount == 0)
-                {
-
-                    content.textureSources[0] = IconData.PotionRectangles(Mod.instance.herbalHandle.herbalism[potionName.ToString()].grayed);
-                }
-                else
-                {
-
-                    content.textureSources[0] = IconData.PotionRectangles(Mod.instance.herbalHandle.herbalism[potionName.ToString()].display);
-
-                }
+                content.textureSources[0] = ApothecaryHandle.ItemRectangles(Mod.instance.apothecaryHandle.apothecary[potionName].item, amount == 0);
 
                 switch (potionName)
                 {
@@ -1774,7 +1765,7 @@ namespace StardewDruid.Handle
 
                         break;
 
-                    case HerbalHandle.herbals.faeth:
+                    case ApothecaryHandle.items.faeth:
 
                         content.text[1] = Mod.instance.Helper.Translation.Get("BattleHandle.390.4");
 
@@ -1782,7 +1773,7 @@ namespace StardewDruid.Handle
 
                         break;
 
-                    case HerbalHandle.herbals.trophy_shroom:
+                    case ApothecaryHandle.items.trophy_shroom:
 
                         content.text[1] = Mod.instance.Helper.Translation.Get("BattleHandle.390.6");
 
@@ -1790,7 +1781,7 @@ namespace StardewDruid.Handle
 
                         break;
 
-                    case HerbalHandle.herbals.trophy_eye:
+                    case ApothecaryHandle.items.trophy_eye:
 
                         content.text[1] = Mod.instance.Helper.Translation.Get("BattleHandle.390.8");
 
@@ -1807,7 +1798,7 @@ namespace StardewDruid.Handle
 
             ContentComponent returnButton = new(ContentComponent.contentTypes.battlereturn, readoutreturn);
 
-            returnButton.icons[0] = IconData.displays.replay;
+            returnButton.textureSources[0] = IconData.DisplayRectangle(IconData.displays.replay);
 
             returnButton.text[0] = Mod.instance.Helper.Translation.Get("BattleHandle.388.846");
 
@@ -1824,9 +1815,9 @@ namespace StardewDruid.Handle
         public bool ItemOption(string selectOption, int ControlIndex)
         {
 
-            HerbalHandle.herbals herb = Enum.Parse<HerbalHandle.herbals>(selectOption);
+            ApothecaryHandle.items herb = Enum.Parse<ApothecaryHandle.items>(selectOption);
 
-            if(HerbalHandle.GetHerbalism(herb) <= 0)
+            if(ApothecaryHandle.GetAmount(herb) <= 0)
             {
 
                 return false;
@@ -1914,22 +1905,22 @@ namespace StardewDruid.Handle
             switch (useMove.item)
             {
                 default:
-                case HerbalHandle.herbals.satius_ligna:
+                case ApothecaryHandle.items.satius_ligna:
                     return Mod.instance.Helper.Translation.Get("BattleHandle.388.894");
 
-                case HerbalHandle.herbals.satius_impes:
+                case ApothecaryHandle.items.satius_vigores:
                     return Mod.instance.Helper.Translation.Get("BattleHandle.388.897");
 
-                case HerbalHandle.herbals.satius_celeri:
+                case ApothecaryHandle.items.satius_celeri:
                     return Mod.instance.Helper.Translation.Get("BattleHandle.388.899");
 
-                case HerbalHandle.herbals.faeth:
+                case ApothecaryHandle.items.faeth:
                     return Mod.instance.Helper.Translation.Get("BattleHandle.390.1");
 
-                case HerbalHandle.herbals.trophy_shroom:
+                case ApothecaryHandle.items.trophy_shroom:
                     return Mod.instance.Helper.Translation.Get("BattleHandle.390.2");
 
-                case HerbalHandle.herbals.trophy_eye:
+                case ApothecaryHandle.items.trophy_eye:
                     return Mod.instance.Helper.Translation.Get("BattleHandle.390.3");
             }
 
@@ -2063,7 +2054,7 @@ namespace StardewDruid.Handle
 
             }
 
-            HerbalHandle.RandomHerbal(Game1.player.Position + new Vector2(32,-128));
+            ApothecaryHandle.RandomApothecaryItem(Game1.player.Position + new Vector2(32,-128));
 
         }
 
@@ -2094,7 +2085,7 @@ namespace StardewDruid.Handle
 
             }
 
-            opponentCombat.item = HerbalHandle.herbals.none;
+            opponentCombat.item = ApothecaryHandle.items.none;
 
         }
 

@@ -14,43 +14,19 @@ namespace StardewDruid.Journal
     public class QuestPage : DruidJournal
     {
 
-        public QuestPage(string QuestId, int Record) : base(QuestId, Record) 
+        public string questId;
+
+        public QuestPage(journalTypes Type, List<string> Parameters) : base(Type, Parameters)
         {
 
-        }
-
-        public override void populateInterface()
-        {
-
-            parentJournal = journalTypes.quests;
-
-            type = journalTypes.questPage;
-
-            interfaceComponents = new()
-            {
-                
-                [101] = addButton(journalButtons.viewEffect),
-
-                [201] = addButton(journalButtons.back),
-
-                [202] = addButton(journalButtons.replayQuest),
-
-                [301] = addButton(journalButtons.exit),
-
-                [302] = addButton(journalButtons.scrollUp),
-
-                [303] = addButton(journalButtons.scrollBar),
-
-                [304] = addButton(journalButtons.scrollDown),
-
-            };
+            parent = journalTypes.quests;
 
         }
 
         public override void populateContent()
         {
 
-            string questId = journalId;
+            questId = parameters[0];
 
             // ---------------------------- quest
 
@@ -96,7 +72,7 @@ namespace StardewDruid.Journal
 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, "hostonly");
 
-                contentComponents[start].text[0] = StringData.Strings(StardewDruid.Data.StringData.stringkeys.hostOnly);
+                contentComponents[start].text[0] = StringData.Get(StardewDruid.Data.StringData.str.hostOnly);
 
                 contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkRed;
 
@@ -111,7 +87,7 @@ namespace StardewDruid.Journal
                 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, "questReplay");
 
-                contentComponents[start].text[0] = StringData.Strings(StardewDruid.Data.StringData.stringkeys.questReplay);
+                contentComponents[start].text[0] = StringData.Get(StardewDruid.Data.StringData.str.questReplay);
 
                 contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkRed;
 
@@ -180,19 +156,19 @@ namespace StardewDruid.Journal
                 string lessonProgress =
                             completeString +
                             Mod.instance.save.progress[questId].progress.ToString() + " " +
-                            StringData.Strings(StringData.stringkeys.outOf) + " " +
+                            StringData.Get(StringData.str.outOf) + " " +
                             questRecord.requirement.ToString() + " " +
                             questRecord.progression;
 
                 if (isComplete)
                 {
                     
-                    completeString = StringData.Strings(StringData.stringkeys.mastered);
+                    completeString = StringData.Get(StringData.str.mastered);
 
                     if(Mod.instance.save.progress[questId].progress < questRecord.requirement)
                     {
 
-                        lessonProgress = StringData.Strings(StringData.stringkeys.lessonSkipped);
+                        lessonProgress = StringData.Get(StringData.str.lessonSkipped);
 
                     }
 
@@ -219,7 +195,7 @@ namespace StardewDruid.Journal
 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, "lesson");
 
-                contentComponents[start].text[0] = StringData.Strings(StardewDruid.Data.StringData.stringkeys.reward) + ": " + questReward.ToString() + "g";
+                contentComponents[start].text[0] = StringData.Get(StardewDruid.Data.StringData.str.reward) + ": " + questReward.ToString() + "g";
 
                 contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkGreen;
 
@@ -234,7 +210,7 @@ namespace StardewDruid.Journal
 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, "replay");
 
-                contentComponents[start].text[0] = StringData.Strings(StardewDruid.Data.StringData.stringkeys.replayReward) + ": " + questRecord.replay;
+                contentComponents[start].text[0] = StringData.Get(StardewDruid.Data.StringData.str.replayReward) + ": " + questRecord.replay;
 
                 contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkGreen;
 
@@ -250,86 +226,87 @@ namespace StardewDruid.Journal
 
         }
 
-        public override void activateInterface()
+        public override void populateInterface()
         {
 
-
-            if (Mod.instance.save.progress[journalId].status <= 1)
+            interfaceComponents = new()
             {
 
-                interfaceComponents[202] = addButton(journalButtons.skipQuest);
 
-            }
-            else if (Mod.instance.questHandle.IsReplayable(journalId))
+                [201] = addButton(journalButtons.previous),
+
+                [202] = addButton(journalButtons.viewEffect),
+
+                [203] = addButton(journalButtons.replayQuest),
+
+
+                [301] = addButton(journalButtons.exit),
+
+                [302] = addButton(journalButtons.scrollUp),
+
+                [303] = addButton(journalButtons.scrollBar),
+
+                [304] = addButton(journalButtons.scrollDown),
+
+            };
+
+
+            if (Mod.instance.questHandle.quests[questId].effect == EffectsData.EffectPage.none)
             {
 
-                switch (Mod.instance.save.progress[journalId].status)
-                {
-
-                    case 2:
-
-                        interfaceComponents[202] = addButton(journalButtons.replayQuest);
-
-                        break;
-                    
-                    case 3:
-
-                        interfaceComponents[202] = addButton(journalButtons.replayTomorrow);
-
-                        break;
-
-                    case 4:
-
-                        interfaceComponents[202] = addButton(journalButtons.cancelReplay);
-
-                        break;
-
-                }
-
-            }
-
-            resetInterface();
-
-            scrolled = 0;
-
-            if (contentBox.Height < 512)
-            {
-
-                interfaceComponents[302].active = false;
-
-                interfaceComponents[303].active = false;
-
-                interfaceComponents[304].active = false;
-
-            }
-            else
-            {
-
-                scrollId = 303;
+                interfaceComponents.Remove(202);
 
             }
 
             if (!Context.IsMainPlayer)
             {
 
-                interfaceComponents[202].active = false;
+                interfaceComponents.Remove(203);
 
             }
-            else if (Mod.instance.save.progress[journalId].status > 1 && !Mod.instance.questHandle.IsReplayable(journalId))
+            else
+            if (Mod.instance.save.progress[questId].status <= 1)
             {
 
-                interfaceComponents[202].active = false;
+                interfaceComponents[203] = addButton(journalButtons.skipQuest);
 
             }
-
-            if (Mod.instance.questHandle.quests[journalId].effect == EffectsData.EffectPage.none)
+            else if (Mod.instance.questHandle.IsReplayable(questId))
             {
 
-                interfaceComponents[101].active = false;
+                switch (Mod.instance.save.progress[questId].status)
+                {
+
+                    case 2:
+
+                        interfaceComponents[203] = addButton(journalButtons.replayQuest);
+
+                        break;
+
+                    case 3:
+
+                        interfaceComponents[203] = addButton(journalButtons.replayTomorrow);
+
+                        break;
+
+                    case 4:
+
+                        interfaceComponents[203] = addButton(journalButtons.cancelReplay);
+
+                        break;
+
+                }
+
+            }
+            else
+            {
+
+                interfaceComponents.Remove(203);
 
             }
 
         }
+
 
         public override void pressButton(journalButtons button)
         {
@@ -337,17 +314,11 @@ namespace StardewDruid.Journal
             switch (button)
             {
 
-                case journalButtons.back:
-
-                    DruidJournal.openJournal(parentJournal, null, record);
-
-                    break;
-
                 case journalButtons.viewEffect:
 
-                    KeyValuePair<string, int> findEffect = Mod.instance.questHandle.questEffects(journalId);
+                    string findEffect = Mod.instance.questHandle.questEffects(questId);
 
-                    openJournal(journalTypes.effectPage, findEffect.Key, findEffect.Value);
+                    openJournal(journalTypes.effectPage,findEffect);
 
                     break;
 
@@ -355,24 +326,24 @@ namespace StardewDruid.Journal
 
                     Game1.playSound("ghost");
 
-                    Mod.instance.questHandle.CompleteQuest(journalId);
+                    Mod.instance.questHandle.CompleteQuest(questId);
 
-                    Mod.instance.questHandle.OnCancel(journalId);
+                    Mod.instance.questHandle.OnCancel(questId);
 
-                    DruidJournal.openJournal(journalTypes.questPage, journalId, record);
+                    openJournal(journalTypes.questPage, questId);
 
                     break;
 
                 case journalButtons.replayQuest:
 
-                    if (Mod.instance.questHandle.IsReplayable(journalId))
+                    if (Mod.instance.questHandle.IsReplayable(questId))
                     {
 
                         Game1.playSound("yoba");
 
-                        Mod.instance.questHandle.RevisitQuest(journalId);
+                        Mod.instance.questHandle.RevisitQuest(questId);
 
-                        DruidJournal.openJournal(journalTypes.questPage, journalId, record);
+                        openJournal(journalTypes.questPage, questId);
 
                     }
 
@@ -386,11 +357,11 @@ namespace StardewDruid.Journal
 
                     Game1.playSound("ghost");
 
-                    Mod.instance.questHandle.OnCancel(journalId);
+                    Mod.instance.questHandle.OnCancel(questId);
 
                     Mod.instance.SyncProgress();
 
-                    DruidJournal.openJournal(journalTypes.questPage, journalId, record);
+                    openJournal(journalTypes.questPage, questId);
 
                     break;
 
@@ -401,47 +372,6 @@ namespace StardewDruid.Journal
                     break;
 
             }
-
-        }
-
-
-        public override void drawContent(SpriteBatch b)
-        {
-
-            // preserve current batch rectangle
-            
-            Rectangle preserve = b.GraphicsDevice.ScissorRectangle;
-
-            b.End();
-
-            // create new batch for scroll rectangle
-
-            SpriteBatch b2 = b;
-
-            b2.Begin(0, BlendState.AlphaBlend, SamplerState.PointClamp, null, new RasterizerState() { ScissorTestEnable = true }, null, new Matrix?());
-
-            // determine inframe
-
-            Rectangle inframe = new(xPositionOnScreen + 32, yPositionOnScreen + 48, width - 64, height - 96);
-
-            Rectangle screen = Utility.ConstrainScissorRectToScreen(inframe);
-
-            Game1.graphics.GraphicsDevice.ScissorRectangle = screen;
-
-            foreach (KeyValuePair<int,ContentComponent> component in contentComponents)
-            {
-
-                component.Value.draw(b, new Vector2(0, -scrolled));
-
-            }
-
-            // leave inframe
-
-            b.End();
-
-            b.GraphicsDevice.ScissorRectangle = preserve;
-
-            b.Begin(0, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, new Matrix?());
 
         }
 

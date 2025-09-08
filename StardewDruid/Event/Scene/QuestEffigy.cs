@@ -94,7 +94,7 @@ namespace StardewDruid.Event.Scene
         public override void OnLocationAbort()
         {
 
-            Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
+            Mod.instance.RegisterMessage(StringData.Get(StringData.str.abortTomorrow), 3, true);
 
         }
 
@@ -142,7 +142,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(1);
 
-                    RelicFunction.RelicFunction(IconData.relics.lantern_censer.ToString());
+                    RelicFunction.ClickFunction(IconData.relics.lantern_censer.ToString());
 
                     //activeCounter = 300;
 

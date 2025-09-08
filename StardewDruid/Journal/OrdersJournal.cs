@@ -14,7 +14,7 @@ namespace StardewDruid.Journal
     public class OrdersJournal : DruidJournal
     {
 
-        public OrdersJournal(string QuestId, int Record) : base(QuestId, Record)
+        public OrdersJournal(journalTypes Type, List<string> Parameters) : base(Type, Parameters)
         {
 
 
@@ -37,18 +37,11 @@ namespace StardewDruid.Journal
 
             type = journalTypes.orders;
 
-            title = JournalData.JournalTitle(type);
-
             pagination = 4;
 
             contentComponents = Mod.instance.exportHandle.JournalOrders();
 
-            if (record >= contentComponents.Count)
-            {
-
-                record = 0;
-
-            }
+            ParameterRecord();
 
             foreach (KeyValuePair<int, ContentComponent> component in contentComponents)
             {
@@ -65,56 +58,33 @@ namespace StardewDruid.Journal
             interfaceComponents = new()
             {
 
-                [201] = addButton(journalButtons.back),
-                [202] = addButton(journalButtons.start),
+                [101] = addButton(journalButtons.openQuests),
+                [102] = addButton(journalButtons.openMasteries),
+                [103] = addButton(journalButtons.openRelics),
+                [104] = addButton(journalButtons.openAlchemy),
+                [105] = addButton(journalButtons.openPotions),
+                [106] = addButton(journalButtons.openCompanions),
+                [107] = addButton(journalButtons.openOrders),
+                [108] = addButton(journalButtons.openDragonomicon),
+
+                [201] = addButton(journalButtons.start),
+                [202] = addButton(journalButtons.back),
+
+                [203] = addButton(journalButtons.openGuilds),
+                [204] = addButton(journalButtons.openGoodsDistillery),
+                [205] = addButton(journalButtons.openDistillery),
+                [206] = addButton(journalButtons.openDistilleryInventory),
+                [207] = addButton(journalButtons.openProductionRecent),
+                [208] = addButton(journalButtons.openProductionEstimated),
 
                 [301] = addButton(journalButtons.exit),
 
-                [305] = addButton(journalButtons.end),
-                [306] = addButton(journalButtons.forward),
+                [302] = addButton(journalButtons.end),
+                [303] = addButton(journalButtons.forward),
 
             };
              
         }
-
-        public override void activateInterface()
-        {
-
-            resetInterface();
-
-            int firstOnThisPage = record - (record % pagination);
-
-            int thispage = firstOnThisPage == 0 ? 0 : firstOnThisPage / pagination;
-
-            int last = contentComponents.Count - 1;
-
-            int firstOnLastPage = last - (last % pagination);
-
-            int lastpage = firstOnLastPage == 0 ? 0 : firstOnLastPage / pagination;
-
-            if (thispage == 0)
-            {
-
-                // back
-                interfaceComponents[201].active = false;
-
-                // start
-                interfaceComponents[202].active = false;
-
-            }
-
-            if (lastpage == thispage)
-            {
-
-                // forward
-                interfaceComponents[305].active = false;
-
-                // end
-                interfaceComponents[306].active = false;
-
-            }
-        }
-
 
         public override void pressContent()
         {

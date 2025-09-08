@@ -18,6 +18,7 @@ using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Companions;
 using StardewValley.GameData.Locations;
+using StardewValley.GameData.Pets;
 using StardewValley.ItemTypeDefinitions;
 using StardewValley.Locations;
 using StardewValley.Menus;
@@ -32,8 +33,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -58,7 +57,7 @@ namespace StardewDruid
 
         public bool synchronisePreferences;
 
-        public bool receivedPreferences;
+        public bool receivedSave;
 
         internal static Mod instance;
 
@@ -68,7 +67,7 @@ namespace StardewDruid
 
         public QuestHandle questHandle;
 
-        public HerbalHandle herbalHandle;
+        public ApothecaryHandle apothecaryHandle;
 
         public RelicHandle relicHandle;
 
@@ -77,6 +76,8 @@ namespace StardewDruid
         public MasteryHandle masteryHandle;
 
         internal StardewDruid.Data.SaveData save;
+
+        internal Dictionary<long, SaveData> multiplayer = new();
 
         public Dictionary<string, Event.EventHandle> eventRegister = new();
 
@@ -106,8 +107,6 @@ namespace StardewDruid
 
         public Dictionary<ReactionData.reactions, int> reactionLimits = new();
 
-        public Dictionary<CharacterHandle.characters,CharacterMover> movers = new();
-
         public double messageBuffer;
 
         public double consumeBuffer;
@@ -130,11 +129,13 @@ namespace StardewDruid
 
         public Dictionary<CharacterHandle.characters, StardewDruid.Character.Character> dopplegangers = new();
 
-        public Dictionary<CharacterHandle.characters, StardewDruid.Dialogue.Dialogue> dialogue = new();
-
         public Dictionary<CharacterHandle.characters, TrackHandle> trackers = new();
 
-        public Dictionary<CharacterHandle.characters, StardewValley.Objects.Chest> chests = new();
+        public Dictionary<CharacterHandle.characters, CharacterMover> movers = new();
+
+        public Dictionary<CharacterHandle.characters, StardewDruid.Dialogue.Dialogue> dialogue = new();
+
+        public Dictionary<ChestHandle.chests, StardewValley.Objects.Chest> chests = new();
 
         public Dictionary<string, GameLocation> locations = new();
 
@@ -151,8 +152,6 @@ namespace StardewDruid
         public int environmentCount;
 
         public EnvironmentHandle environment;
-
-        public int version = 220;
 
         public int DamageLevel;
 
@@ -368,8 +367,6 @@ namespace StardewDruid
 
             characters = new();
 
-            dopplegangers = new();
-
             dialogue = new();
 
             chests = new();
@@ -390,9 +387,9 @@ namespace StardewDruid
 
             questHandle.LoadQuests();
 
-            herbalHandle = new HerbalHandle();
+            apothecaryHandle = new ApothecaryHandle();
 
-            herbalHandle.LoadHerbals();
+            apothecaryHandle.LoadItems();
 
             relicHandle = new RelicHandle();
 
@@ -441,30 +438,33 @@ namespace StardewDruid
             if (!Context.IsMainPlayer)
             {
 
+                receivedSave = false;
+
+                synchronisePreferences = true;
+
                 save = new();
 
-                if (!magic)
-                {
+                multiplayer = new();
 
-                    Helper.Multiplayer.SendMessage(new QueryData(), QueryData.queries.RequestProgress.ToString(), modIDs: new[] { this.ModManifest.UniqueID });
-                
-                }
-
-                Helper.Multiplayer.SendMessage(new QueryData(), QueryData.queries.RequestPreferences.ToString(), modIDs: new[] { this.ModManifest.UniqueID });
+                Helper.Multiplayer.SendMessage(new QueryData(), QueryData.queries.FarmhandRequestsData.ToString(), modIDs: new[] { this.ModManifest.UniqueID });
 
                 return;
 
             }
 
-            save = Helper.Data.ReadSaveData<StardewDruid.Data.SaveData>("saveData_" + version.ToString());
+            save = Helper.Data.ReadSaveData<StardewDruid.Data.SaveData>(SaveData.version);
+
+            multiplayer = new();
 
             save ??= new();
 
             if (magic)
             {
-                
+
                 // only need save data for potions
-                ReadyState();
+                rite.Reset();
+
+                questHandle.Ready();
 
                 return;
 
@@ -473,40 +473,21 @@ namespace StardewDruid
             if (Config.setMilestone != 0)
             {
 
-                if (save.set != Config.setMilestone)
+                save = new()
+                {
+                    
+                    milestone = (QuestHandle.milestones)Config.setMilestone
+                
+                };
+
+                if (save.milestone != QuestHandle.milestones.none)
                 {
 
-                    save.progress = new();
-
-                    save.reliquary = new();
-
-                    save.characters = new();
-
-                    save.milestone = (QuestHandle.milestones)Config.setMilestone;
-
-                    save.set = Config.setMilestone;
-
-                    if (save.milestone != QuestHandle.milestones.none)
-                    {
-
-                        questHandle.Promote(save.milestone);
-
-                    }
-
-                    save.rite = rite.RequirementCheck(rite.requirement.Last().Key,true);
-
-                    if (Config.setOnce)
-                    {
-
-                        Config.setOnce = false;
-
-                        Config.setMilestone = 0;
-
-                        SaveConfig();
-
-                    }
+                    questHandle.Promote(save.milestone);
 
                 }
+
+                save.rite = rite.RequirementCheck(rite.requirement.Last().Key,true);
 
             }
 
@@ -517,57 +498,15 @@ namespace StardewDruid
 
             }
 
-            Helper.Data.WriteJsonFile("saveData.json", save);
-
-            // for pre 3.8.6 inventory serialisation
-            CharacterHandle.ConvertInventory();
-
-            ReadyState();
-
-            DeserialiseGrove();
-
-            exportHandle.Produce();
-
-        }
-
-        public void ReadyState()
-        {
-
-            modReady = true;
+            Helper.Data.WriteJsonFile("debug.json", save);
 
             rite.Reset();
 
             questHandle.Ready();
 
-            /*Mod.instance.save.herbalism[herbals.omen_feather] = 2;
-            Mod.instance.save.herbalism[herbals.omen_tuft] = 3;
-            Mod.instance.save.herbalism[herbals.omen_shell] = 4;
-            Mod.instance.save.herbalism[herbals.omen_tusk] = 1;
-            Mod.instance.save.herbalism[herbals.omen_nest] = 1;
-            Mod.instance.save.herbalism[herbals.omen_glass] = 2;
+            DeserialiseLocations();
 
-            Mod.instance.save.herbalism[herbals.trophy_shroom] = 5;
-            Mod.instance.save.herbalism[herbals.trophy_eye] = 1;
-            Mod.instance.save.herbalism[herbals.trophy_pumpkin] = 1;
-            Mod.instance.save.herbalism[herbals.trophy_pearl] = 2;
-            Mod.instance.save.herbalism[herbals.trophy_tooth] = 4;
-            Mod.instance.save.herbalism[herbals.trophy_spiral] = 3;
-
-            Mod.instance.save.herbalism[herbals.omen_down] = 1;
-            Mod.instance.save.herbalism[herbals.omen_coral] = 2;
-            Mod.instance.save.herbalism[herbals.trophy_spike] = 4;
-            Mod.instance.save.herbalism[herbals.trophy_seed] = 3;
-
-            Mod.instance.save.pals[CharacterHandle.characters.PalSerpent] = new(CharacterHandle.characters.PalSerpent);
-            Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.monster_serpent.ToString());
-
-            Mod.instance.save.pals[CharacterHandle.characters.PalSpirit] = new(CharacterHandle.characters.PalSpirit);
-            Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.monster_spirit.ToString());
-
-            Mod.instance.save.pals[CharacterHandle.characters.PalGhost] = new(CharacterHandle.characters.PalGhost);
-            Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.monster_ghost.ToString());*/
-
-            return;
+            exportHandle.Produce();
 
         }
 
@@ -582,8 +521,6 @@ namespace StardewDruid
         {
 
             trackers.Clear();
-
-            dopplegangers.Clear();
 
             rite.Shutdown();
 
@@ -615,7 +552,7 @@ namespace StardewDruid
             if (!magic)
             {
 
-                SerialiseGrove();
+                SerialiseLocations();
 
                 SaveCharacters();
 
@@ -630,7 +567,28 @@ namespace StardewDruid
 
             }
 
-            Helper.Data.WriteSaveData("saveData_" + version.ToString(), save);
+            if (Config.setMilestone != 0)
+            {
+
+                Config.setMilestone = 0;
+
+                SaveConfig();
+
+            }
+
+            if (multiplayer.Count > 0)
+            {
+
+                foreach (KeyValuePair<long, SaveData> farmhandData in multiplayer)
+                {
+
+                    Helper.Data.WriteSaveData(SaveData.version+"_"+farmhandData.Key, farmhandData.Value);
+
+                }
+
+            }
+
+            Helper.Data.WriteSaveData(SaveData.version, save);
 
         }
 
@@ -657,8 +615,6 @@ namespace StardewDruid
                 return;
 
             }
-
-            save.characters = new();
 
             for (int c = characters.Count - 1; c >= 0; c-- )
             {
@@ -688,7 +644,7 @@ namespace StardewDruid
                     case Character.Character.mode.random:
                     case Character.Character.mode.limbo:
 
-                        save.characters[character.Key] = Character.Character.mode.home;
+                        save.companions[character.Key.ToString()].mode = Character.Character.mode.home;
 
                         break;
 
@@ -703,13 +659,13 @@ namespace StardewDruid
 
                         characters[character.Key].Position = CharacterHandle.CharacterStart(home, character.Key);
 
-                        save.characters[character.Key] = character.Value.modeActive;
+                        save.companions[character.Key.ToString()].mode = character.Value.modeActive;
 
                         break;
 
                     default:
 
-                        save.characters[character.Key] = character.Value.modeActive;
+                        save.companions[character.Key.ToString()].mode = character.Value.modeActive;
 
                         break;
 
@@ -717,9 +673,7 @@ namespace StardewDruid
 
             }
 
-            //save.serialchests.Clear();
-
-            foreach (KeyValuePair<CharacterHandle.characters, StardewValley.Objects.Chest> chest in chests)
+            foreach (KeyValuePair<ChestHandle.chests, StardewValley.Objects.Chest> chest in chests)
             {
                     
                 if (chest.Value == null)
@@ -729,18 +683,6 @@ namespace StardewDruid
 
                 }
 
-                /*if (save.chests.ContainsKey(chest.Key))
-                {
-
-                    save.chests[chest.Key].Clear();
-
-                }
-                else
-                {
-
-                    save.chests[chest.Key] = new();
-
-                }*/
                 for (int i = chest.Value.Items.Count - 1; i >= 0; i--)
                 {
 
@@ -823,55 +765,7 @@ namespace StardewDruid
                 
                 xml = xml[..(xml.LastIndexOf(Convert.ToChar(62)) + 1)];
 
-                save.serialchests[chest.Key] = xml;
-
-                bool redundant = false;
-
-                if (redundant)
-                {
-
-                    List<string> removal = new();
-
-                    for (int i = chest.Value.Items.Count - 1; i >= 0; i--)
-                    {
-
-                        Item item = chest.Value.Items.ElementAt(i);
-
-                        if (item == null)
-                        {
-
-                            continue;
-
-                        }
-
-                        ParsedItemData parsedItemData = ItemRegistry.GetData(item.QualifiedItemId);
-
-                        if (System.Object.ReferenceEquals(parsedItemData, null))
-                        {
-
-                            continue;
-
-                        }
-
-                        if (parsedItemData.ItemType is not ObjectDataDefinition)
-                        {
-
-                            if (!Game1.player.addItemToInventoryBool(item))
-                            {
-
-                                Game1.player.dropItem(item);
-
-                            }
-
-                            continue;
-
-                        }
-
-                        save.chests[chest.Key].Add(new() { id = item.QualifiedItemId, quality = item.quality.Value, stack = item.stack.Value, });
-
-                    }
-
-                }
+                save.chests[chest.Key] = xml;
 
             }
 
@@ -997,8 +891,8 @@ namespace StardewDruid
                 character.Value.currentLocation.characters.Add(character.Value);
 
                 Character.Character.mode mode =
-                save.characters.ContainsKey(character.Key) ?
-                save.characters[character.Key] :
+                save.companions.ContainsKey(character.Key.ToString()) ?
+                save.companions[character.Key.ToString()].mode :
                 Character.Character.mode.home;
 
                 character.Value.SwitchToMode(mode, Game1.player);
@@ -1007,7 +901,7 @@ namespace StardewDruid
 
         }
 
-        public void SerialiseGrove()
+        public void SerialiseLocations()
         {
 
             if (!Context.IsMainPlayer)
@@ -1017,54 +911,60 @@ namespace StardewDruid
 
             }
 
-            if (!Config.decorateGrove)
+            if (!Config.decorateLocations)
             {
 
                 return;
 
             }
 
-            GameLocation proxyGrove = new Shed();
+            GameLocation proxy = new Shed();
 
             int overnightMinutesElapsed = Utility.CalculateMinutesUntilMorning(Game1.timeOfDay);
 
-            locations[LocationHandle.druid_grove_name].passTimeForObjects(overnightMinutesElapsed);
-
-            proxyGrove.furniture.Set(locations[LocationHandle.druid_grove_name].furniture);
-
-            proxyGrove.netObjects.Set(locations[LocationHandle.druid_grove_name].netObjects.Pairs);
-
-            /*if (Config.plantGrove)
+            foreach(KeyValuePair<string,GameLocation> location in locations)
             {
 
-                proxyGrove.largeTerrainFeatures.Set(locations[LocationHandle.druid_grove_name].largeTerrainFeatures);
+                locations[location.Key].passTimeForObjects(overnightMinutesElapsed);
 
-                proxyGrove.terrainFeatures.Set(locations[LocationHandle.druid_grove_name].terrainFeatures.Pairs);
+                proxy.furniture.Set(locations[location.Key].furniture);
 
-            }*/
+                proxy.netObjects.Set(locations[location.Key].netObjects.Pairs);
 
-            XmlSerializer serializer = new(typeof(GameLocation));
+                XmlSerializer serializer = new(typeof(GameLocation));
 
-            MemoryStream memStream;
-            memStream = new MemoryStream();
-            XmlTextWriter xmlWriter;
-            xmlWriter = new XmlTextWriter(memStream, Encoding.UTF8)
-            {
-                Namespaces = true
-            };
-            serializer.Serialize(xmlWriter, proxyGrove);
-            xmlWriter.Close();
-            memStream.Close();
-            string xml;
-            xml = Encoding.UTF8.GetString(memStream.GetBuffer());
-            xml = xml[xml.IndexOf(Convert.ToChar(60))..];
-            xml = xml[..(xml.LastIndexOf(Convert.ToChar(62)) + 1)];
+                MemoryStream memStream;
 
-            save.serialise = xml;
+                memStream = new MemoryStream();
+
+                XmlTextWriter xmlWriter;
+
+                xmlWriter = new XmlTextWriter(memStream, Encoding.UTF8)
+                {
+                    Namespaces = true
+                };
+
+                serializer.Serialize(xmlWriter, proxy);
+
+                xmlWriter.Close();
+
+                memStream.Close();
+
+                string xml;
+
+                xml = Encoding.UTF8.GetString(memStream.GetBuffer());
+
+                xml = xml[xml.IndexOf(Convert.ToChar(60))..];
+
+                xml = xml[..(xml.LastIndexOf(Convert.ToChar(62)) + 1)];
+
+                save.locations[location.Key] = xml;
+
+            }
 
         }
 
-        public void DeserialiseGrove()
+        public void DeserialiseLocations()
         {
             
             if (!Context.IsMainPlayer)
@@ -1074,75 +974,60 @@ namespace StardewDruid
 
             }
 
-            if (!Config.decorateGrove)
+            if (!Config.decorateLocations)
             {
 
                 return;
 
             }
 
-            if (save.serialise == string.Empty)
+            foreach(KeyValuePair<string,string> locationData in save.locations)
             {
 
-                return;
-
-            }
-
-            if (!locations.ContainsKey(LocationHandle.druid_grove_name))
-            {
-                return;
-
-            }
-
-            XmlSerializer serializer = new(typeof(GameLocation));
-
-            StringReader stringReader;
-            stringReader = new StringReader(save.serialise);
-            XmlTextReader xmlReader;
-            xmlReader = new XmlTextReader(stringReader);
-            GameLocation proxyGrove = (GameLocation)serializer.Deserialize(xmlReader);
-            xmlReader.Close();
-            stringReader.Close();
-
-            locations[LocationHandle.druid_grove_name].furniture.Set(proxyGrove.furniture);
-
-            locations[LocationHandle.druid_grove_name].netObjects.Set(proxyGrove.netObjects.Pairs);
-
-            foreach (Furniture item2 in locations[LocationHandle.druid_grove_name].furniture)
-            {
-                item2.updateDrawPosition();
-            }
-
-            foreach (KeyValuePair<Vector2, StardewValley.Object> pair in locations[LocationHandle.druid_grove_name].objects.Pairs)
-            {
-                pair.Value.initializeLightSource(pair.Key);
-                pair.Value.reloadSprite();
-            }
-
-            /*if (Config.plantGrove)
-            {
-
-                locations[LocationHandle.druid_grove_name].largeTerrainFeatures.Set(proxyGrove.largeTerrainFeatures);
-
-                locations[LocationHandle.druid_grove_name].terrainFeatures.Set(proxyGrove.terrainFeatures.Pairs);
-
-                foreach (LargeTerrainFeature largeTerrainFeature in locations[LocationHandle.druid_grove_name].largeTerrainFeatures)
+                if (!locations.ContainsKey(locationData.Key))
                 {
-                    largeTerrainFeature.Location = locations[LocationHandle.druid_grove_name];
-                    largeTerrainFeature.loadSprite();
+
+                    continue;
+
                 }
 
-                foreach (TerrainFeature value4 in locations[LocationHandle.druid_grove_name].terrainFeatures.Values)
+                XmlSerializer serializer = new(typeof(GameLocation));
+
+                StringReader stringReader;
+
+                stringReader = new StringReader(locationData.Value);
+
+                XmlTextReader xmlReader;
+
+                xmlReader = new XmlTextReader(stringReader);
+
+                GameLocation proxyGrove = (GameLocation)serializer.Deserialize(xmlReader);
+
+                xmlReader.Close();
+
+                stringReader.Close();
+
+                locations[locationData.Key].furniture.Set(proxyGrove.furniture);
+
+                locations[locationData.Key].netObjects.Set(proxyGrove.netObjects.Pairs);
+
+                foreach (Furniture item2 in locations[locationData.Key].furniture)
                 {
-                    value4.Location = locations[LocationHandle.druid_grove_name];
-                    value4.loadSprite();
-                    //if (value4 is HoeDirt hoeDirt)
-                    //{
-                    //    hoeDirt.updateNeighbors();
-                    //}
+
+                    item2.updateDrawPosition();
+
                 }
 
-            }*/
+                foreach (KeyValuePair<Vector2, StardewValley.Object> pair in locations[locationData.Key].objects.Pairs)
+                {
+
+                    pair.Value.initializeLightSource(pair.Key);
+
+                    pair.Value.reloadSprite();
+
+                }
+
+            }
 
 
         }
@@ -1158,7 +1043,7 @@ namespace StardewDruid
 
                     ReinstateLocations();
 
-                    DeserialiseGrove();
+                    DeserialiseLocations();
 
                     exportHandle.Produce();
 
@@ -1170,7 +1055,7 @@ namespace StardewDruid
 
             rite = new();
 
-            ReadyState();
+            questHandle.Ready();
 
         }
 
@@ -1208,26 +1093,14 @@ namespace StardewDruid
 
             }
 
-            if (Context.IsMainPlayer)
-            {
-
-                save.multiplayer ??= new();
-
-
-            }
-            else
-            {
-
-                save ??= new();
-
-            }
-
             // Synchronise progress
 
             switch (queryType)
             {
 
-                case QueryData.queries.RequestProgress:
+                // From farmhand
+
+                case QueryData.queries.FarmhandRequestsProgress:
 
                     if (!Context.IsMainPlayer) { return; }
 
@@ -1235,91 +1108,94 @@ namespace StardewDruid
 
                     return;
 
-                case QueryData.queries.SyncProgress:
-
-                    if (Context.IsMainPlayer) { return; }
-
-                    SaveData syncProgress = e.ReadAs<SaveData>();
-
-                    save.reliquary = syncProgress.reliquary;
-
-                    save.progress = syncProgress.progress;
-
-                    save.milestone = syncProgress.milestone;
-
-                    save.restoration = syncProgress.restoration;
-
-                    ReadyState();
-
-                    Console.WriteLine(StringData.Strings(StringData.stringkeys.receivedData) + e.FromPlayerID);
-
-                    return;
-
-                case QueryData.queries.RequestPreferences:
+                case QueryData.queries.FarmhandRequestsData:
 
                     if (!Context.IsMainPlayer) { return; }
 
-                    MessageSendPreferences();
+                    if (!multiplayer.ContainsKey(e.FromPlayerID))
+                    {
+
+                        SaveData farmhandData = Helper.Data.ReadSaveData<StardewDruid.Data.SaveData>(SaveData.version + "_" + e.FromPlayerID);
+
+                        if(farmhandData != null)
+                        {
+
+                            multiplayer[e.FromPlayerID] = farmhandData;
+
+                        }
+
+                    }
+                    
+                    if (!multiplayer.ContainsKey(e.FromPlayerID))
+                    {
+
+                        multiplayer[e.FromPlayerID] = new SaveData() { id = e.FromPlayerID };
+
+                    }
+
+                    multiplayer[e.FromPlayerID].progress = save.progress;
+
+                    multiplayer[e.FromPlayerID].reliquary = save.reliquary;
+
+                    Helper.Multiplayer.SendMessage(
+                        multiplayer[e.FromPlayerID],
+                        QueryData.queries.HostProvidesData.ToString(),
+                        modIDs: new[] { this.ModManifest.UniqueID }
+                    );
+
 
                     return;
 
-                case QueryData.queries.PostPreferences:
+                case QueryData.queries.FarmhandProvidesSave:
 
                     if (!Context.IsMainPlayer) { return; }
 
                     SaveData postPreferences = e.ReadAs<SaveData>();
 
-                    if (!save.multiplayer.ContainsKey(e.FromPlayerID))
-                    {
-
-                        save.multiplayer[e.FromPlayerID] = new();
-
-                    }
-
-                    save.multiplayer[e.FromPlayerID].attunement = postPreferences.attunement;
-
-                    save.multiplayer[e.FromPlayerID].herbalism = postPreferences.herbalism;
-
-                    save.multiplayer[e.FromPlayerID].potions = postPreferences.potions;
-
-                    save.multiplayer[e.FromPlayerID].pals = postPreferences.pals;
+                    multiplayer[postPreferences.id] = postPreferences;
 
                     return;
 
-                case QueryData.queries.SyncPreferences:
+                // From host
+
+                case QueryData.queries.HostProvidesProgress:
+
+                    if (Context.IsMainPlayer) { return; }
+
+                    SaveData syncProgress = e.ReadAs<SaveData>();
+
+                    save.progress = syncProgress.progress;
+
+                    save.reliquary = syncProgress.reliquary;
+
+                    rite = new();
+
+                    questHandle.Ready();
+
+                    Console.WriteLine(StringData.Get(StringData.str.receivedData) + e.FromPlayerID);
+
+                    return;
+
+                case QueryData.queries.HostProvidesData:
 
                     if (Context.IsMainPlayer) { return; }
 
                     SaveData syncPreferences = e.ReadAs<SaveData>();
 
-                    save ??= new();
-
-                    if (syncPreferences.multiplayer.ContainsKey(Game1.player.UniqueMultiplayerID))
+                    if(syncPreferences.id == Game1.player.UniqueMultiplayerID)
                     {
 
-                        save.attunement = syncPreferences.multiplayer[Game1.player.UniqueMultiplayerID].attunement;
+                        save = syncPreferences;
 
-                        save.herbalism = syncPreferences.multiplayer[Game1.player.UniqueMultiplayerID].herbalism;
+                        receivedSave = true;
 
-                        save.potions = syncPreferences.multiplayer[Game1.player.UniqueMultiplayerID].potions;
+                        modReady = true;
 
-                        save.pals = syncPreferences.multiplayer[Game1.player.UniqueMultiplayerID].pals;
+                        rite = new();
 
-                    }
-                    else if(!receivedPreferences)
-                    {
-
-                        save.attunement = syncPreferences.attunement;
-
-                        save.herbalism = syncPreferences.herbalism;
-
-                        save.potions = syncPreferences.potions;
-
-                        save.pals = syncPreferences.pals;
+                        questHandle.Ready();
 
                     }
-
-                    receivedPreferences = true;
 
                     return;
 
@@ -1390,47 +1266,6 @@ namespace StardewDruid
 
                     return;
 
-                case QueryData.queries.AddExport:
-
-                    if (!Context.IsMainPlayer)
-                    {
-
-                        return;
-
-                    }
-
-                    ExportHandle.exports addexport = Enum.Parse<ExportHandle.exports>(queryData.name);
-
-                    Mod.instance.exportHandle.AddExport(addexport, Convert.ToInt32(queryData.value));
-
-                    return;
-
-                case QueryData.queries.AddPal:
-
-                    if (!Context.IsMainPlayer)
-                    {
-
-                        return;
-
-                    }
-
-                    CharacterHandle.characters addpal = Enum.Parse<CharacterHandle.characters>(queryData.name);
-
-                    PalHandle.ReceiveHelp(addpal, Convert.ToInt32(queryData.value));
-
-                    return;
-
-                case QueryData.queries.RequestGoods:
-
-                    exportHandle.PostStock();
-
-                    return;
-
-                case QueryData.queries.SyncGoods:
-
-                    exportHandle.SynchroniseStock(queryData.value);
-
-                    return;
 
             }
 
@@ -1512,58 +1347,6 @@ namespace StardewDruid
 
                     return;
 
-                /*case QueryData.queries.EventDialogue:
-
-                    if (queryData.location != Game1.player.currentLocation.Name)
-                    {
-                        
-                        return;
-
-                    }
-
-                    if(queryData.name == null)
-                    {
-
-                        Game1.currentSpeaker = null;
-
-                        List<string> answers = ModUtility.SplitStringByLength(queryData.value, 185);
-
-                        Game1.activeClickableMenu = new DialogueBox(answers);
-
-                    }
-                    else
-                    {
-
-                        NPC npc = Game1.player.currentLocation.getCharacterFromName(queryData.name);
-
-                        Game1.currentSpeaker = npc;
-
-                        if (npc == null)
-                        {
-
-                            List<string> answers = ModUtility.SplitStringByLength(queryData.value, 185);
-
-                            Game1.activeClickableMenu = new DialogueBox(answers);
-
-                        }
-                        else
-                        {
-
-                            StardewValley.Dialogue dialogue = new(npc, "0", queryData.value);
-
-                            Game1.activeClickableMenu = new DialogueBox(dialogue);
-
-                        }
-
-                    }
-
-                    Game1.player.Halt();
-
-                    Game1.player.CanMove = false;
-
-                    return;*/
-
-
                 case QueryData.queries.EventQuestion:
 
                     if (queryData.location != Game1.player.currentLocation.Name)
@@ -1605,11 +1388,9 @@ namespace StardewDruid
 
                     }
 
-                    //new ThrowHandle(Game1.player,Game1.player.Position - new Vector2(0,640), relic).register();
-
                     string relicTitle = relicHandle.reliquary[relic.ToString()].title;
 
-                    DisplayMessage relicMessage = new(relicTitle + StringData.Strings(StringData.stringkeys.relicReceived), relic);
+                    DisplayMessage relicMessage = new(relicTitle + StringData.Get(StringData.str.relicReceived), relic);
 
                     Game1.addHUDMessage(relicMessage);
 
@@ -1647,7 +1428,7 @@ namespace StardewDruid
 
                     string gimmeQuest = queryData.name;
 
-                    RegisterMessage(gimmeQuest + " " + StringData.Strings(StringData.stringkeys.questComplete), 1, true);
+                    RegisterMessage(gimmeQuest + " " + StringData.Get(StringData.str.questComplete), 1, true);
 
                     Game1.player.Money += gimmeMoney;
 
@@ -1686,79 +1467,9 @@ namespace StardewDruid
 
             if (!Context.IsMainPlayer) { return; }
 
-            SaveData requestProgress = new()
-            {
-                reliquary = save.reliquary,
-
-                progress = save.progress,
-
-                milestone = save.milestone,
-
-                attunement = save.attunement,
-
-                herbalism = save.herbalism,
-
-                potions = save.potions,
-
-                pals = save.pals,
-
-                multiplayer = save.multiplayer,
-
-            };
-
             Helper.Multiplayer.SendMessage(
-                requestProgress,
-                QueryData.queries.SyncProgress.ToString(),
-                modIDs: new[] { this.ModManifest.UniqueID }
-            );
-
-        }
-
-        public void MessageSendPreferences()
-        {
-
-            SaveData requestProgress = new()
-            {
-
-                attunement = save.attunement,
-
-                herbalism = save.herbalism,
-
-                potions = save.potions,
-
-                pals = save.pals,
-
-                multiplayer = save.multiplayer,
-
-            };
-
-            Helper.Multiplayer.SendMessage(
-                requestProgress,
-                QueryData.queries.SyncPreferences.ToString(),
-                modIDs: new[] { this.ModManifest.UniqueID }
-            );
-
-        }
-
-        public void MessagePostPreferences()
-        {
-
-            SaveData requestProgress = new()
-            {
-                
-                attunement = save.attunement,
-
-                herbalism = save.herbalism,
-
-                potions = save.potions,
-
-                pals = save.pals,
-
-            };
-
-            Helper.Multiplayer.SendMessage(
-                requestProgress,
-                QueryData.queries.PostPreferences.ToString(),
+                save,
+                QueryData.queries.HostProvidesProgress.ToString(),
                 modIDs: new[] { this.ModManifest.UniqueID }
             );
 
@@ -1802,13 +1513,6 @@ namespace StardewDruid
 
             }
 
-            if (!receivedPreferences)
-            {
-
-                return;
-
-            }
-
             synchronisePreferences = true;
 
         }
@@ -1829,7 +1533,7 @@ namespace StardewDruid
 
         public bool ModPaused()
         {
-
+            modReady = true;
             if (!Context.IsWorldReady)
             {
 
@@ -2567,9 +2271,28 @@ namespace StardewDruid
                     if (synchronisePreferences)
                     {
 
-                        MessagePostPreferences();
+                        if (!receivedSave)
+                        {
 
-                        synchronisePreferences = false;
+                            Helper.Multiplayer.SendMessage(
+                                save,
+                                QueryData.queries.FarmhandRequestsData.ToString(),
+                                modIDs: new[] { this.ModManifest.UniqueID }
+                            );
+
+                        }
+                        else
+                        {
+
+                            Helper.Multiplayer.SendMessage(
+                                save,
+                                QueryData.queries.FarmhandProvidesSave.ToString(),
+                                modIDs: new[] { this.ModManifest.UniqueID }
+                            );
+
+                            synchronisePreferences = false;
+
+                        }
 
                     }
 
@@ -2586,19 +2309,10 @@ namespace StardewDruid
 
             // Event Updates
 
-            if (Game1.player.Stamina <= 28 || Game1.player.health <= 40)
-            {
-
-                AutoConsume();
-
-            }
-
             rite.Update();
 
             if (tickIndex == 27)
             {
-
-                rite.ChargeBuff();
 
                 rite.RiteBuff();
 
@@ -2607,7 +2321,7 @@ namespace StardewDruid
             if(tickIndex == 46)
             {
 
-                herbalHandle.CheckBuff();
+                apothecaryHandle.buff.CheckBuff();
 
             }
 
@@ -2993,7 +2707,7 @@ namespace StardewDruid
 
                     }
 
-                    herbalHandle.HoverBuff(e.SpriteBatch);
+                    apothecaryHandle.buff.HoverBuff(e.SpriteBatch);
 
                     break;
 
@@ -3144,76 +2858,6 @@ namespace StardewDruid
 
         // ========================================================= REGISTER
 
-        public int AttuneableWeapon()
-        {
-
-            if (Rite.HoldingBomb() != Rite.ritetools.none)
-            {
-
-                currentTool = 997;
-
-                return 997;
-
-            }
-            else
-            if (Game1.player.CurrentTool is null)
-            {
-
-                if ((Config.slotAttune || magic) && Config.slotFreedom)
-                {
-
-                    // valid tool not required
-                    return 999;
-
-                }
-
-                if (Game1.player.CurrentToolIndex == Transform.toolPlaceholder && eventRegister.ContainsKey(Rite.eventTransform))
-                {
-
-                    if (eventRegister[Rite.eventTransform] is Cast.Ether.Transform transform)
-                    {
-
-                        return transform.attuneableIndex;
-
-                    }
-
-                }
-
-                return -1;
-
-            }
-
-            switch (Game1.player.CurrentTool)
-            {
-                default:
-                    return -1;
-                case MeleeWeapon:
-                    currentTool = Game1.player.CurrentTool.InitialParentTileIndex;
-                    break;
-                case Pickaxe:
-                    currentTool = 991;
-                    break;
-                case Axe:
-                    currentTool = 992;
-                    break;
-                case Hoe:
-                    currentTool = 993;
-                    break;
-                case WateringCan:
-                    currentTool = 994;
-                    break;
-                case FishingRod:
-                    currentTool = 995;
-                    break;
-                case Pan:
-                    currentTool = 996;
-                    break;
-            }
-
-            return currentTool;
-
-        }
-
         public int CombatDamage()
         {
 
@@ -3226,8 +2870,8 @@ namespace StardewDruid
 
             int damageLevel = 200;
 
-            if (!Config.maxDamage)
-            {
+            //if (!Config.maxDamage)
+            //{
 
                 damageLevel = 3 * Game1.player.CombatLevel; // 30
 
@@ -3280,7 +2924,7 @@ namespace StardewDruid
 
                 damageLevel = Math.Min(200, damageLevel); // 150
 
-            }
+            //}
 
             switch (PowerLevel)
             {
@@ -3311,10 +2955,10 @@ namespace StardewDruid
 
             }
 
-            if (herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.alignment))
+            if (apothecaryHandle.buff.applied.ContainsKey(BuffHandle.buffTypes.alignment))
             {
 
-                damageLevel += (int)(damageLevel * 0.1f * herbalHandle.buff.applied[HerbalBuff.herbalbuffs.alignment].level);
+                damageLevel += (int)(damageLevel * 0.1f * apothecaryHandle.buff.applied[BuffHandle.buffTypes.alignment].level);
 
             }
 
@@ -3354,12 +2998,12 @@ namespace StardewDruid
 
             }
 
-            if (herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.vigor))
+            if (apothecaryHandle.buff.applied.ContainsKey(BuffHandle.buffTypes.vigor))
             {
 
-                critChance += (0.03f * herbalHandle.buff.applied[HerbalBuff.herbalbuffs.vigor].level);
+                critChance += (0.03f * apothecaryHandle.buff.applied[BuffHandle.buffTypes.vigor].level);
 
-                critModifier += (0.1f * herbalHandle.buff.applied[HerbalBuff.herbalbuffs.vigor].level);
+                critModifier += (0.1f * apothecaryHandle.buff.applied[BuffHandle.buffTypes.vigor].level);
 
             }
 
@@ -3532,139 +3176,6 @@ namespace StardewDruid
 
         }
 
-        public bool AttuneWeapon(Rite.Rites blessing)
-        {
-
-            int toolIndex = AttuneableWeapon();
-
-            if (toolIndex == -1) { return false; };
-
-            save.attunement[toolIndex] = blessing;
-
-            rite.Shutdown();
-
-            SyncPreferences();
-
-            return true;
-
-        }
-
-        public bool DetuneWeapon()
-        {
-
-            int toolIndex = AttuneableWeapon();
-
-            if (toolIndex == -1) { return false; };
-
-            if (save.attunement.ContainsKey(toolIndex))
-            {
-
-                save.attunement.Remove(toolIndex);
-
-            }
-
-            rite.Shutdown();
-
-            SyncPreferences();
-
-            return true;
-
-        }
-
-        public void AutoConsume()
-        {
-
-            List<HerbalHandle.herbals> lines = new()
-            {
-                HerbalHandle.herbals.ligna,
-                HerbalHandle.herbals.impes,
-                HerbalHandle.herbals.celeri,
-            };
-
-            List<HerbalHandle.herbals> potions = new();
-
-            List<HerbalHandle.herbals> prioritised = new();
-
-            int max = herbalHandle.MaxHerbal();
-
-            foreach (HerbalHandle.herbals line in lines)
-            {
-
-                for (int i = herbalHandle.lines[line].Count - 1; i >= 0; i--)
-                {
-
-                    bool priority = false;
-
-                    HerbalHandle.herbals herbal = herbalHandle.lines[line][i];
-
-                    if (herbalHandle.herbalism[herbal.ToString()].level > max)
-                    {
-
-                        continue;
-
-                    }
-
-                    if (save.potions.ContainsKey(herbal))
-                    {
-
-                        if (save.potions[herbal] == 0 || save.potions[herbal] == 4)
-                        {
-
-                            continue;
-
-                        }
-
-                        if (save.potions[herbal] == 2)
-                        {
-
-                            priority = true;
-
-                        }
-
-                    }
-
-                    if (save.herbalism.ContainsKey(herbal))
-                    {
-
-                        if (save.herbalism[herbal] > 0)
-                        {
-                            if (priority)
-                            {
-
-                                prioritised.Add(herbal);
-
-                            }
-                            else
-                            {
-                                potions.Add(herbal);
-
-                            }
-
-                            break;
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            prioritised.AddRange(potions);
-
-            foreach (HerbalHandle.herbals potion in prioritised)
-            {
-
-                if (Game1.player.Stamina >= (Game1.player.MaxStamina * 0.5) && Game1.player.health >= (Game1.player.maxHealth * 0.5))
-                {
-                    break;
-                }
-
-                herbalHandle.ConsumeHerbal(potion.ToString());
-
-            }
-
-        }
 
     }
 

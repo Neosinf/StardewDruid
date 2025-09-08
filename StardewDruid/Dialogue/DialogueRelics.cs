@@ -320,7 +320,7 @@ namespace StardewDruid.Dialogue
 
                     Game1.exitActiveMenu();
 
-                    DruidJournal.openJournal(DruidJournal.journalTypes.herbalism);
+                    DruidJournal.openJournal(DruidJournal.journalTypes.potions);
 
                     return null;
 
@@ -742,31 +742,31 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.PalBat:
 
-                    RelicFunction.RelicFunction(IconData.relics.monster_bat.ToString());
+                    RelicFunction.ClickFunction(IconData.relics.monster_bat.ToString());
 
                     return null;
 
                 case CharacterHandle.characters.PalSlime:
 
-                    RelicFunction.RelicFunction(IconData.relics.monster_slime.ToString());
+                    RelicFunction.ClickFunction(IconData.relics.monster_slime.ToString());
 
                     return null;
 
                 case CharacterHandle.characters.PalSpirit:
 
-                    RelicFunction.RelicFunction(IconData.relics.monster_spirit.ToString());
+                    RelicFunction.ClickFunction(IconData.relics.monster_spirit.ToString());
 
                     return null;
 
                 case CharacterHandle.characters.PalGhost:
 
-                    RelicFunction.RelicFunction(IconData.relics.monster_ghost.ToString());
+                    RelicFunction.ClickFunction(IconData.relics.monster_ghost.ToString());
 
                     return null;
 
                 case CharacterHandle.characters.PalSerpent:
 
-                    RelicFunction.RelicFunction(IconData.relics.monster_serpent.ToString());
+                    RelicFunction.ClickFunction(IconData.relics.monster_serpent.ToString());
 
                     return null;
 

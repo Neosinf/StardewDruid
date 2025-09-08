@@ -93,18 +93,14 @@ namespace StardewDruid.Cast.Weald
         public void CultivateConversions()
         {
 
-            int quality = Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour) ? Mod.instance.Config.cultivateBehaviour : 0;
-
-            conversions = SpawnData.CropList(location, quality);
+            conversions = SpawnData.CropList(location, MasteryHandle.HasMastery(MasteryNode.nodes.incentive_shinies) ? 4 : 0);
 
         }
 
         public void CultivateImports()
         {
 
-            int quality = Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour) ? Mod.instance.Config.cultivateBehaviour : 0;
-
-            List<string> imports = SpawnData.ShopList(location, quality);
+            List<string> imports = SpawnData.ShopList(location, MasteryHandle.HasMastery(MasteryNode.nodes.incentive_shinies) ? 4 : 0);
 
             if (imports.Count > 0)
             {
@@ -213,7 +209,7 @@ namespace StardewDruid.Cast.Weald
                     // ----------------------------------------------------------------------
                     // cultivate crop
 
-                    if (!hoeDirt.HasFertilizer())
+                    /*if (!hoeDirt.HasFertilizer())
                     {
 
                         int powerLevel = Mod.instance.PowerLevel;
@@ -270,7 +266,7 @@ namespace StardewDruid.Cast.Weald
 
                         }
 
-                    }
+                    }*/
 
                     if (hoeDirt.crop == null)
                     {
@@ -364,13 +360,13 @@ namespace StardewDruid.Cast.Weald
 
                     }
 
-                    if (Mod.instance.Config.cultivateBehaviour == 3)
+                    if (MasteryHandle.HasMastery(MasteryNode.nodes.weald_cultivate))
                     {
-                        
-                        if (hoeDirt.crop.currentPhase.Value == 0)
+
+                        if (hoeDirt.crop.currentPhase.Value <= 1)
                         {
 
-                            hoeDirt.crop.currentPhase.Value = 1;
+                            hoeDirt.crop.currentPhase.Value = 2;
 
                             hoeDirt.crop.dayOfCurrentPhase.Value = 0;
 
@@ -380,10 +376,10 @@ namespace StardewDruid.Cast.Weald
 
                     }
                     else
-                    if (hoeDirt.crop.currentPhase.Value <= 1)
+                    if (hoeDirt.crop.currentPhase.Value == 0)
                     {
 
-                        hoeDirt.crop.currentPhase.Value = 2;
+                        hoeDirt.crop.currentPhase.Value = 1;
 
                         hoeDirt.crop.dayOfCurrentPhase.Value = 0;
 

@@ -19,7 +19,7 @@ namespace StardewDruid.Journal
     public class RecruitJournal : DruidJournal
     {
 
-        public RecruitJournal(string QuestId, int Record) : base(QuestId, Record)
+        public RecruitJournal(journalTypes Type, List<string> Parameters) : base(Type, Parameters)
         {
 
 
@@ -29,8 +29,6 @@ namespace StardewDruid.Journal
         {
 
             type = journalTypes.ledger;
-
-            title = JournalData.JournalTitle(type);
 
             pagination = 4;
 
@@ -79,7 +77,9 @@ namespace StardewDruid.Journal
 
                         content.text[1] = RecruitHandle.RecruitTitle(name);
 
-                        content.icons[0] = IconData.displays.heroes;
+                        content.textures[0] = Mod.instance.iconData.displayTexture;
+
+                        content.textureSources[0] = IconData.DisplayRectangle(IconData.displays.heroes);
 
                         content.text[2] = RecruitHandle.RecruitLevel(Mod.instance.save.recruits[hero].level);
 
@@ -128,27 +128,10 @@ namespace StardewDruid.Journal
                 [104] = addButton(journalButtons.openAlchemy),
                 [105] = addButton(journalButtons.openPotions),
                 [106] = addButton(journalButtons.openCompanions),
-                [107] = addButton(journalButtons.openDragonomicon),
+                [107] = addButton(journalButtons.openOrders),
+                [108] = addButton(journalButtons.openDragonomicon),
 
                 [301] = addButton(journalButtons.exit),
-
-            };
-
-        }
-
-        public override void activateInterface()
-        {
-
-            resetInterface();
-
-            reviseInterface();
-
-            List<CharacterHandle.characters> slots = new()
-            {
-                CharacterHandle.characters.recruit_one,
-                CharacterHandle.characters.recruit_two,
-                CharacterHandle.characters.recruit_three,
-                CharacterHandle.characters.recruit_four,
 
             };
 
@@ -157,7 +140,7 @@ namespace StardewDruid.Journal
         public override void pressContent()
         {
 
-            openJournal(journalTypes.companion, contentComponents[focus].id, focus);
+            openJournal(journalTypes.companion,contentComponents[focus].id);
 
         }
 

@@ -49,7 +49,7 @@ namespace StardewDruid.Battle
 
         public BattleBuff.battlebuffs buff;
 
-        public HerbalHandle.herbals item;
+        public ApothecaryHandle.items item;
 
     }
 

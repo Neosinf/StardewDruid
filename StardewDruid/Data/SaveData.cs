@@ -13,7 +13,7 @@ namespace StardewDruid.Data
     class SaveData
     {
 
-        public int version = 0;
+        public const string version = "SD500";
 
         public long id = 0;
 
@@ -21,23 +21,23 @@ namespace StardewDruid.Data
 
         public Dictionary<string, QuestProgress> progress = new();
 
-        public Dictionary<CharacterHandle.characters, Character.Character.mode> characters = new();
+        public Dictionary<string, CompanionData> companions = new();
 
-        public Dictionary<CharacterHandle.characters, RecruitHandle> recruits = new();
+        public Dictionary<ChestHandle.chests, string> chests = new();
 
-        public Dictionary<CharacterHandle.characters, PalData> pals = new();
+        public Dictionary<string, string> locations = new();
 
-        public Dictionary<CharacterHandle.characters, List<ItemData>> chests = new();
+        public Dictionary<string,Rite.Rites> attunement = new();
 
-        public Dictionary<CharacterHandle.characters, string> serialchests = new();
+        public Dictionary<ApothecaryHandle.items, ApothecaryRecord> apothecary = new();
 
-        public Dictionary<int,Rite.Rites> attunement = new();
+        public Dictionary<ExportResource.resources, int> resources = new();
 
-        public Dictionary<HerbalHandle.herbals, int> herbalism = new();
+        public Dictionary<ExportGood.goods, int> goods = new();
 
-        public Dictionary<HerbalHandle.herbals, int> potions = new();
+        public Dictionary<ExportMachine.machines, MachineRecord> machines = new();
 
-        public Dictionary<ExportHandle.exports, int> exports = new();
+        public Dictionary<ExportGuild.guilds, GuildRecord> guilds = new();
 
         public Dictionary<int, ExportOrder> orders = new();
 
@@ -47,61 +47,33 @@ namespace StardewDruid.Data
 
         public Dictionary<string, int> reliquary = new();
 
+        public int experience = 0;
+
+        public Dictionary<MasteryNode.nodes, int> masteries = new();
+
+        // Redundant
+
         public QuestHandle.milestones milestone = QuestHandle.milestones.none;
 
-        public Dictionary<long, MultiplayerData> multiplayer = new();
+        public Dictionary<CharacterHandle.characters, Character.Character.mode> characters = new();
 
-        public int set = 0;
+        public Dictionary<CharacterHandle.characters, RecruitHandle> recruits = new();
 
-        public string serialise = string.Empty;
+        public Dictionary<CharacterHandle.characters, PalData> pals = new();
+
 
         public SaveData()
         {
 
             // Player specific
 
-            version = Mod.instance.version;
-
             id = Game1.player.UniqueMultiplayerID;
 
-        }
-
-    }
-
-    class ItemData
-    {
-
-        public string id;
-
-        public int quality;
-
-        public int stack;
-
-        public ItemData()
-        {
+            attunement = SpawnData.WeaponAttunement();
 
         }
 
     }
 
-    class MultiplayerData
-    {
-
-        public Dictionary<int, Rite.Rites> attunement = new();
-
-        public Dictionary<HerbalHandle.herbals, int> herbalism = new();
-
-        public Dictionary<HerbalHandle.herbals, int> potions = new();
-
-        public Dictionary<CharacterHandle.characters, PalData> pals = new();
-
-        public Dictionary<int, ExportOrder> orders = new();
-
-        public MultiplayerData()
-        {
-
-        }
-
-    }
 
 }

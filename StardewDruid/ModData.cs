@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewModdingAPI.Utilities;
 using StardewValley.Characters;
 
@@ -33,6 +34,8 @@ namespace StardewDruid
 
         public string modDifficulty { get; set; }
         
+        public bool allMasteries { get; set; }
+
         public string dialogueOption { get; set; }
 
         public string captionOption { get; set; }
@@ -43,15 +46,9 @@ namespace StardewDruid
 
         public int setMilestone { get; set; }
 
-        public bool setOnce { get; set; }
-
-        public bool maxDamage { get; set; }
-
         public bool slotAttune { get; set; }
 
         public bool slotFreedom { get; set; }
-
-        public bool slotReverse { get; set; }
 
         public string potionDefault { get; set; }
 
@@ -79,21 +76,15 @@ namespace StardewDruid
 
         public string slotTwelve { get; set; }
 
-        public int cultivateBehaviour { get; set; }
-
         public int cultivatePlot { get; set; }
         
         public bool cultivateTallCrops { get; set; }
 
         public bool disableShopdata { get; set; }
 
-        public int meteorBehaviour { get; set; }
-
         public bool cardinalMovement { get; set; }
 
-        public bool decorateGrove { get; set; }
-
-        //public bool plantGrove { get; set; }
+        public bool decorateLocations { get; set; }
 
         public bool reverseJournal { get; set; }
 
@@ -139,9 +130,11 @@ namespace StardewDruid
 
         public enum slotOptions
         {
+            winds,
             weald,
             mists,
             stars,
+            voide,
             fates,
             ether,
             witch,
@@ -171,15 +164,6 @@ namespace StardewDruid
             Magic,
         }
 
-        public enum potionDefaults
-        {
-            automatic,
-            noconsume,
-            nobrew,
-            disabled
-
-        }
-
         public ModData()
         {
             
@@ -201,33 +185,28 @@ namespace StardewDruid
             autoProgress = false;
             paceProgress = 1;
             setMilestone = 0;
-            setOnce = false;
-            maxDamage = false;
             modDifficulty = difficulties.medium.ToString();
+            allMasteries = false;
             slotAttune = false;
             slotFreedom = false;
-            slotReverse = false;
-            potionDefault = potionDefaults.automatic.ToString();
-            slotOne = slotOptions.weald.ToString();
-            slotTwo = slotOptions.mists.ToString();
-            slotThree = slotOptions.stars.ToString();
-            slotFour = slotOptions.fates.ToString();
-            slotFive = slotOptions.ether.ToString();
-            slotSix = slotOptions.witch.ToString();
-            slotSeven = slotOptions.none.ToString();
-            slotEight = slotOptions.none.ToString();
+            potionDefault = ApothecaryRecord.automation.brew.ToString();
+            slotOne = slotOptions.winds.ToString();
+            slotTwo = slotOptions.weald.ToString();
+            slotThree = slotOptions.mists.ToString();
+            slotFour = slotOptions.stars.ToString();
+            slotFive = slotOptions.voide.ToString();
+            slotSix = slotOptions.fates.ToString();
+            slotSeven = slotOptions.ether.ToString();
+            slotEight = slotOptions.witch.ToString();
             slotNine = slotOptions.none.ToString();
             slotTen = slotOptions.none.ToString();
             slotEleven = slotOptions.none.ToString();
             slotTwelve = slotOptions.none.ToString();
-            cultivateBehaviour = 2;
             cultivatePlot = 3;
             cultivateTallCrops = false;
             disableShopdata = false;
-            meteorBehaviour = 3;
             cardinalMovement = false;
-            decorateGrove = false;
-            //plantGrove = false;
+            decorateLocations = false;
             enableGothic = false;
             enableCrossover = true;
             dragonScale = 3;

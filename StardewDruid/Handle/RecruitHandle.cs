@@ -7,6 +7,7 @@ using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -595,7 +596,7 @@ namespace StardewDruid.Handle
 
             int real = UnitLevel(level);
 
-            return StringData.LevelStrings(real);
+            return StringData.Get(StringData.str.level, new { level = real });
 
         }
 

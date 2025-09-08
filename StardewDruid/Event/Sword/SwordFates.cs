@@ -161,7 +161,7 @@ namespace StardewDruid.Event.Sword
 
                     DialogueCue(900);
 
-                    EventBar run = ProgressBar(StringData.Strings(StringData.stringkeys.reachEnd), 1);
+                    EventBar run = ProgressBar(StringData.Get(StringData.str.reachEnd), 1);
 
                     run.colour = Color.Orange;
 

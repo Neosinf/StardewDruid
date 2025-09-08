@@ -115,7 +115,7 @@ namespace StardewDruid.Data
             powderbox,
             heroes,
             holy,
-            pals,
+            orders,
             goods,
             shield,
 
@@ -145,6 +145,26 @@ namespace StardewDruid.Data
             effects,
             lunchbox,
             voide,
+            levelup,
+
+            malt,
+            must,
+            tribute,
+            nectar,
+            labour,
+            heavy,
+
+            special,
+            materials,
+            previous,
+            attunement,
+            craft,
+            noselect,
+
+            inventory,
+            sell,
+            upgrade,
+            guilds,
 
         }
 
@@ -383,7 +403,7 @@ namespace StardewDruid.Data
             blank_wayfinder_5,
             blank_wayfinder_6,
 
-            herbalism_apothecary,
+            druid_apothecary,
             herbalism_mortar,
             herbalism_pan,
             herbalism_still,
@@ -478,169 +498,9 @@ namespace StardewDruid.Data
 
         public Texture2D relicsTexture;
 
-        public enum potions
-        {
-            none,
-            
-            // potions
-            ligna,
-            ligna1,
-            ligna2,
-            ligna3,
-            ligna4,
-            faeth,
-            
-            impes,
-            impes1,
-            impes2,
-            impes3,
-            impes4,
-            aether,
-            
-            celeri,
-            celeri1,
-            celeri2,
-            celeri3,
-            celeri4,
-            blank1,
-            
-            lignaGray,
-            lignaGray1,
-            lignaGray2,
-            lignaGray3,
-            lignaGray4,
-            faethGray,
-            
-            impesGray,
-            impesGray1,
-            impesGray2,
-            impesGray3,
-            impesGray4,
-            aetherGray,
+        public Texture2D itemsTexture;
 
-            celeriGray,
-            celeriGray1,
-            celeriGray2,
-            celeriGray3,
-            celeriGray4,
-            blank1Gray,
-
-            // powders
-            imbus,
-            amori,
-            donis,
-            rapidus,
-            blank2,
-            coruscant,
-
-            concutere,
-            jumere,
-            felis,
-            sanctus,
-            blank3,
-            voil,
-
-            captis,
-            ferrum_captis,
-            aurum_captis,
-            diamas_captis,
-            capesso,
-            blank5,
-
-            imbusGray,
-            amoriGray,
-            donisGray,
-            rapidusGray,
-            blank2Gray,
-            coruscantGray,
-
-            concutereGray,
-            jumereGray,
-            felisGray,
-            sanctusGray,
-            blank3Gray,
-            voilGray,
-
-            captisGray,
-            ferrum_captisGray,
-            aurum_captisGray,
-            diamas_captisGray,
-            capessoGray,
-            blank5Gray,
-
-            omenFeather,
-            omenTuft,
-            omenShell,
-            omenTusk,
-            omenNest,
-            omenGlass,
-
-            omenDown,
-            omenCoral,
-            omenBloom,
-            trophyShroom,
-            trophyEye,
-            trophyPumpkin,
-
-            trophyPearl,
-            trophyTooth,
-            trophyShell,
-            trophySpike,
-            trophySeed,
-            trophyDragon,
-
-            omenFeatherGray,
-            omenTuftGray,
-            omenShellGray,
-            omenTuskGray,
-            omenNestGray,
-            omenGlassGray,
-
-            omenDownGray,
-            omenCoralGray,
-            omenBloomGray,
-            trophyShroomGray,
-            trophyEyeGray,
-            trophyPumpkinGray,
-
-            trophyPearlGray,
-            trophyToothGray,
-            trophyShellGray,
-            trophySpikeGray,
-            trophySeedGray,
-            trophyDragonGray,
-
-        }
-
-        public Texture2D potionsTexture;
-
-        public enum workshops
-        {
-            none,
-
-            potions,
-            powders,
-            whiskey,
-            brandy,
-            
-            weapons,
-            supplies,
-            trophies,
-            omens,
-            
-            crushers,
-            press,
-            kiln,
-            mashtun,
-
-            fermentation,
-            distillery,
-            barrel,
-            packer,
-
-        }
-
-        public Texture2D workshopTexture;
+        public Texture2D exportTexture;
 
         public Texture2D masteryTexture;
 
@@ -808,6 +668,8 @@ namespace StardewDruid.Data
 
             cursorTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Cursors.png"));
 
+            masteryTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Masteries.png"));
+
             shadowTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Shadow.png"));
 
             displayTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Displays.png"));
@@ -859,8 +721,6 @@ namespace StardewDruid.Data
             sheetTextures[tilesheets.temple] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Temple.png"));
 
             sheetTextures[tilesheets.sanctuary] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Sanctuary.png"));
-
-            sheetTextures[tilesheets.pavement] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Pavement.png"));
 
             sheetTextures[tilesheets.ritual] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Ritual.png"));
 
@@ -929,9 +789,9 @@ namespace StardewDruid.Data
 
             relicsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Relics.png"));
 
-            potionsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Potions.png"));
+            itemsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Potions.png"));
 
-            workshopTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Workshop.png"));
+            exportTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Workshop.png"));
 
 
             missileTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Missiles.png"));
@@ -1199,28 +1059,6 @@ namespace StardewDruid.Data
             int slot = Convert.ToInt32(relic) - 1;
 
             return new(slot % 6 * 20, slot == 0 ? 0 : slot / 6 * 20, 20, 20);
-
-        }
-
-        public static Microsoft.Xna.Framework.Rectangle PotionRectangles(potions potion)
-        {
-
-            if (potion == potions.none) { return new(); }
-
-            int slot = Convert.ToInt32(potion) - 1;
-
-            return new(slot % 6 * 20, slot == 0 ? 0 : slot / 6 * 20, 20, 20);
-
-        }
-
-        public static Microsoft.Xna.Framework.Rectangle WorkshopRectangles(workshops workshop)
-        {
-
-            if (workshop == workshops.none) { return new(); }
-
-            int slot = Convert.ToInt32(workshop) - 1;
-
-            return new(slot % 4 * 32, slot == 0 ? 0 : slot / 4 * 32, 32, 32);
 
         }
 

@@ -1,22 +1,36 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using StardewDruid.Cast;
+using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
-using StardewValley.ItemTypeDefinitions;
-using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace StardewDruid.Journal
 {
     public class MasteryPage : DruidJournal
     {
 
-        public MasteryPage(string QuestId, int Record) : base(QuestId, Record)
+        public MasteryPath.paths path;
+
+        public MasteryDiscipline.disciplines discipline;
+
+        public bool maxLevel;
+
+        public int requiredExp;
+
+        public int availableExp;
+
+        public int usedExp;
+
+        public MasteryPage(journalTypes Type, List<string> Parameters) : base(Type, Parameters)
         {
 
         }
@@ -24,65 +38,199 @@ namespace StardewDruid.Journal
         public override void populateInterface()
         {
 
-            type = journalTypes.masteryPage;
-
-            //title = JournalData.JournalTitle(type);
-
-        }
-        
-        public override void populateContent()
-        {
-
-            contentColumns = 12;
-
-            pagination = 0;
-
-            contentComponents = Mod.instance.herbalHandle.JournalOmens();
-
-            if (record >= contentComponents.Count)
+            interfaceComponents = new()
             {
 
-                record = 0;
+                [101] = addButton(journalButtons.openMasteries),
 
-            }
+                [102] = addButton(journalButtons.levelUp),
 
-            foreach (KeyValuePair<int, ContentComponent> component in contentComponents)
-            {
 
-                component.Value.setBounds(component.Key/2, xPositionOnScreen, yPositionOnScreen, width, height, 0, 56);
+                [201] = addButton(journalButtons.previous),
 
-            }
+
+                [301] = addButton(journalButtons.exit),
+
+                [302] = addButton(journalButtons.scrollUp),
+
+                [303] = addButton(journalButtons.scrollBar),
+
+                [304] = addButton(journalButtons.scrollDown),
+
+            };
 
         }
 
         public override void activateInterface()
         {
+            
+            base.activateInterface();
 
-            resetInterface();
+            if (requiredExp > availableExp || maxLevel)
+            {
+
+                interfaceComponents[interfaceRegistry[journalButtons.levelUp]].fade = 0.7f;
+
+            }
 
         }
+
+        public override void prepareContent()
+        {
+
+            path = MasteryPath.paths.alchemy;
+
+            if (parameters.Count > 0)
+            {
+
+                path = Enum.Parse<MasteryPath.paths>(parameters[0]);
+
+            }
+
+        }
+
+        public override void populateContent()
+        {
+
+            scrollHeight = 468;
+
+            usedExp = Mod.instance.save.masteries.Values.Sum();
+
+            availableExp = Mod.instance.save.experience - usedExp;
+
+            int pathLevel = Mod.instance.masteryHandle.PathLevel(path);
+
+            // ----------------------------- title
+
+            int textHeight = 48;
+
+            int start = 0;
+
+            MasteryPath pathData = Mod.instance.masteryHandle.paths[path];
+
+            discipline = pathData.discipline;
+
+            title = pathData.name;
+
+            // ----------------------------- description
+
+            contentComponents[start] = new(ContentComponent.contentTypes.text, "description");
+
+            contentComponents[start].text[0] = pathData.description;
+
+            contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width-128, 0);
+
+            textHeight += contentComponents[start++].bounds.Height;
+
+            // ------------------------------ details
+
+            maxLevel = true;
+
+            foreach (KeyValuePair<int, MasteryNode.nodes> node in pathData.nodes)
+            {
+
+                MasteryNode nodeData = Mod.instance.masteryHandle.nodes[node.Value];
+
+                string nodeTitle = StringData.Get(StringData.str.level, new { level = node.Key+1 }) + StringData.colon + nodeData.name;
+
+                if (node.Key == pathLevel)
+                {
+
+                    nodeTitle = StringData.Get(StringData.str.nextLevel) + StringData.colon + nodeData.name;
+
+                }
+                
+                // node title
+
+                contentComponents[start] = new(ContentComponent.contentTypes.text, node.Value.ToString());
+
+                contentComponents[start].text[0] = nodeTitle;
+
+                contentComponents[start].textScales[0] = 0.9f;
+
+                if (node.Key == pathLevel)
+                {
+
+                    contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkSlateBlue;
+
+                    maxLevel = false;
+
+                    requiredExp = Mod.instance.masteryHandle.RequiredExperience(path, node.Key + 1);
+
+                }
+                else if (node.Key > pathLevel)
+                {
+
+                    contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.SlateGray;
+
+                }
+
+                contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+
+                textHeight += contentComponents[start++].bounds.Height;
+
+                // node description
+
+                contentComponents[start] = new(ContentComponent.contentTypes.text, node.Value.ToString() + "_description");
+
+                contentComponents[start].text[0] = nodeData.description;
+                
+                contentComponents[start].textScales[0] = 0.9f;
+
+                if (node.Key == pathLevel)
+                {
+
+                    contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkSlateBlue;
+
+                }
+                else if (node.Key > pathLevel)
+                {
+
+                    contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.SlateGray;
+
+                }
+
+                contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+
+                textHeight += contentComponents[start++].bounds.Height;
+
+            }
+
+            textHeight += 48;
+
+            contentBox = new(xPositionOnScreen, yPositionOnScreen + 96, width, textHeight);
+
+        }
+
 
         public override void pressButton(journalButtons button)
         {
 
             switch (button)
             {
+                
+                case journalButtons.previous:
 
-                case journalButtons.start:
-
-                    DruidJournal.openJournal(journalTypes.herbalism);
-
-                    return;
-
-                case journalButtons.back:
-
-                    DruidJournal.openJournal(journalTypes.powders);
+                    openJournal(journalTypes.masteryOverview, contentComponents[focus].id);
 
                     return;
 
-                case journalButtons.forward:
+                case journalButtons.levelUp:
 
-                    DruidJournal.openJournal(journalTypes.goods);
+                    if (requiredExp > availableExp || maxLevel)
+                    {
+
+                        Game1.playSound(SpellHandle.Sounds.ghost.ToString());
+
+                        break;
+
+                    }
+
+                    Mod.instance.masteryHandle.LevelUp(path);
+
+                    populateContent();
+
+                    activateInterface();
 
                     return;
 
@@ -96,53 +244,47 @@ namespace StardewDruid.Journal
 
         }
 
-        public override void pressContent()
+        public override void drawInterface(SpriteBatch b)
         {
+            
+            base.drawInterface(b);
 
-            int amount = 1;
+            // -----------------------------------
 
-            if (Mod.instance.Helper.Input.GetState(SButton.LeftShift) == SButtonState.Held)
-            {
-                amount = 5;
-            }
-            else if (Mod.instance.Helper.Input.GetState(SButton.RightShift) == SButtonState.Held)
-            {
-                amount = 5;
-            }
-            else if (Mod.instance.Helper.Input.GetState(SButton.LeftControl) == SButtonState.Held)
-            {
-                amount = 10;
-            }
-            else if (Mod.instance.Helper.Input.GetState(SButton.RightControl) == SButtonState.Held)
-            {
-                amount = 10;
-            }
+            string requiredLabel = StringData.Get(StringData.str.maxLevel);
 
-            if (contentComponents[focus].type == ContentComponent.contentTypes.toggle)
+            if (!maxLevel)
             {
 
-                Mod.instance.herbalHandle.ConvertToGoods(contentComponents[focus].id, amount);
-
-                populateContent();
-
-                return;
+                requiredLabel = StringData.Get(StringData.str.nextLevel) + StringData.colon + " " + Math.Min(availableExp, requiredExp) + StringData.slash + requiredExp;
 
             }
 
-            string herbalId = contentComponents[focus].id;
+            Microsoft.Xna.Framework.Color requiredColour = ContentComponent.defaultColour;
 
-            Mod.instance.herbalHandle.ConsumeOmen(herbalId, amount);
+            if (requiredExp > availableExp)
+            {
 
-            populateContent();
+                requiredColour = Color.DarkRed;
 
-            return;
+            }
 
-        }
+            Vector2 requiredPosition = new Vector2(xPositionOnScreen + 64, yPositionOnScreen + height - 72);
 
-        public override void pressCancel()
-        {
+            b.DrawString(Game1.dialogueFont, requiredLabel, requiredPosition + new Vector2(-1f, 2f), Color.Brown * 0.25f, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0.88f);
 
-            return;
+            b.DrawString(Game1.dialogueFont, requiredLabel, requiredPosition, requiredColour, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0.88f);
+
+            // -----------------------------------
+
+            string totalLabel = StringData.Get(StringData.str.experience) + usedExp + StringData.slash + Mod.instance.save.experience;
+
+            Vector2 totalPosition = new Vector2(xPositionOnScreen + (width / 2) + 80, yPositionOnScreen + height - 72);
+
+            b.DrawString(Game1.dialogueFont, totalLabel, totalPosition + new Vector2(-1f, 2f), Color.Brown * 0.25f, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0.88f);
+
+            b.DrawString(Game1.dialogueFont, totalLabel, totalPosition, ContentComponent.defaultColour, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0.88f);
+
 
         }
 

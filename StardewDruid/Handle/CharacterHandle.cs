@@ -7,6 +7,7 @@ using StardewDruid.Location;
 using StardewDruid.Location.Druid;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.GameData.Characters;
 using StardewValley.ItemTypeDefinitions;
 using StardewValley.Locations;
 using StardewValley.Objects;
@@ -18,6 +19,15 @@ using System.Xml.Serialization;
 
 namespace StardewDruid.Handle
 {
+
+    public class CompanionData
+    {
+
+        public CharacterHandle.characters character;
+
+        public Character.Character.mode mode;
+
+    }
 
     public class CharacterDisposition
     {
@@ -643,8 +653,8 @@ namespace StardewDruid.Handle
         {
 
             Character.Character.mode savemode =
-                Mod.instance.save.characters.ContainsKey(entity) ?
-                Mod.instance.save.characters[entity] :
+                Mod.instance.save.companions.ContainsKey(entity.ToString()) ?
+                Mod.instance.save.companions[entity.ToString()].mode :
                 Character.Character.mode.home;
 
             return savemode;
@@ -1254,160 +1264,6 @@ namespace StardewDruid.Handle
             }
 
             return false;
-
-        }
-
-        public static void ConvertInventory()
-        {
-
-            if(Mod.instance.save.chests.Count == 0)
-            {
-
-                return;
-
-            }
-
-            foreach (KeyValuePair<characters, List<ItemData>> chestEntries in Mod.instance.save.chests)
-            {
-
-                Chest newChest = new();
-
-                Mod.instance.chests[chestEntries.Key] = newChest;
-
-                foreach (ItemData item in Mod.instance.save.chests[chestEntries.Key])
-                {
-
-                    string QualifiedId = ItemRegistry.QualifyItemId(item.id);
-
-                    if (QualifiedId == null)
-                    {
-
-                        Item oldItem = new StardewValley.Object(item.id, item.stack, quality: item.quality);
-
-                        if (oldItem != null)
-                        {
-
-                            newChest.Items.Add(oldItem);
-
-                        }
-
-                        continue;
-
-                    }
-
-                    ParsedItemData parsedItemData = ItemRegistry.GetData(item.id);
-
-                    if (ReferenceEquals(parsedItemData, null))
-                    {
-
-                        continue;
-
-                    }
-
-                    if (parsedItemData.ItemType is not ObjectDataDefinition)
-                    {
-
-                        continue;
-
-                    }
-
-                    Item add = ItemRegistry.Create(QualifiedId, amount: item.stack, quality: item.quality);
-
-                    if (add.Name == Item.ErrorItemName)
-                    {
-
-                        continue;
-
-                    }
-
-                    newChest.Items.Add(add);
-
-                }
-
-            }
-
-            Mod.instance.save.chests.Clear();
-
-        }
-
-        public static void RetrieveInventory(characters character)
-        {
-
-            if (Mod.instance.chests.ContainsKey(character))
-            {
-
-                return;
-
-            }
-
-            Chest newChest = new();
-
-            Mod.instance.chests[character] = newChest;
-
-            if (Mod.instance.save.serialchests.ContainsKey(character))
-            {
-
-                XmlSerializer serializer = new(typeof(Chest));
-
-                StringReader stringReader;
-                
-                stringReader = new StringReader(Mod.instance.save.serialchests[character]);
-
-                System.Xml.XmlTextReader xmlReader;
-                
-                xmlReader = new System.Xml.XmlTextReader(stringReader);
-
-                Chest serialchest = (Chest)serializer.Deserialize(xmlReader);
-                
-                xmlReader.Close();
-                
-                stringReader.Close();
-
-                Mod.instance.chests[character] = serialchest;
-
-                return;
-
-            }
-
-        }
-
-        public static void OpenInventory(characters character)
-        {
-
-            RetrieveInventory(character);
-
-            Mod.instance.chests[character].ShowMenu();
-
-        }
-
-        public static void CleanInventory(characters character)
-        {
-
-            if (!Mod.instance.chests.ContainsKey(character))
-            {
-
-                return;
-
-            }
-
-            Chest chest = Mod.instance.chests[character];
-
-            for (int i = chest.Items.Count - 1; i >= 0; i--)
-            {
-
-                if (chest.Items.ElementAt(i) != null)
-                {
-
-                    if (chest.Items.ElementAt(i).Stack <= 0)
-                    {
-
-                        chest.Items.RemoveAt(i);
-
-                    }
-
-                }
-
-            }
 
         }
 

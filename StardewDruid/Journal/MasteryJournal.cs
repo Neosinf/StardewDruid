@@ -5,10 +5,14 @@ using StardewDruid.Data;
 using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Events;
 using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +22,11 @@ namespace StardewDruid.Journal
     public class MasteryJournal : DruidJournal
     {
 
-        public MasteryJournal(string QuestId, int Record) : base(QuestId, Record)
+        public MasteryDiscipline.disciplines hoverFocus;
+
+        public List<string> hoverData = new();
+
+        public MasteryJournal(journalTypes Type, List<string> Parameters) : base(Type, Parameters)
         {
 
 
@@ -34,16 +42,18 @@ namespace StardewDruid.Journal
 
             type = journalTypes.masteries;
 
-            title = JournalData.JournalTitle(type);
-
             pagination = 0;
 
-            contentComponents = Mod.instance.masteryHandle.SectionComponents();
+            contentComponents = Mod.instance.masteryHandle.DisciplineComponents();
 
             foreach (KeyValuePair<int, ContentComponent> component in contentComponents)
             {
 
-                component.Value.setBounds(component.Key, xPositionOnScreen, yPositionOnScreen, width, height);
+                int componentWidth = ((width - 40) / 5);
+
+                component.Value.SetText(width);
+
+                component.Value.bounds = new Rectangle(xPositionOnScreen + 20 + (component.Key % 5) * componentWidth, yPositionOnScreen + 24, componentWidth, height - 40);
 
             }
 
@@ -62,7 +72,8 @@ namespace StardewDruid.Journal
                 [104] = addButton(journalButtons.openAlchemy),
                 [105] = addButton(journalButtons.openPotions),
                 [106] = addButton(journalButtons.openCompanions),
-                [107] = addButton(journalButtons.openDragonomicon),
+                [107] = addButton(journalButtons.openOrders),
+                [108] = addButton(journalButtons.openDragonomicon),
 
                 [201] = addButton(journalButtons.openEffects),
                 [202] = addButton(journalButtons.openLore),
@@ -76,10 +87,82 @@ namespace StardewDruid.Journal
         public override void pressContent()
         {
 
-            string goodId = contentComponents[focus].id;
+            openJournal(journalTypes.masteryOverview, contentComponents[focus].id);
 
-            ExportHandle.exports export = Enum.Parse<ExportHandle.exports>(goodId);
+        }
 
+        public override void drawContent(SpriteBatch b)
+        {
+
+            for (int i = 0; i < contentComponents.Count; i++)
+            {
+
+                DrawDiscipline(b, contentComponents[i], i);
+
+            }
+
+        }
+
+        public virtual void DrawDiscipline(SpriteBatch b, ContentComponent contentComponent, int Index)
+        {
+
+            IClickableMenu.drawTextureBox(
+                b,
+                Game1.mouseCursors,
+                new Rectangle(384, 396, 15, 15),
+                contentComponent.bounds.X,
+                contentComponent.bounds.Y,
+                contentComponent.bounds.Width,
+                contentComponent.bounds.Height,
+                (browsing && Index == focus) ? Color.Wheat : Color.White,
+                3f,
+                false,
+                -1f
+            );
+
+            // upper image -------------------------------------------
+
+            Vector2 center = contentComponent.bounds.Center.ToVector2();
+
+            Vector2 origin = new Vector2(contentComponent.textureSources[0].Width / 2, contentComponent.textureSources[0].Height / 2);
+
+            Vector2 placement = center - new Vector2(0, origin.Y * 4);
+
+            b.Draw(Mod.instance.iconData.masteryTexture, placement + new Vector2(-1, 3), contentComponent.textureSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, origin, 4f, 0, 0.900f);
+
+            b.Draw(Mod.instance.iconData.masteryTexture, placement, contentComponent.textureSources[0], Color.White, 0f, origin, 4f, 0, 0.901f);
+
+            // discipline label -------------------------------------------
+
+            origin = new Vector2(contentComponent.textMeasures[0].X / 2, contentComponent.textMeasures[0].Y / 2);
+
+            placement = center + new Vector2(4, 8);
+
+            b.DrawString(Game1.dialogueFont, contentComponent.textParse[0], placement + new Vector2(-1, 1), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, origin, 0.8f, SpriteEffects.None, 0.900f);
+
+            b.DrawString(Game1.dialogueFont, contentComponent.textParse[0], placement, contentComponent.textColours[0], 0f, origin, 0.8f, SpriteEffects.None, 0.901f);
+
+            if (!contentComponent.textureSources.ContainsKey(1))
+            {
+
+                return;
+
+            }
+
+            // path icons -------------------------------------------
+
+            origin = new Vector2(contentComponent.textureSources[1].Width / 2, contentComponent.textureSources[1].Height / 2);
+
+            placement = center + new Vector2(0, (contentComponent.textMeasures[0].Y / 2) + (contentComponent.textureSources[1].Height * 1.5f) + 16);
+
+            for (int i = 1; i < contentComponent.textureSources.Count; i++)
+            {
+
+                b.Draw(Mod.instance.iconData.masteryTexture, placement, contentComponent.textureSources[i], Color.White, 0f, origin, 3f, 0, 0.901f);
+
+                placement.Y += (contentComponent.textureSources[1].Height * 3) + 16;
+
+            }
 
         }
 
@@ -95,18 +178,18 @@ namespace StardewDruid.Journal
 
             }
 
-            string goodId = contentComponents[focus].id;
+            string disciplineString = contentComponents[focus].id;
 
-            ExportHandle.exports export = Enum.Parse<ExportHandle.exports>(goodId);
+            MasteryDiscipline.disciplines disciplineId = Enum.Parse<MasteryDiscipline.disciplines>(disciplineString);
 
-            ExportGood good = Mod.instance.exportHandle.goods[export];
+            MasteryDiscipline disciplineData = Mod.instance.masteryHandle.disciplines[disciplineId];
 
             float contentHeight = 16;
 
             // -------------------------------------------------------
             // title
 
-            string titleText = Game1.parseText(good.name, Game1.dialogueFont, 476);
+            string titleText = Game1.parseText(disciplineData.name, Game1.dialogueFont, 476);
 
             Vector2 titleSize = Game1.dialogueFont.MeasureString(titleText);
 
@@ -115,66 +198,60 @@ namespace StardewDruid.Journal
             // -------------------------------------------------------
             // description
 
-            string descriptionText = Game1.parseText(good.description, Game1.smallFont, 476);
+            string descriptionText = Game1.parseText(disciplineData.description, Game1.smallFont, 476);
 
             Vector2 descriptionSize = Game1.smallFont.MeasureString(descriptionText);
 
             contentHeight += 12 + descriptionSize.Y;
 
             // -------------------------------------------------------
-
-            string technicalText = Game1.parseText(good.technical, Game1.smallFont, 476);
-
-            Vector2 technicalSize = Game1.smallFont.MeasureString(technicalText);
-
-            contentHeight += 12 + technicalSize.Y;
-
-            // -------------------------------------------------------
             // details
 
-            if (good.details.Count > 0)
+            if(hoverFocus != disciplineId || hoverData.Count == 0)
             {
 
-                contentHeight += 12; // bar
+                hoverData = new();
 
-                foreach (string detail in good.details)
+                foreach (MasteryPath.paths path in disciplineData.paths)
                 {
 
-                    string detailText = Game1.parseText(detail, Game1.smallFont, 476);
+                    if (Mod.instance.masteryHandle.PathLocked(path))
+                    {
 
-                    Vector2 detailSize = Game1.smallFont.MeasureString(detailText);
+                        continue;
 
-                    contentHeight += detailSize.Y;
+                    }
+
+                    string pathName = Mod.instance.masteryHandle.paths[path].name;
+
+                    pathName += StringData.slash;
+
+                    int pathLevel = Mod.instance.masteryHandle.PathLevel(path);
+
+                    pathName += StringData.Get(StringData.str.level, new { level = pathLevel });
+
+                    hoverData.Add(pathName);
 
                 }
 
-                contentHeight += 12;
+                hoverFocus = disciplineId;
 
             }
-            // -------------------------------------------------------
-            // sell now
 
-            string sellText = String.Empty;
+            contentHeight += 12; // bar
 
-            Vector2 sellSize = Vector2.Zero;
-
-            int quickSell = Mod.instance.exportHandle.QuickSell(export);
-
-            if (quickSell > 0)
+            foreach (string detail in hoverData)
             {
 
-                contentHeight += 12; // bar
+                string detailText = Game1.parseText(detail, Game1.smallFont, 476);
 
-                sellText = Game1.parseText(StringData.Strings(StringData.stringkeys.sellnow) + quickSell + StringData.currency, Game1.smallFont, 476);
+                Vector2 detailSize = Game1.smallFont.MeasureString(detailText);
 
-                sellSize = Game1.smallFont.MeasureString(sellText);
-
-                contentHeight += sellSize.Y;
-
-                contentHeight += 12;
-
+                contentHeight += detailSize.Y;
 
             }
+
+            contentHeight += 12;
 
             contentHeight += 4; // bottom
 
@@ -220,18 +297,10 @@ namespace StardewDruid.Journal
 
             textPosition += 8 + titleSize.Y;
 
-            Color outerTop = new(167, 81, 37);
-
-            Color outerBot = new(139, 58, 29);
-
-            Color inner = new(246, 146, 30);
-
             // --------------------------------
             // top
 
-            b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition, 488, 2), outerTop);
-
-            b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition + 2, 488, 3), inner);
+            DrawSeparator(b, (int)textMargin - 4, (int)textPosition);
 
             textPosition += 12;
 
@@ -245,64 +314,28 @@ namespace StardewDruid.Journal
             textPosition += 12 + descriptionSize.Y;
 
             // -------------------------------------------------------
-            // technical
-
-            b.DrawString(Game1.smallFont, technicalText, new Vector2(textMargin, textPosition), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
-
-            b.DrawString(Game1.smallFont, technicalText, new Vector2(textMargin - 1.5f, textPosition + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
-
-            textPosition += 12 + technicalSize.Y;
-
-            // -------------------------------------------------------
             // details
 
-            if (good.details.Count > 0)
+            DrawSeparator(b, (int)textMargin - 4, (int)textPosition);
+
+            textPosition += 12;
+
+            foreach (string detail in hoverData)
             {
 
-                b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition, 488, 2), outerTop);
+                string detailText = Game1.parseText(detail, Game1.smallFont, 476);
 
-                b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition + 2, 488, 3), inner);
+                Vector2 detailSize = Game1.smallFont.MeasureString(detailText);
 
-                textPosition += 12;
+                b.DrawString(Game1.smallFont, detailText, new Vector2(textMargin, textPosition), Game1.textColor * 0.9f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1f);
 
-                foreach (string detail in good.details)
-                {
+                b.DrawString(Game1.smallFont, detailText, new Vector2(textMargin - 1.5f, textPosition + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1.1f);
 
-                    string detailText = Game1.parseText(detail, Game1.smallFont, 476);
-
-                    Vector2 detailSize = Game1.smallFont.MeasureString(detailText);
-
-                    b.DrawString(Game1.smallFont, detailText, new Vector2(textMargin, textPosition), Game1.textColor * 0.9f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1f);
-
-                    b.DrawString(Game1.smallFont, detailText, new Vector2(textMargin - 1.5f, textPosition + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1.1f);
-
-                    textPosition += detailSize.Y;
-
-                }
-
-                textPosition += 12;
+                textPosition += detailSize.Y;
 
             }
 
-            // -------------------------------------------------------
-            // sell now
-
-            if (good.sell > 0)
-            {
-
-                b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition, 488, 2), outerTop);
-
-                b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition + 2, 488, 3), inner);
-
-                textPosition += 12;
-
-                b.DrawString(Game1.smallFont, sellText, new Vector2(textMargin, textPosition), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
-
-                b.DrawString(Game1.smallFont, sellText, new Vector2(textMargin - 1.5f, textPosition + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
-
-                textPosition += 12 + sellSize.Y;
-
-            }
+            textPosition += 12;
 
         }
 

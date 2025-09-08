@@ -77,7 +77,7 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle.spawnGroup = true;
 
-            ProgressBar(StringData.Strings(StringData.stringkeys.theDusting),0);
+            ProgressBar(StringData.Get(StringData.str.theDusting),0);
 
             Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { displayRadius = 4, sound = SpellHandle.Sounds.getNewSpecialItem, });
 

@@ -10,18 +10,28 @@ using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace StardewDruid.Journal
 {
-    public class DistilleryJournal : DruidJournal
+    public class DistilleryJournal : GoodsJournal
     {
 
-        public DistilleryJournal(string QuestId, int Record) : base(QuestId, Record)
+        public DistilleryJournal(journalTypes Type, List<string> Parameters) : base(Type, Parameters)
         {
 
+
+        }
+
+        public override void prepareContent()
+        {
+
+            type = journalTypes.distillery;
+
+            parent = journalTypes.orders;
 
         }
 
@@ -31,51 +41,21 @@ namespace StardewDruid.Journal
             interfaceComponents = new()
             {
 
-                [101] = addButton(journalButtons.openProductionEstimated),
+                [101] = addButton(journalButtons.openOrders),
 
-                [102] = addButton(journalButtons.openProductionRecent),
+                [201] = addButton(journalButtons.previous),
 
-                [201] = addButton(journalButtons.refresh),
+                [202] = addButton(journalButtons.openGuilds),
+                [203] = addButton(journalButtons.openGoodsDistillery),
+                [204] = addButton(journalButtons.openDistilleryInventory),
+                [205] = addButton(journalButtons.openProductionRecent),
+                [206] = addButton(journalButtons.openProductionEstimated),
+
+                [207] = addButton(journalButtons.refresh),
 
                 [301] = addButton(journalButtons.exit),
 
             };
-
-        }
-
-        public override void activateInterface()
-        {
-
-            resetInterface();
-
-        }
-
-        public override void populateContent()
-        {
-
-            type = journalTypes.distillery;
-
-            title = JournalData.JournalTitle(type);
-
-            pagination = 12;
-
-            Mod.instance.exportHandle.CalculateOutput();
-
-            contentComponents = Mod.instance.exportHandle.JournalDistillery();
-
-            if (record >= contentComponents.Count)
-            {
-
-                record = 0;
-
-            }
-
-            foreach (KeyValuePair<int, ContentComponent> component in contentComponents)
-            {
-
-                component.Value.setBounds(component.Key % pagination, xPositionOnScreen, yPositionOnScreen, width, height);
-
-            }
 
         }
 
@@ -91,18 +71,6 @@ namespace StardewDruid.Journal
 
                     return;
 
-                case journalButtons.openProductionEstimated:
-
-                    DruidJournal.openJournal(journalTypes.distilleryEstimated);
-
-                    return;
-
-                case journalButtons.openProductionRecent:
-
-                    DruidJournal.openJournal(journalTypes.distilleryRecent);
-
-                    return;
-
                 default:
 
                     base.pressButton(button);
@@ -112,39 +80,19 @@ namespace StardewDruid.Journal
             }
 
         }
-
         public override void pressContent()
         {
 
-            if(contentComponents[focus].type == ContentComponent.contentTypes.estimate)
+            if (contentComponents[focus].serial != 2)
             {
 
                 return;
 
             }
 
-            ExportHandle.exports export = Enum.Parse<ExportHandle.exports>(contentComponents[focus].id);
+            ExportMachine.machines machineId = Enum.Parse<ExportMachine.machines>(contentComponents[focus].id);
 
-            int amount = 1;
-
-            if (Mod.instance.Helper.Input.GetState(SButton.LeftShift) == SButtonState.Held)
-            {
-                amount = 5;
-            }
-            else if (Mod.instance.Helper.Input.GetState(SButton.RightShift) == SButtonState.Held)
-            {
-                amount = 5;
-            }
-            else if (Mod.instance.Helper.Input.GetState(SButton.LeftControl) == SButtonState.Held)
-            {
-                amount = 10;
-            }
-            else if (Mod.instance.Helper.Input.GetState(SButton.RightControl) == SButtonState.Held)
-            {
-                amount = 10;
-            }
-
-            if (Mod.instance.exportHandle.CraftMachine(export, amount))
+            if (Mod.instance.exportHandle.UpdateMachine(machineId))
             {
 
                 populateContent();
@@ -164,335 +112,310 @@ namespace StardewDruid.Journal
         public override void drawHover(SpriteBatch b)
         {
 
-            base.drawHover(b);
+            if (interfacing)
+            {
+
+                if (interfaceComponents[focus].text != null)
+                {
+
+                    drawHoverText(b, interfaceComponents[focus].text);
+
+                }
+
+                return;
+
+            }
 
             if (!browsing)
             {
 
-                return;
-
-            }
-
-            if (contentComponents[focus].type == ContentComponent.contentTypes.estimate)
-            {
-
-                DrawEstimate(b);
+                hoverFocus = -1;
 
                 return;
 
             }
 
-            float contentHeight = 16;
-
-            ExportHandle.exports export = Enum.Parse<ExportHandle.exports>(contentComponents[focus].id);
-
-            ExportMachine machine = Mod.instance.exportHandle.machines[export];
-
-            // -------------------------------------------------------
-
-            string titleText = Game1.parseText(machine.name, Game1.dialogueFont, 412);
-
-            Vector2 titleSize = Game1.dialogueFont.MeasureString(titleText);
-
-            contentHeight += 24 + titleSize.Y;
-
-            // -------------------------------------------------------
-
-            string descriptionText = Game1.parseText(machine.description, Game1.smallFont, 412);
-
-            Vector2 descriptionSize = Game1.smallFont.MeasureString(descriptionText);
-
-            contentHeight += 24 + descriptionSize.Y;
-
-            // -------------------------------------------------------
-
-            string technicalText = Game1.parseText(machine.technical, Game1.smallFont, 412);
-
-            Vector2 technicalSize = Game1.smallFont.MeasureString(technicalText);
-
-            contentHeight += 24 + technicalSize.Y;
-
-            // -------------------------------------------------------
-
-            contentHeight += 32;
-
-            contentHeight += (32 * machine.resources.Count);
-
-            contentHeight += 24;
-
-            // =================================================================================================
-
-            int cornerX = Game1.getMouseX() + 32;
-
-            int cornerY = Game1.getMouseY() + 32;
-
-            if (cornerX > Game1.graphics.GraphicsDevice.Viewport.Width - 448)
+            switch (contentComponents[focus].serial)
             {
 
-                int tryCorner = cornerX - 576;
+                case 1:
 
-                cornerX = tryCorner < 0 ? 0 : tryCorner;
+                    DrawExportHover(b);
 
-            }
+                    break;
 
-            if (cornerY > Game1.graphics.GraphicsDevice.Viewport.Height - contentHeight - 48)
-            {
+                case 2:
 
-                int tryCorner = cornerY - (int)(contentHeight + 64f);
+                    DrawUpgradeHover(b);
 
-                cornerY = tryCorner < 0 ? 0 : tryCorner;
+                    break;
 
-            }
+                case 3:
 
-            Vector2 corner = new(cornerX, cornerY);
+                    DrawResourceHover(b);
 
-            IClickableMenu.drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), (int)corner.X, (int)corner.Y, 448, (int)(contentHeight), Color.White, 1f, true, -1f);
-
-            float textPosition = corner.Y + 16;
-
-            float textMargin = corner.X + 16;
-
-            // -------------------------------------------------------
-
-            b.DrawString(Game1.dialogueFont, titleText, new Vector2(textMargin, textPosition), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
-
-            b.DrawString(Game1.dialogueFont, titleText, new Vector2(textMargin - 1.5f, textPosition + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
-
-            textPosition += 8 + titleSize.Y;
-
-            Color outerTop = new(167, 81, 37);
-
-            Color outerBot = new(139, 58, 29);
-
-            Color inner = new(246, 146, 30);
-
-            // -------------------------------------------------------
-
-            b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition, 424, 2), outerTop);
-
-            b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition + 2, 424, 3), inner);
-
-            textPosition += 12;
-
-            // -------------------------------------------------------
-
-            b.DrawString(Game1.smallFont, descriptionText, new Vector2(textMargin, textPosition), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
-
-            b.DrawString(Game1.smallFont, descriptionText, new Vector2(textMargin - 1.5f, textPosition + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
-
-            textPosition += 12 + descriptionSize.Y;
-
-            b.DrawString(Game1.smallFont, technicalText, new Vector2(textMargin, textPosition), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
-
-            b.DrawString(Game1.smallFont, technicalText, new Vector2(textMargin - 1.5f, textPosition + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
-
-            textPosition += 12 + technicalSize.Y;
-
-            // --------------------------------------------------------
-
-            b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition, 424, 2), outerTop);
-
-            b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition + 2, 424, 3), inner);
-
-            textPosition += 12;
-
-            b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(textMargin, textPosition), IconData.RelicRectangles(PalHandle.PalRelic(machine.pal)), Color.White, 0f, Vector2.Zero, 1.5f, 0, 0.901f);
-
-            b.DrawString(Game1.smallFont, machine.labour.ToString(), new Vector2(textMargin + 40, textPosition + 2), Game1.textColor * 0.9f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1f);
-
-            b.DrawString(Game1.smallFont, machine.labour.ToString(), new Vector2(textMargin + 40 - 1.5f, textPosition + 2 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1.1f);
-
-            string palTitle = PalHandle.PalTitle(machine.pal);
-
-            b.DrawString(Game1.smallFont, palTitle, new Vector2(textMargin + 96, textPosition + 2), Game1.textColor * 0.9f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1f);
-
-            b.DrawString(Game1.smallFont, palTitle, new Vector2(textMargin + 96 - 1.5f, textPosition + 2 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1.1f);
-
-            int availablePal = 0;
-
-            if (Mod.instance.save.pals.ContainsKey(machine.pal))
-            {
-
-                availablePal = Mod.instance.save.pals[machine.pal].caught - Mod.instance.save.pals[machine.pal].hired;
-
-            }
-
-            string amountPal = "(" + availablePal + ")";
-
-            Vector2 amountPalParse = Game1.smallFont.MeasureString(amountPal);
-
-            b.DrawString(Game1.smallFont, amountPal, new Vector2(textMargin + 412 - amountPalParse.X, textPosition + 2), Game1.textColor * 0.9f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1f);
-
-            b.DrawString(Game1.smallFont, amountPal, new Vector2(textMargin + 412 - amountPalParse.X - 1.5f, textPosition + 2 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1.1f);
-
-            textPosition += 32;
-
-            foreach (KeyValuePair<string, int> item in machine.resources)
-            {
-
-                ParsedItemData dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(item.Key);
-
-                b.Draw(dataOrErrorItem.GetTexture(), new Vector2(textMargin, textPosition), dataOrErrorItem.GetSourceRect(), Color.White, 0f, Vector2.Zero, 2f, 0, 1f);
-
-                b.DrawString(Game1.smallFont, item.Value.ToString(), new Vector2(textMargin + 40, textPosition + 2), Game1.textColor * 0.9f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1f);
-
-                b.DrawString(Game1.smallFont, item.Value.ToString(), new Vector2(textMargin + 40 - 1.5f, textPosition + 2 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1.1f);
-
-                string displayItem = dataOrErrorItem.DisplayName;
-
-                b.DrawString(Game1.smallFont, displayItem, new Vector2(textMargin + 96, textPosition + 2), Game1.textColor * 0.9f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1f);
-
-                b.DrawString(Game1.smallFont, displayItem, new Vector2(textMargin + 96 - 1.5f, textPosition + 2 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1.1f);
-
-                int availableItem = Game1.player.Items.CountId(item.Key);
-
-                string amountItem = "(" + availableItem + ")";
-
-                Vector2 amountParse = Game1.smallFont.MeasureString(amountItem);
-
-                b.DrawString(Game1.smallFont, amountItem, new Vector2(textMargin + 412 - amountParse.X, textPosition + 2), Game1.textColor * 0.9f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1f);
-
-                b.DrawString(Game1.smallFont, amountItem, new Vector2(textMargin + 412 - amountParse.X - 1.5f, textPosition + 2 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1.1f);
-
-                textPosition += 32;
+                    break;
 
             }
 
         }
 
-        public void DrawEstimate(SpriteBatch b)
+        public override void PrepareExportHover()
         {
 
-            float contentHeight = 16;
+            HoverReset();
 
-            ExportHandle.exports export = Enum.Parse<ExportHandle.exports>(contentComponents[focus].id);
+            string machineId = contentComponents[focus].id;
 
-            ExportGood good = Mod.instance.exportHandle.goods[export];
+            ExportMachine.machines export = Enum.Parse<ExportMachine.machines>(machineId);
+
+            ExportMachine machine = Mod.instance.exportHandle.machines[export];
+
+            float contentHeight = 20;
 
             // -------------------------------------------------------
+            // title
 
-            string titleText = Game1.parseText(good.name, Game1.dialogueFont, 412);
+            string titleText = Game1.parseText(machine.name, Game1.dialogueFont, 476);
 
             Vector2 titleSize = Game1.dialogueFont.MeasureString(titleText);
 
-            contentHeight += 24 + titleSize.Y;
+            hoverTitle = titleText;
+
+            hoverTitleY = titleSize.Y;
+
+            contentHeight += 4 + titleSize.Y;
 
             // -------------------------------------------------------
+            // description
 
-            string descriptionText = Game1.parseText(good.technical, Game1.smallFont, 412);
+            string descriptionText = Game1.parseText(machine.description, Game1.smallFont, 476);
 
             Vector2 descriptionSize = Game1.smallFont.MeasureString(descriptionText);
+
+            hoverDescription = descriptionText;
+
+            hoverDescriptionSize = descriptionSize.Y;
 
             contentHeight += 12 + descriptionSize.Y;
 
             // -------------------------------------------------------
+            // machine level
 
-            string technicalText = Game1.parseText(good.technical, Game1.smallFont, 412);
+            contentHeight += 12; // bar
 
-            Vector2 technicalSize = Game1.smallFont.MeasureString(technicalText);
+            int Level = 1;
 
-            contentHeight += 24 + technicalSize.Y;
-
-            // -------------------------------------------------------
-
-            string priceText = String.Empty;
-
-            if (Mod.instance.exportHandle.stock.ContainsKey(export))
+            if (Mod.instance.save.machines.ContainsKey(export))
             {
-                contentHeight += 12;
 
-                string price = StringData.Strings(StringData.stringkeys.currentPrice) + Mod.instance.exportHandle.stock[export][1].ToString() + StringData.currency;
-
-                priceText = Game1.parseText(price, Game1.smallFont, 412);
-
-                Vector2 priceSize = Game1.smallFont.MeasureString(priceText);
-
-                contentHeight += 12 + priceSize.Y;
+                Level = Mod.instance.save.machines[export].level;
 
             }
 
-            // =================================================================================================
+            string levelText = StringData.Get(StringData.str.level, new { level = Level });
 
-            int cornerX = Game1.getMouseX() + 32;
+            string levelParse = Game1.parseText(levelText, Game1.smallFont, 476);
 
-            int cornerY = Game1.getMouseY() + 32;
+            Vector2 levelSize = Game1.smallFont.MeasureString(levelParse);
 
-            if (cornerX > Game1.graphics.GraphicsDevice.Viewport.Width - 448)
-            {
+            contentHeight += levelSize.Y;
 
-                int tryCorner = cornerX - 576;
+            hoverDetails.Add(levelParse);
 
-                cornerX = tryCorner < 0 ? 0 : tryCorner;
+            contentHeight += 12;
 
-            }
+            // -------------------------------------------------------
+            // machine stat
 
-            if (cornerY > Game1.graphics.GraphicsDevice.Viewport.Height - contentHeight - 48)
-            {
+            int machineStat = Mod.instance.exportHandle.MachineStat(export);
 
-                int tryCorner = cornerY - (int)(contentHeight + 64f);
+            string statText = machineStat + machine.technical;
 
-                cornerY = tryCorner < 0 ? 0 : tryCorner;
+            string statParse = Game1.parseText(statText, Game1.smallFont, 476);
 
-            }
+            Vector2 statSize = Game1.smallFont.MeasureString(statParse);
 
-            Vector2 corner = new(cornerX, cornerY);
+            contentHeight += statSize.Y;
 
-            IClickableMenu.drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), (int)corner.X, (int)corner.Y, 448, (int)(contentHeight), Color.White, 1f, true, -1f);
+            hoverDetails.Add(statParse);
 
-            float textPosition = corner.Y + 16;
-
-            float textMargin = corner.X + 16;
+            contentHeight += 12;
 
             // -------------------------------------------------------
 
-            b.DrawString(Game1.dialogueFont, titleText, new Vector2(textMargin, textPosition), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
+            contentHeight += 20; // bottom
 
-            b.DrawString(Game1.dialogueFont, titleText, new Vector2(textMargin - 1.5f, textPosition + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
+            hoverHeight = (int)contentHeight;
 
-            textPosition += 8 + titleSize.Y;
+        }
 
-            Color outerTop = new(167, 81, 37);
+        public void PrepareUpgradeHover()
+        {
 
-            Color outerBot = new(139, 58, 29);
+            HoverReset();
 
-            Color inner = new(246, 146, 30);
+            string machineId = contentComponents[focus].id;
+
+            ExportMachine.machines export = Enum.Parse<ExportMachine.machines>(machineId);
+
+            ExportMachine machine = Mod.instance.exportHandle.machines[export];
+
+            float contentHeight = 20;
+
+            // -------------------------------------------------------
+            // title
+
+            int machineLevel = 1;
+
+            if (Mod.instance.save.machines.ContainsKey(export))
+            {
+
+                machineLevel = Mod.instance.save.machines[export].level;
+
+            }
+
+            string titleText = StringData.Get(StringData.str.upgradeLevel, new { value = machine.name, level = machineLevel + 1 });
+
+            string titleParse = Game1.parseText(titleText, Game1.smallFont, 476);
+
+            Vector2 titleSize = Game1.smallFont.MeasureString(titleParse);
+
+            hoverTitle = titleParse;
+
+            hoverTitleY = titleSize.Y;
+
+            contentHeight += 4 + titleSize.Y;
+
+            hoverDetails.Clear();
+
+            hoverSources.Clear();
+
+            // -------------------------------------------------------
+            // labour
+
+            int existingLabour = 0;
+
+            ExportResource.resources labourType = machine.labour;
+
+            if (Mod.instance.save.resources.ContainsKey(labourType))
+            {
+
+                existingLabour = Mod.instance.save.resources[labourType];
+
+            }
+
+            int requiredLabour = machine.hireage[machineLevel];
+
+            hoverDetails.Add(Mod.instance.exportHandle.resources[labourType].name);
+
+            hoverDetails.Add(existingLabour + " (" + requiredLabour + ")");
+
+            hoverSources[0] = IconData.DisplayRectangle(ExportResource.ResourceDisplay(labourType));
+
+            contentHeight += 56; // resource 1
+
+            // -------------------------------------------------------
+            // material
+
+            int existingMaterial = 0;
+
+            if (Mod.instance.save.resources.ContainsKey(ExportResource.resources.materials))
+            {
+
+                existingMaterial = Mod.instance.save.resources[ExportResource.resources.materials];
+
+            }
+
+            int requiredMaterial = machine.materials[machineLevel];
+
+            hoverDetails.Add(Mod.instance.exportHandle.resources[ExportResource.resources.materials].name);
+
+            hoverDetails.Add(existingMaterial + " (" + requiredMaterial + ")");
+
+            hoverSources[1] = IconData.DisplayRectangle(ExportResource.ResourceDisplay(ExportResource.resources.materials));
+
+            contentHeight += 56; // resource 2
 
             // -------------------------------------------------------
 
-            b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition, 424, 2), outerTop);
+            contentHeight += 20; // bottom
 
-            b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition + 2, 424, 3), inner);
+            hoverHeight = (int)contentHeight;
+
+        }
+
+        public void DrawUpgradeHover(SpriteBatch b)
+        {
+
+            // --------------------------------------------------------
+            // Upgrade Button
+
+            if (hoverFocus != focus)
+            {
+
+                PrepareUpgradeHover();
+
+            }
+
+            // -------------------------------------------------------
+            // texturebox
+
+            Rectangle boxBounds = drawHoverBox(b, 512, hoverHeight);
+
+            float textPosition = boxBounds.Y + 20;
+
+            float textMargin = boxBounds.X + 16;
+
+            // -------------------------------------------------------
+            // title
+
+            b.DrawString(Game1.smallFont, hoverTitle, new Vector2(textMargin, textPosition), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
+
+            b.DrawString(Game1.smallFont, hoverTitle, new Vector2(textMargin - 1.5f, textPosition + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
+
+            textPosition += 4 + hoverTitleY;
+
+            // -------------------------------------------------------
+
+            DrawSeparator(b, (int)textMargin - 4, (int)textPosition);
 
             textPosition += 12;
 
             // -------------------------------------------------------
+            // labour
 
-            b.DrawString(Game1.smallFont, descriptionText, new Vector2(textMargin, textPosition), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
+            b.Draw(Mod.instance.iconData.displayTexture, new Vector2(textMargin, textPosition), hoverSources[0], Color.White, 0f, Vector2.Zero, 3f, 0, 1f);
 
-            b.DrawString(Game1.smallFont, descriptionText, new Vector2(textMargin - 1.5f, textPosition + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
+            b.DrawString(Game1.smallFont, hoverDetails[0], new Vector2(textMargin + 56, textPosition + 8), Game1.textColor * 0.9f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1f);
 
-            textPosition += 12 + descriptionSize.Y;
-            
+            b.DrawString(Game1.smallFont, hoverDetails[0], new Vector2(textMargin + 56 - 1.5f, textPosition + 8 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1.1f);
+
+            Vector2 labourParse = Game1.smallFont.MeasureString(hoverDetails[1]);
+
+            b.DrawString(Game1.smallFont, hoverDetails[1], new Vector2(textMargin + 476 - labourParse.X, textPosition + 8), Game1.textColor * 0.9f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1f);
+
+            b.DrawString(Game1.smallFont, hoverDetails[1], new Vector2(textMargin + 476 - labourParse.X - 1.5f, textPosition + 8 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1.1f);
+
+            textPosition += 56;
+
             // -------------------------------------------------------
-            // technical
+            // material
 
-            b.DrawString(Game1.smallFont, technicalText, new Vector2(textMargin, textPosition), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
+            b.Draw(Mod.instance.iconData.displayTexture, new Vector2(textMargin, textPosition), hoverSources[1], Color.White, 0f, Vector2.Zero, 3f, 0, 1f);
 
-            b.DrawString(Game1.smallFont, technicalText, new Vector2(textMargin - 1.5f, textPosition + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
+            b.DrawString(Game1.smallFont, hoverDetails[2], new Vector2(textMargin + 56, textPosition + 8), Game1.textColor * 0.9f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1f);
 
-            textPosition += 12 + technicalSize.Y;
+            b.DrawString(Game1.smallFont, hoverDetails[2], new Vector2(textMargin + 56 - 1.5f, textPosition + 8 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1.1f);
 
-            if (priceText != String.Empty)
-            {
+            Vector2 materialParse = Game1.smallFont.MeasureString(hoverDetails[3]);
 
-                b.DrawString(Game1.smallFont, priceText, new Vector2(textMargin, textPosition), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
+            b.DrawString(Game1.smallFont, hoverDetails[3], new Vector2(textMargin + 476 - materialParse.X, textPosition + 8), Game1.textColor * 0.9f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1f);
 
-                b.DrawString(Game1.smallFont, priceText, new Vector2(textMargin - 1.5f, textPosition + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f); ;
+            b.DrawString(Game1.smallFont, hoverDetails[3], new Vector2(textMargin + 476 - materialParse.X - 1.5f, textPosition + 8 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1.1f);
 
-                textPosition += 12 + descriptionSize.Y;
-
-            }
         }
+
 
     }
 

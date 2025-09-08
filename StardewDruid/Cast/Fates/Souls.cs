@@ -22,7 +22,7 @@ using xTile.Layers;
 
 namespace StardewDruid.Cast.Fates
 {
-    public class Winds : EventHandle
+    public class Souls : EventHandle
     {
 
         public Dictionary<Vector2, WispHandle> wisps = new();
@@ -35,7 +35,7 @@ namespace StardewDruid.Cast.Fates
 
         public float damageFarmers;
 
-        public Winds()
+        public Souls()
             : base()
         {
 

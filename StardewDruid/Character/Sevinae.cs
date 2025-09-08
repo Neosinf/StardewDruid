@@ -194,7 +194,7 @@ namespace StardewDruid.Character
 
                 LookAtTarget(Game1.player.Position, true);
 
-                HerbalHandle.herbals potion = HerbalHandle.herbals.ligna + Mod.instance.randomIndex.Next(15);
+                ApothecaryHandle.items potion = ApothecaryHandle.items.ligna + Mod.instance.randomIndex.Next(15);
 
                 ThrowHandle throwPotion = new(Game1.player, Position, potion, 1);
 

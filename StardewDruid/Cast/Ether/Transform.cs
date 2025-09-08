@@ -96,8 +96,8 @@ namespace StardewDruid.Cast.Ether
                 source: etherBuffName,
                 displaySource: etherBuffName,
                 duration: Buff.ENDLESS, 
-                displayName: StringData.Strings(StringData.stringkeys.dragonBuff),
-                description: StringData.Strings(StringData.stringkeys.dragonBuffDescription),
+                displayName: StringData.Get(StringData.str.dragonBuff),
+                description: StringData.Get(StringData.str.dragonBuffDescription),
                 effects: buffEffect);
 
             Game1.player.buffs.Apply(dragonBuff);
@@ -241,18 +241,7 @@ namespace StardewDruid.Cast.Ether
             if (Game1.player.CurrentToolIndex != toolPlaceholder)
             {
 
-                int num = Mod.instance.AttuneableWeapon();
-
-                if (num == -1)
-                {
-
-                    return false;
-
-                }
-
                 toolIndex = Game1.player.CurrentToolIndex;
-
-                attuneableIndex = num;
 
                 Game1.player.CurrentToolIndex = toolPlaceholder;
 

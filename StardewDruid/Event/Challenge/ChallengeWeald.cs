@@ -73,7 +73,7 @@ namespace StardewDruid.Event.Challenge
 
             ProgressBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
-            EventBar trashbar = ProgressBar(StringData.Strings(StringData.stringkeys.trashCollected), 1);
+            EventBar trashbar = ProgressBar(StringData.Get(StringData.str.trashCollected), 1);
 
             trashbar.colour = Color.LightGreen;
 

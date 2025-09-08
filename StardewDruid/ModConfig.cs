@@ -150,6 +150,14 @@ namespace StardewDruid
                 setValue: value => Config.modDifficulty = value
             );
 
+            configMenu.AddBoolOption(
+                mod: mod.ModManifest,
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.500.masteries.1"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.500.masteries.2"),
+                getValue: () => Config.allMasteries,
+                setValue: value => Config.allMasteries = value
+            );
+
             string[] dialogueOption = Enum.GetNames<ModData.dialogueOptions>();
 
             configMenu.AddTextOption(
@@ -172,14 +180,6 @@ namespace StardewDruid
                 setValue: value => Config.captionOption = value
             );
 
-            /*configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => Mod.instance.Helper.Translation.Get("ModConfig.92"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.93"),
-                getValue: () => Config.disableHands,
-                setValue: value => Config.disableHands = value
-            );*/
-
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
                 name: () => Mod.instance.Helper.Translation.Get("ModConfig.100"),
@@ -201,30 +201,14 @@ namespace StardewDruid
 
             configMenu.AddNumberOption(
                 mod: mod.ModManifest,
-                name: () => Mod.instance.Helper.Translation.Get("ModConfig.108"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.109"),
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.500.milestones.1"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.500.milestones.2"),
                 min: 0,
                 max: Enum.GetNames(typeof(QuestHandle.milestones)).Count() - 1,
                 interval: 1,
                 getValue: () => Config.setMilestone,
                 setValue: value => Config.setMilestone = value
             );
-
-            configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => Mod.instance.Helper.Translation.Get("ModConfig.120"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.121"),
-                getValue: () => Config.setOnce,
-                setValue: value => Config.setOnce = value
-            );
-
-            /*configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => Mod.instance.Helper.Translation.Get("ModConfig.128"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.129"),
-                getValue: () => Config.convert219,
-                setValue: value => Config.convert219 = value
-            );*/
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
@@ -242,15 +226,7 @@ namespace StardewDruid
                 setValue: value => Config.slotFreedom = value
             );
 
-            configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => Mod.instance.Helper.Translation.Get("ModConfig.160"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.161"),
-                getValue: () => Config.slotReverse,
-                setValue: value => Config.slotReverse = value
-            );
-
-            string[] potionOption = Enum.GetNames<ModData.potionDefaults>();
+            string[] potionOption = Enum.GetNames<ApothecaryRecord.automation>();
 
             configMenu.AddTextOption(
                 mod: mod.ModManifest,
@@ -373,17 +349,6 @@ namespace StardewDruid
 
             configMenu.AddNumberOption(
                 mod: mod.ModManifest,
-                name: () => Mod.instance.Helper.Translation.Get("ModConfig.278"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.279"),
-                min: 1,
-                max: 4,
-                interval: 1,
-                getValue: () => Config.cultivateBehaviour,
-                setValue: value => Config.cultivateBehaviour = value
-            );
-
-            configMenu.AddNumberOption(
-                mod: mod.ModManifest,
                 name: () => Mod.instance.Helper.Translation.Get("ModConfig.380.1"),
                 tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.380.2"),
                 min: 1,
@@ -409,25 +374,6 @@ namespace StardewDruid
                 setValue: value => Config.disableShopdata = value
             );
 
-            configMenu.AddNumberOption(
-                mod: mod.ModManifest,
-                name: () => Mod.instance.Helper.Translation.Get("ModConfig.289"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.290"),
-                min: 1,
-                max: 5,
-                interval: 1,
-                getValue: () => Config.meteorBehaviour,
-                setValue: value => Config.meteorBehaviour = value
-            );
-
-            configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => Mod.instance.Helper.Translation.Get("ModConfig.300"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.301"),
-                getValue: () => Config.maxDamage,
-                setValue: value => Config.maxDamage = value
-            );
-
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
                 name: () => Mod.instance.Helper.Translation.Get("ModConfig.308"),
@@ -436,28 +382,12 @@ namespace StardewDruid
                 setValue: value => Config.cardinalMovement = value
             );
 
-            /*configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => Mod.instance.Helper.Translation.Get("ModConfig.316"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.317"),
-                getValue: () => Config.castAnywhere,
-                setValue: value => Config.castAnywhere = value
-            );*/
-
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
-                name: () => Mod.instance.Helper.Translation.Get("ModConfig.326.1"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.326.2"),
-                getValue: () => Config.decorateGrove,
-                setValue: value => Config.decorateGrove = value
-            );
-
-            configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => Mod.instance.Helper.Translation.Get("ModConfig.340.1"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.340.2"),
-                getValue: () => Config.plantGrove,
-                setValue: value => Config.plantGrove = value
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.500.locations.1"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.500.locations.2"),
+                getValue: () => Config.decorateLocations,
+                setValue: value => Config.decorateLocations = value
             );
 
             configMenu.AddBoolOption(

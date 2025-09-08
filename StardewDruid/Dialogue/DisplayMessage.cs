@@ -21,14 +21,14 @@ namespace StardewDruid.Dialogue
 
         public enum iconTypes
         {
-            potion,
+            item,
             relic,
             display,
         }
 
         public iconTypes iconType;
 
-        public IconData.potions potion;
+        public ApothecaryHandle.items item;
 
         public IconData.relics relic;
 
@@ -36,15 +36,15 @@ namespace StardewDruid.Dialogue
 
         public Microsoft.Xna.Framework.Rectangle iconSource;
 
-        public DisplayMessage(string message, Herbal Herbal)
+        public DisplayMessage(string message, ApothecaryItem Herbal)
           : base(message)
         {
 
-            potion = Herbal.display;
+            item = Herbal.item;
 
-            iconSource = IconData.PotionRectangles(potion);
+            iconSource = ApothecaryHandle.ItemRectangles(item);
 
-            iconType = iconTypes.potion;
+            iconType = iconTypes.item;
 
 
         }
@@ -111,11 +111,11 @@ namespace StardewDruid.Dialogue
             switch (iconType)
             {
 
-                case iconTypes.potion:
+                case iconTypes.item:
 
-                    b.Draw(Mod.instance.iconData.potionsTexture, vector + new Vector2(2f, 4f), iconSource, Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 3f, 0, 0.900f);
+                    b.Draw(Mod.instance.iconData.itemsTexture, vector + new Vector2(2f, 4f), iconSource, Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 3f, 0, 0.900f);
 
-                    b.Draw(Mod.instance.iconData.potionsTexture, vector, iconSource, Color.White, 0f, Vector2.Zero, 3f, 0, 0.901f);
+                    b.Draw(Mod.instance.iconData.itemsTexture, vector, iconSource, Color.White, 0f, Vector2.Zero, 3f, 0, 0.901f);
 
                     if (!message.Contains("-"))
                     {

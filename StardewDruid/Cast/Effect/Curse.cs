@@ -289,7 +289,7 @@ namespace StardewDruid.Cast.Effect
 
                     display = IconData.displays.omens;
 
-                    HerbalHandle.RandomHerbal(victim.Position + new Vector2(32));
+                    ApothecaryHandle.RandomApothecaryItem(victim.Position + new Vector2(32));
 
                     break;
 
@@ -601,10 +601,10 @@ namespace StardewDruid.Cast.Effect
             };
 
 
-            if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
+            if (Mod.instance.apothecaryHandle.buff.applied.ContainsKey(BuffHandle.buffTypes.spellcatch))
             {
 
-                if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
+                if (Mod.instance.apothecaryHandle.buff.applied.ContainsKey(BuffHandle.buffTypes.capture))
                 {
 
                     death.added.Add(SpellHandle.Effects.capture);
@@ -627,10 +627,10 @@ namespace StardewDruid.Cast.Effect
                 scheme = IconData.schemes.golden
             };
 
-            if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
+            if (Mod.instance.apothecaryHandle.buff.applied.ContainsKey(BuffHandle.buffTypes.spellcatch))
             {
 
-                if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
+                if (Mod.instance.apothecaryHandle.buff.applied.ContainsKey(BuffHandle.buffTypes.capture))
                 {
 
                     critical.added.Add(SpellHandle.Effects.capture);

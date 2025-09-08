@@ -321,7 +321,7 @@ namespace StardewDruid.Event.Scene
         public override void OnLocationAbort()
         {
 
-            Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
+            Mod.instance.RegisterMessage(StringData.Get(StringData.str.abortTomorrow), 3, true);
 
         }
 
@@ -1801,7 +1801,7 @@ namespace StardewDruid.Event.Scene
                     if (!Mod.instance.eventRegister.ContainsKey(Rite.eventDeathwinds))
                     {
 
-                        Winds windsNew = new();
+                        Souls windsNew = new();
 
                         windsNew.EventSetup(Game1.player, eventVectors[157] * 64, Rite.eventDeathwinds);
 

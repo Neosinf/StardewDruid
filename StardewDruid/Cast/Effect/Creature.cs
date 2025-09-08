@@ -118,7 +118,7 @@ namespace StardewDruid.Cast.Effect
 
         public bool run;
 
-        public HerbalHandle.herbals herbal = HerbalHandle.herbals.omen_feather;
+        public ApothecaryHandle.items herbal = ApothecaryHandle.items.omen_feather;
 
         public CreatureHandle(GameLocation Location, CharacterHandle.characters CharacterType, Vector2 Origin, Vector2 Target, string EventId, float Scale, int DropRate)
         {
@@ -180,7 +180,7 @@ namespace StardewDruid.Cast.Effect
 
                     }
 
-                    herbal = HerbalHandle.herbals.omen_tusk;
+                    herbal = ApothecaryHandle.items.omen_tuft;
 
                     break;
 
@@ -196,12 +196,12 @@ namespace StardewDruid.Cast.Effect
 
                     }
 
-                    herbal = HerbalHandle.herbals.omen_tusk;
+                    herbal = ApothecaryHandle.items.omen_glass;
 
                     if(Mod.instance.randomIndex.Next(2) == 0)
                     {
 
-                        herbal = HerbalHandle.herbals.omen_bloom;
+                        herbal = ApothecaryHandle.items.omen_elderbloom;
 
                     }
 
@@ -221,7 +221,7 @@ namespace StardewDruid.Cast.Effect
                         run = true;
 
                     }
-                    herbal = HerbalHandle.herbals.omen_tuft;
+                    herbal = ApothecaryHandle.items.omen_tuft;
                     break;
 
                 case CharacterHandle.characters.CorvidCrow:
@@ -239,11 +239,11 @@ namespace StardewDruid.Cast.Effect
                     }
 
                     location.playSound(SpellHandle.Sounds.batFlap.ToString());
-                    herbal = HerbalHandle.herbals.omen_nest;
+                    herbal = ApothecaryHandle.items.omen_nest;
                     if (Mod.instance.randomIndex.Next(2) == 0)
                     {
 
-                        herbal = HerbalHandle.herbals.omen_down;
+                        herbal = ApothecaryHandle.items.omen_down;
 
                     }
                     break;
@@ -263,12 +263,12 @@ namespace StardewDruid.Cast.Effect
 
                     dropFish = true;
 
-                    herbal = HerbalHandle.herbals.omen_shell;
+                    herbal = ApothecaryHandle.items.omen_shell;
 
                     if (Mod.instance.randomIndex.Next(2) == 0)
                     {
 
-                        herbal = HerbalHandle.herbals.omen_coral;
+                        herbal = ApothecaryHandle.items.omen_coral;
 
                     }
 
@@ -291,7 +291,7 @@ namespace StardewDruid.Cast.Effect
                     if (Mod.instance.randomIndex.Next(2) == 0)
                     {
 
-                        herbal = HerbalHandle.herbals.omen_down;
+                        herbal = ApothecaryHandle.items.omen_down;
 
                     }
                     break;
@@ -313,12 +313,12 @@ namespace StardewDruid.Cast.Effect
                     Mod.instance.spellRegister.Add(splash);
 
                     dropFish = true;
-                    herbal = HerbalHandle.herbals.omen_glass;
+                    herbal = ApothecaryHandle.items.omen_glass;
 
                     if (Mod.instance.randomIndex.Next(2) == 0)
                     {
 
-                        herbal = HerbalHandle.herbals.omen_coral;
+                        herbal = ApothecaryHandle.items.omen_coral;
 
                     }
 

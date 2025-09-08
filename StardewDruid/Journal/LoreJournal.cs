@@ -11,7 +11,7 @@ namespace StardewDruid.Journal
     public class LoreJournal : DruidJournal
     {
 
-        public LoreJournal(string QuestId, int Record) : base(QuestId, Record)
+        public LoreJournal(journalTypes Type, List<string> Parameters) : base(Type, Parameters)
         {
 
 
@@ -23,17 +23,18 @@ namespace StardewDruid.Journal
             interfaceComponents = new()
             {
 
+
                 [101] = addButton(journalButtons.openQuests),
                 [102] = addButton(journalButtons.openMasteries),
                 [103] = addButton(journalButtons.openRelics),
                 [104] = addButton(journalButtons.openAlchemy),
                 [105] = addButton(journalButtons.openPotions),
                 [106] = addButton(journalButtons.openCompanions),
-                [107] = addButton(journalButtons.openDragonomicon),
+                [107] = addButton(journalButtons.openOrders),
+                [108] = addButton(journalButtons.openDragonomicon),
 
                 [201] = addButton(journalButtons.back),
                 [202] = addButton(journalButtons.start),
-                [203] = addButton(journalButtons.reverse),
 
                 [204] = addButton(journalButtons.openEffects),
 
@@ -51,18 +52,11 @@ namespace StardewDruid.Journal
 
             type = journalTypes.lore;
 
-            title = JournalData.JournalTitle(type);
-
             pagination = 6;
 
             contentComponents = Mod.instance.questHandle.JournalLore();
 
-            if (record >= contentComponents.Count)
-            {
-
-                record = 0;
-
-            }
+            ParameterRecord();
 
             foreach (KeyValuePair<int, ContentComponent> component in contentComponents)
             {
@@ -76,7 +70,7 @@ namespace StardewDruid.Journal
         public override void pressContent()
         {
 
-            openJournal(journalTypes.lorePage, contentComponents[focus].id, focus);
+            openJournal(journalTypes.lorePage, contentComponents[focus].id);
 
         }
 
